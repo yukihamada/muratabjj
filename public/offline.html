@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オフライン - Murata BJJ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 500px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #ea384c, #d21f33);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ea384c, #d21f33);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #888;
+            margin-bottom: 30px;
+        }
+        
+        .message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            color: #ccc;
+        }
+        
+        .retry-button {
+            background: linear-gradient(135deg, #ea384c, #d21f33);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(234, 56, 76, 0.3);
+        }
+        
+        .offline-features {
+            margin-top: 40px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .offline-features h3 {
+            color: #ea384c;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            color: #ccc;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #ea384c;
+            font-weight: bold;
+        }
+        
+        .connection-status {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(234, 56, 76, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(234, 56, 76, 0.3);
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background: #ea384c;
+        }
+        
+        .status-indicator.online {
+            background: #4ade80;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">BJJ</div>
+        <h1>オフライン</h1>
+        <p class="subtitle">インターネット接続が必要です</p>
+        
+        <div class="message">
+            <p>現在、インターネットに接続されていません。</p>
+            <p>接続を確認して、再度お試しください。</p>
+        </div>
+        
+        <button class="retry-button" onclick="location.reload()">
+            再試行
+        </button>
+        
+        <button class="retry-button" onclick="goToHome()" style="background: transparent; border: 2px solid #ea384c;">
+            ホームに戻る
+        </button>
+        
+        <div class="offline-features">
+            <h3>オフラインでも利用可能な機能</h3>
+            <ul class="feature-list">
+                <li>キャッシュされたページの閲覧</li>
+                <li>ローカルに保存されたフロー図の確認</li>
+                <li>スパーリングログの下書き作成</li>
+                <li>復習スケジュールの確認</li>
+            </ul>
+        </div>
+        
+        <div class="connection-status">
+            <span class="status-indicator" id="statusIndicator"></span>
+            <span id="statusText">接続状況を確認中...</span>
+        </div>
+    </div>
+
+    <script>
+        // Check connection status
+        function updateConnectionStatus() {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+            
+            if (navigator.onLine) {
+                indicator.classList.add('online');
+                text.textContent = 'オンライン - 再試行できます';
+            } else {
+                indicator.classList.remove('online');
+                text.textContent = 'オフライン - 接続をお待ちしています';
+            }
+        }
+        
+        // Update status immediately
+        updateConnectionStatus();
+        
+        // Listen for connection changes
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        
+        // Auto-reload when connection is restored
+        window.addEventListener('online', () => {
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        });
+        
+        function goToHome() {
+            if (navigator.onLine) {
+                window.location.href = '/dashboard';
+            } else {
+                // Try to navigate to cached dashboard
+                window.location.href = '/dashboard';
+            }
+        }
+        
+        // Service Worker registration check
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then((registration) => {
+                console.log('Service Worker is ready');
+            });
+        }
+    </script>
+</body>
+</html>

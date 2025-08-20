@@ -1,0 +1,99 @@
+{
+  "name": "Murata BJJ",
+  "short_name": "Murata BJJ",
+  "description": "ブラジリアン柔術を「連携（Flow）」中心で学ぶWebプラットフォーム",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png", 
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-maskable-512x512.png",
+      "sizes": "512x512", 
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#ea384c",
+  "orientation": "portrait-primary",
+  "categories": ["sports", "education", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "動画",
+      "short_name": "動画", 
+      "description": "BJJ技術動画を見る",
+      "url": "/dashboard/videos",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "フロー",
+      "short_name": "フロー",
+      "description": "技の連携を作成・練習する",
+      "url": "/flows",
+      "icons": [
+        {
+          "src": "/icon-192x192.png", 
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "スパーリングログ",
+      "short_name": "スパーリング",
+      "description": "スパーリング記録を管理する",
+      "url": "/dashboard/sparring",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "復習",
+      "short_name": "復習",
+      "description": "アダプティブ復習を開始する",
+      "url": "/dashboard/review",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192" 
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "type": "image/png", 
+      "sizes": "1280x800",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-mobile.png",
+      "type": "image/png",
+      "sizes": "400x800", 
+      "form_factor": "narrow"
+    }
+  ]
+}
