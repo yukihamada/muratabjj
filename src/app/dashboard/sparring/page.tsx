@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { Plus, Calendar, Clock, Trophy, TrendingUp, Users, X } from 'lucide-react'
+import { Plus, Calendar, Clock, Trophy, TrendingUp, Users, X, Play, Pause, RotateCcw } from 'lucide-react'
 import toast from 'react-hot-toast'
 import DashboardNav from '@/components/DashboardNav'
+import SparringEventLogger from '@/components/SparringEventLogger'
 
 interface SparringLog {
   id: string
@@ -101,6 +102,12 @@ export default function SparringPage() {
     sweepRate: 0,
   })
 
+  // Timer state
+  const [isTimerRunning, setIsTimerRunning] = useState(false)
+  const [timerSeconds, setTimerSeconds] = useState(0)
+  const [activeLogId, setActiveLogId] = useState<string | null>(null)
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
   // New log form state
   const [formData, setFormData] = useState({
     partner_name: '',
@@ -115,6 +122,14 @@ export default function SparringPage() {
       fetchSparringLogs()
     }
   }, [user])
+
+  useEffect(() => {
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current)
+      }
+    }
+  }, [])
 
   const fetchSparringLogs = async () => {
     try {
@@ -182,6 +197,94 @@ export default function SparringPage() {
       submissionRate: totalEvents > 0 ? (totalSubmissions / totalEvents) * 100 : 0,
       sweepRate: totalEvents > 0 ? (totalSweeps / totalEvents) * 100 : 0,
     })
+  }
+
+  const startTimer = () => {
+    setIsTimerRunning(true)
+    timerIntervalRef.current = setInterval(() => {
+      setTimerSeconds(prev => prev + 1)
+    }, 1000)
+  }
+
+  const pauseTimer = () => {
+    setIsTimerRunning(false)
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current)
+    }
+  }
+
+  const resetTimer = () => {
+    setIsTimerRunning(false)
+    setTimerSeconds(0)
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current)
+    }
+  }
+
+  const startLiveSession = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('sparring_logs')
+        .insert({
+          user_id: user!.id,
+          partner_name: 'Live Session',
+          duration: 0,
+          starting_position: 'standing',
+          date: new Date().toISOString(),
+          notes: 'Live recording session',
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      setActiveLogId(data.id)
+      setSelectedLog(data)
+      startTimer()
+      
+      toast.success(
+        language === 'ja' ? 'ライブセッションを開始しました' :
+        language === 'en' ? 'Live session started' :
+        'Sessão ao vivo iniciada'
+      )
+    } catch (error) {
+      console.error('Error starting live session:', error)
+      toast.error(
+        language === 'ja' ? 'セッションの開始に失敗しました' :
+        language === 'en' ? 'Failed to start session' :
+        'Falha ao iniciar sessão'
+      )
+    }
+  }
+
+  const endLiveSession = async () => {
+    if (!activeLogId) return
+
+    pauseTimer()
+    
+    try {
+      await supabase
+        .from('sparring_logs')
+        .update({ duration: timerSeconds })
+        .eq('id', activeLogId)
+
+      toast.success(
+        language === 'ja' ? 'セッションを終了しました' :
+        language === 'en' ? 'Session ended' :
+        'Sessão finalizada'
+      )
+      
+      setActiveLogId(null)
+      resetTimer()
+      fetchSparringLogs()
+    } catch (error) {
+      console.error('Error ending session:', error)
+      toast.error(
+        language === 'ja' ? 'セッションの終了に失敗しました' :
+        language === 'en' ? 'Failed to end session' :
+        'Falha ao finalizar sessão'
+      )
+    }
   }
 
   const createSparringLog = async () => {
@@ -270,14 +373,84 @@ export default function SparringPage() {
                'Acompanhe e analise suas sessões de sparring'}
             </p>
           </div>
-          <button
-            onClick={() => setShowNewLog(true)}
-            className="btn-primary flex items-center gap-2"
-          >
-            <Plus className="w-5 h-5" />
-            {language === 'ja' ? '新規記録' : language === 'en' ? 'New Log' : 'Novo Registro'}
-          </button>
+          <div className="flex gap-4">
+            {!activeLogId ? (
+              <button
+                onClick={startLiveSession}
+                className="btn-primary flex items-center gap-2"
+              >
+                <Play className="w-5 h-5" />
+                {language === 'ja' ? 'ライブセッション' : language === 'en' ? 'Live Session' : 'Sessão ao Vivo'}
+              </button>
+            ) : (
+              <button
+                onClick={endLiveSession}
+                className="btn-primary bg-red-500 hover:bg-red-600 flex items-center gap-2"
+              >
+                <X className="w-5 h-5" />
+                {language === 'ja' ? 'セッション終了' : language === 'en' ? 'End Session' : 'Finalizar Sessão'}
+              </button>
+            )}
+            <button
+              onClick={() => setShowNewLog(true)}
+              className="btn-ghost flex items-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              {language === 'ja' ? '新規記録' : language === 'en' ? 'New Log' : 'Novo Registro'}
+            </button>
+          </div>
         </div>
+
+        {/* Live Timer */}
+        {activeLogId && (
+          <div className="bg-bjj-accent/20 border border-bjj-accent rounded-bjj p-6 mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">
+                  {language === 'ja' ? 'ライブセッション進行中' : 
+                   language === 'en' ? 'Live Session in Progress' : 
+                   'Sessão ao Vivo em Andamento'}
+                </h2>
+                <div className="text-4xl font-mono font-bold text-bjj-accent">
+                  {formatDuration(timerSeconds)}
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {isTimerRunning ? (
+                  <button
+                    onClick={pauseTimer}
+                    className="btn-ghost p-3"
+                  >
+                    <Pause className="w-6 h-6" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={startTimer}
+                    className="btn-ghost p-3"
+                  >
+                    <Play className="w-6 h-6" />
+                  </button>
+                )}
+                <button
+                  onClick={resetTimer}
+                  className="btn-ghost p-3"
+                >
+                  <RotateCcw className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            
+            {/* Event Logger */}
+            {selectedLog && (
+              <div className="mt-6">
+                <SparringEventLogger 
+                  sparringLogId={activeLogId}
+                  onEventAdded={() => fetchSparringLogs()}
+                />
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
