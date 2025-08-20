@@ -131,19 +131,19 @@ function extractInfoFromText(text: string): Partial<AnalysisResult> {
     }
   })
 
-  positions.forEach(pos => {
+  for (const pos of positions) {
     if (text.toLowerCase().includes(pos)) {
       result.position = pos
       break
     }
-  })
+  }
 
-  categories.forEach(cat => {
+  for (const cat of categories) {
     if (text.toLowerCase().includes(cat)) {
       result.category = cat
       break
     }
-  })
+  }
 
   return result
 }
@@ -168,20 +168,28 @@ function mergeAnalysisResults(results: Partial<AnalysisResult>[]): AnalysisResul
   }
 
   // 最も頻繁に出現する値を選択
-  const techniques = [...new Set(validResults.flatMap(r => r.techniques || []))]
-  const positions = validResults.map(r => r.position).filter(Boolean)
+  const allTechniques = validResults.flatMap(r => r.techniques || [])
+  const techniques = Array.from(new Set(allTechniques))
+  const positions = validResults.map(r => r.position).filter((p): p is string => Boolean(p))
   const position = positions.length > 0 ? positions[0] : 'unknown'
   
-  const categories = validResults.map(r => r.category).filter(Boolean)
+  const categories = validResults.map(r => r.category).filter((c): c is string => Boolean(c))
   const category = categories.length > 0 ? categories[0] : 'other'
 
-  const difficulties = validResults.map(r => r.difficulty).filter(Boolean)
-  const difficulty = difficulties.length > 0 ? Math.round(difficulties.reduce((a, b) => a! + b!, 0) / difficulties.length) : 3
+  const difficulties = validResults.map(r => r.difficulty).filter((d): d is number => typeof d === 'number')
+  const difficulty = difficulties.length > 0 ? Math.round(difficulties.reduce((a, b) => a + b, 0) / difficulties.length) : 3
 
-  const recommended_belts = [...new Set(validResults.flatMap(r => r.recommended_belts || []))]
-  const safety_warnings = [...new Set(validResults.flatMap(r => r.safety_warnings || []))]
-  const key_points = [...new Set(validResults.flatMap(r => r.key_points || []))]
-  const tags = [...new Set(validResults.flatMap(r => r.tags || []))]
+  const allRecommendedBelts = validResults.flatMap(r => r.recommended_belts || [])
+  const recommended_belts = Array.from(new Set(allRecommendedBelts))
+  
+  const allSafetyWarnings = validResults.flatMap(r => r.safety_warnings || [])
+  const safety_warnings = Array.from(new Set(allSafetyWarnings))
+  
+  const allKeyPoints = validResults.flatMap(r => r.key_points || [])
+  const key_points = Array.from(new Set(allKeyPoints))
+  
+  const allTags = validResults.flatMap(r => r.tags || [])
+  const tags = Array.from(new Set(allTags))
 
   // 安全性チェック
   const is_competition_legal = !techniques.some(tech => 

@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase/client'
 import { uploadVideo, uploadThumbnail, generateVideoThumbnail, getVideoDuration } from '@/lib/supabase/storage'
 import { transcribeVideoServerSide, saveTranscription } from '@/lib/whisper/api'
-import { Upload, AlertCircle, Info, Video, Loader2, Plus, Mic } from 'lucide-react'
+import { Upload, AlertCircle, Info, Video, Loader2, Plus, Mic, Brain } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import DashboardNav from '@/components/DashboardNav'
 import toast from 'react-hot-toast'
@@ -25,6 +25,8 @@ const translations = {
     beltRequirement: '推奨帯',
     noBeltRequirement: '指定なし',
     premium: 'プレミアムコンテンツ',
+    enableAIAnalysis: 'AI自動分析を有効にする',
+    aiAnalysisDesc: '動画をアップロード後にAIで技術を自動分析します',
     flowIntegration: 'フロー統合',
     addToFlow: '既存のフローに追加',
     selectFlow: 'フローを選択',
@@ -55,6 +57,8 @@ const translations = {
     beltRequirement: 'Belt Requirement',
     noBeltRequirement: 'No requirement',
     premium: 'Premium Content',
+    enableAIAnalysis: 'Enable AI Auto-Analysis',
+    aiAnalysisDesc: 'Automatically analyze video techniques with AI after upload',
     flowIntegration: 'Flow Integration',
     addToFlow: 'Add to existing flow',
     selectFlow: 'Select flow',
@@ -85,6 +89,8 @@ const translations = {
     beltRequirement: 'Faixa Recomendada',
     noBeltRequirement: 'Sem requisito',
     premium: 'Conteúdo Premium',
+    enableAIAnalysis: 'Habilitar Análise Automática por IA',
+    aiAnalysisDesc: 'Analisar automaticamente as técnicas do vídeo com IA após upload',
     flowIntegration: 'Integração com Fluxo',
     addToFlow: 'Adicionar ao fluxo existente',
     selectFlow: 'Selecionar fluxo',
@@ -124,6 +130,7 @@ export default function VideoUploadPage() {
   const [flows, setFlows] = useState<any[]>([])
   const [transcribing, setTranscribing] = useState(false)
   const [enableTranscription, setEnableTranscription] = useState(true)
+  const [enableAIAnalysis, setEnableAIAnalysis] = useState(true)
   const [formData, setFormData] = useState({
     title_ja: '',
     title_en: '',
@@ -282,7 +289,32 @@ export default function VideoUploadPage() {
         }
       }
 
-      // 5. Handle flow integration if requested
+      // 5. Trigger AI analysis if enabled
+      if (enableAIAnalysis && videoData) {
+        try {
+          toast.loading(language === 'ja' ? 'AI分析を開始中...' : 
+                       language === 'en' ? 'Starting AI analysis...' : 
+                       'Iniciando análise de IA...')
+          
+          await fetch('/api/ai/auto-analyze-on-upload', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ videoId: videoData.id })
+          })
+          
+          toast.dismiss()
+          toast.success(language === 'ja' ? 'AI分析がスケジュールされました' : 
+                       language === 'en' ? 'AI analysis scheduled' : 
+                       'Análise de IA agendada')
+        } catch (aiError) {
+          console.error('AI analysis scheduling error:', aiError)
+          toast.dismiss()
+        }
+      }
+
+      // 6. Handle flow integration if requested
       if (formData.add_to_flow && videoData) {
         let flowId = formData.flow_id
 
@@ -574,6 +606,25 @@ export default function VideoUploadPage() {
                    language === 'en' ? 'Auto-transcribe audio (Whisper API)' : 
                    'Transcrever áudio automaticamente (Whisper API)'}
                 </span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={enableAIAnalysis}
+                  onChange={(e) => setEnableAIAnalysis(e.target.checked)}
+                  className="rounded border-white/20"
+                  disabled={loading}
+                />
+                <Brain className="w-4 h-4" />
+                <div className="flex flex-col">
+                  <span className="text-sm">
+                    {t.enableAIAnalysis}
+                  </span>
+                  <span className="text-xs text-bjj-muted">
+                    {t.aiAnalysisDesc}
+                  </span>
+                </div>
               </label>
             </div>
 
