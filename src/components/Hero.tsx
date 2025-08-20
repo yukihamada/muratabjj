@@ -27,6 +27,11 @@ export default function Hero() {
     return () => observer.disconnect()
   }, [])
 
+  // Early return if translations aren't loaded
+  if (!t || !t.hero) {
+    return null
+  }
+
   return (
     <section ref={heroRef} className="container mx-auto px-4 py-16 md:py-24">
       <div className="grid lg:grid-cols-2 gap-8">

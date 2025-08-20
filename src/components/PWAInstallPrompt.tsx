@@ -85,8 +85,8 @@ export default function PWAInstallPrompt() {
       setDeferredPrompt(e as BeforeInstallPromptEvent)
       
       // Check if user has dismissed prompt before
-      const dismissed = localStorage.getItem('pwa-install-dismissed')
-      const lastPrompt = localStorage.getItem('pwa-install-last-prompt')
+      const dismissed = typeof window !== 'undefined' ? localStorage.getItem('pwa-install-dismissed') : null
+      const lastPrompt = typeof window !== 'undefined' ? localStorage.getItem('pwa-install-last-prompt') : null
       const now = new Date().getTime()
       const oneDayMs = 24 * 60 * 60 * 1000
       
@@ -147,7 +147,7 @@ export default function PWAInstallPrompt() {
   }
 
   // Don't show if already installed or running as PWA
-  if (isStandalone || localStorage.getItem('pwa-installed')) {
+  if (isStandalone || (typeof window !== 'undefined' && localStorage.getItem('pwa-installed'))) {
     return null
   }
 

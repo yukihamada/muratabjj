@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe, SUBSCRIPTION_PLANS } from '@/lib/stripe/config';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
-    // Use the exported supabase client
+    // Use the server-side supabase client
+    const supabase = createClient();
     
     // Check if user is authenticated
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -41,9 +42,9 @@ export async function POST(request: NextRequest) {
     
     // Check if user already has a Stripe customer ID in the database
     const { data: profile } = await supabase
-      .from('profiles')
+      .from('users_profile')
       .select('stripe_customer_id')
-      .eq('id', user.id)
+      .eq('user_id', user.id)
       .single();
 
     if (profile?.stripe_customer_id) {
@@ -60,9 +61,9 @@ export async function POST(request: NextRequest) {
 
       // Save customer ID to database
       await supabase
-        .from('profiles')
+        .from('users_profile')
         .update({ stripe_customer_id: customerId })
-        .eq('id', user.id);
+        .eq('user_id', user.id);
     }
 
     // Create checkout session

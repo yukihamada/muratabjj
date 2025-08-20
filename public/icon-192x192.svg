@@ -1,0 +1,7 @@
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" fill="#13131a"/>
+  <circle cx="96" cy="96" r="76.80000000000001" fill="#ea384c" opacity="0.15"/>
+  <text x="96" y="96" font-family="Arial, sans-serif" font-size="57.599999999999994" font-weight="bold" fill="#ea384c" text-anchor="middle" dominant-baseline="middle">M</text>
+  <circle cx="96" cy="57.599999999999994" r="9.600000000000001" fill="#ea384c"/>
+  <path d="M57.599999999999994 115.19999999999999 Q96 76.80000000000001 134.39999999999998 115.19999999999999" fill="none" stroke="#ea384c" stroke-width="3.84" stroke-linecap="round"/>
+</svg>

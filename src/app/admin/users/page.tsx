@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase/client'
 import DashboardNav from '@/components/DashboardNav'
 import { 
   Users, 
@@ -88,12 +89,27 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('/api/admin/users')
+      // Supabaseのセッションからトークンを取得
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (!session) {
+        toast.error('認証エラー')
+        return
+      }
+
+      const response = await fetch('/api/admin/users', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      })
+      
       if (response.ok) {
         const data = await response.json()
         setUsers(data.users)
       } else {
-        toast.error('ユーザー一覧の取得に失敗しました')
+        const error = await response.json()
+        console.error('API Error:', error)
+        toast.error(error.error || 'ユーザー一覧の取得に失敗しました')
       }
     } catch (error) {
       console.error('Error fetching users:', error)

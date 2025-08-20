@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { stripe } from '@/lib/stripe/config';
-import { supabase } from '@/lib/supabase/client';
+import { createServiceClient } from '@/lib/supabase/service';
 import Stripe from 'stripe';
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -23,7 +23,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Use the exported supabase client
+  // Use the service role client for admin operations
+  const supabase = createServiceClient();
 
   try {
     switch (event.type) {
@@ -33,13 +34,13 @@ export async function POST(request: NextRequest) {
         
         // Update user subscription in database
         await supabase
-          .from('profiles')
+          .from('users_profile')
           .update({
             subscription_plan: planId,
             subscription_status: 'active',
             stripe_subscription_id: session.subscription as string,
           })
-          .eq('id', userId);
+          .eq('user_id', userId);
         
         break;
       }
@@ -50,16 +51,16 @@ export async function POST(request: NextRequest) {
         const { userId, planId } = subscription.metadata;
         
         await supabase
-          .from('profiles')
+          .from('users_profile')
           .update({
             subscription_plan: planId,
             subscription_status: subscription.status,
             stripe_subscription_id: subscription.id,
-            subscription_current_period_end: new Date(
+            subscription_period_end: new Date(
               subscription.current_period_end * 1000
             ).toISOString(),
           })
-          .eq('id', userId);
+          .eq('user_id', userId);
         
         break;
       }
@@ -69,14 +70,14 @@ export async function POST(request: NextRequest) {
         const { userId } = subscription.metadata;
         
         await supabase
-          .from('profiles')
+          .from('users_profile')
           .update({
             subscription_plan: 'free',
             subscription_status: 'canceled',
             stripe_subscription_id: null,
-            subscription_current_period_end: null,
+            subscription_period_end: null,
           })
-          .eq('id', userId);
+          .eq('user_id', userId);
         
         break;
       }
@@ -90,13 +91,13 @@ export async function POST(request: NextRequest) {
         const { userId } = subscription.metadata;
         
         await supabase
-          .from('profiles')
+          .from('users_profile')
           .update({
-            subscription_current_period_end: new Date(
+            subscription_period_end: new Date(
               subscription.current_period_end * 1000
             ).toISOString(),
           })
-          .eq('id', userId);
+          .eq('user_id', userId);
         
         break;
       }
@@ -111,11 +112,11 @@ export async function POST(request: NextRequest) {
         
         // Update subscription status
         await supabase
-          .from('profiles')
+          .from('users_profile')
           .update({
             subscription_status: 'past_due',
           })
-          .eq('id', userId);
+          .eq('user_id', userId);
         
         break;
       }

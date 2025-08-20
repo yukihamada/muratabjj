@@ -24,15 +24,24 @@ function isAdmin(email: string | undefined): boolean {
 
 export async function GET(request: NextRequest) {
   try {
-    // 認証チェック
+    // 認証チェック - Supabaseのセッションクッキーを確認
     const cookieStore = cookies()
-    const authCookie = cookieStore.get('supabase-auth-token')
+    const supabaseCookies = cookieStore.getAll().filter(cookie => 
+      cookie.name.startsWith('sb-') && cookie.name.includes('-auth-token')
+    )
     
-    if (!authCookie) {
+    if (!supabaseCookies.length) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(authCookie.value)
+    // Authorization headerからトークンを取得
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Missing authorization header' }, { status: 401 })
+    }
+
+    const token = authHeader.substring(7)
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
     
     if (authError || !user || !isAdmin(user.email)) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
@@ -40,28 +49,53 @@ export async function GET(request: NextRequest) {
 
     // ユーザー一覧を取得
     const { data: profiles, error: profilesError } = await supabaseAdmin
-      .from('profiles')
+      .from('users_profile')
       .select(`
-        id,
-        email,
+        user_id:id,
         full_name,
         belt,
         stripes,
-        role,
         is_coach,
+        is_admin,
         subscription_plan,
         subscription_status,
         created_at,
         updated_at
       `)
       .order('created_at', { ascending: false })
-
+    
     if (profilesError) {
       console.error('Error fetching profiles:', profilesError)
       return NextResponse.json({ error: 'Database error' }, { status: 500 })
     }
 
-    return NextResponse.json({ users: profiles })
+    // 認証情報からemailを取得
+    const { data: { users: authUsers }, error: authUsersError } = await supabaseAdmin.auth.admin.listUsers()
+    
+    if (authUsersError) {
+      console.error('Error fetching auth users:', authUsersError)
+      return NextResponse.json({ error: 'Auth error' }, { status: 500 })
+    }
+
+    // プロフィールとemailを結合
+    const usersWithEmail = profiles?.map(profile => {
+      const authUser = authUsers.find(u => u.id === profile.user_id)
+      return {
+        id: profile.user_id,
+        email: authUser?.email || '',
+        full_name: profile.full_name,
+        belt: profile.belt,
+        stripes: profile.stripes,
+        role: profile.is_admin ? 'admin' : 'user',
+        is_coach: profile.is_coach,
+        subscription_plan: profile.subscription_plan,
+        subscription_status: profile.subscription_status,
+        created_at: profile.created_at,
+        last_sign_in_at: authUser?.last_sign_in_at
+      }
+    }) || []
+
+    return NextResponse.json({ users: usersWithEmail })
 
   } catch (error) {
     console.error('Admin users API error:', error)

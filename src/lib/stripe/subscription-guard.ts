@@ -9,9 +9,9 @@ export async function checkSubscriptionAccess(
   
   try {
     const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('subscription_plan, subscription_status, subscription_current_period_end')
-      .eq('id', userId)
+      .from('users_profile')
+      .select('subscription_plan, subscription_status, subscription_period_end')
+      .eq('user_id', userId)
       .single()
 
     if (error || !profile) {
@@ -24,8 +24,8 @@ export async function checkSubscriptionAccess(
 
     const userPlan = (profile.subscription_plan || 'free') as PlanId
     const isActive = profile.subscription_status === 'active'
-    const periodEnd = profile.subscription_current_period_end
-      ? new Date(profile.subscription_current_period_end)
+    const periodEnd = profile.subscription_period_end
+      ? new Date(profile.subscription_period_end)
       : null
     const isExpired = periodEnd ? periodEnd < new Date() : false
 
