@@ -418,7 +418,7 @@ export default function VideoPage() {
             {user && video.technique_id && (
               <ProgressTracker
                 techniqueId={video.technique_id}
-                techiqueName={technique?.[`name_${language}`] || video[`title_${language}`] || video.title}
+                techniqueName={technique?.[`name_${language}`] || video[`title_${language}`] || video.title}
                 videoId={video.id}
                 initialProgress={progress?.progress_level || 0}
               />

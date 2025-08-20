@@ -144,7 +144,7 @@ export default function AdminUsers() {
 
   const toggleCoachStatus = async (userId: string, isCoach: boolean) => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const response = await adminFetch(`/api/admin/users/${userId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
