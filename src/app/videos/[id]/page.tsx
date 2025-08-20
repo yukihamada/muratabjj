@@ -146,6 +146,8 @@ export default function VideoPage() {
   const [showTranscript, setShowTranscript] = useState(false)
   const [playbackRate, setPlaybackRate] = useState(1)
   const [chapters, setChapters] = useState<any[]>([])
+  const [technique, setTechnique] = useState<any>(null)
+  const [progress, setProgress] = useState<any>(null)
 
   useEffect(() => {
     if (!user) {
@@ -182,6 +184,33 @@ export default function VideoPage() {
 
       if (chaptersData) {
         setChapters(chaptersData)
+      }
+
+      // Load technique information if available
+      if (videoData.technique_id) {
+        const { data: techniqueData } = await supabase
+          .from('techniques')
+          .select('*')
+          .eq('id', videoData.technique_id)
+          .single()
+        
+        if (techniqueData) {
+          setTechnique(techniqueData)
+        }
+      }
+
+      // Load user progress if available
+      if (user && videoData.technique_id) {
+        const { data: progressData } = await supabase
+          .from('user_progress')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('technique_id', videoData.technique_id)
+          .single()
+        
+        if (progressData) {
+          setProgress(progressData)
+        }
       }
 
       // Update view count
@@ -386,11 +415,14 @@ export default function VideoPage() {
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             {/* Progress Tracker */}
-            {/* Progress Tracker - To be implemented */}
-            <div className="bg-white/5 rounded-lg p-6">
-              <h3 className="text-sm font-medium text-bjj-muted mb-3">{t.markComplete}</h3>
-              <p className="text-xs text-bjj-muted/50">Progress tracking coming soon...</p>
-            </div>
+            {user && video.technique_id && (
+              <ProgressTracker
+                techniqueId={video.technique_id}
+                techiqueName={technique?.[`name_${language}`] || video[`title_${language}`] || video.title}
+                videoId={video.id}
+                initialProgress={progress?.progress_level || 0}
+              />
+            )}
 
             {/* Chapters */}
             {chapters.length > 0 && (
