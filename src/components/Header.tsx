@@ -13,6 +13,11 @@ export default function Header() {
   const [showAuthDialog, setShowAuthDialog] = useState(false)
   const { user, signOut, loading } = useAuth()
   const { t } = useLanguage()
+  
+  // tが読み込まれていない場合の早期リターン
+  if (!t || !t.nav) {
+    return null
+  }
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-white/10">

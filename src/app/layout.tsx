@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { AuthProvider } from '@/hooks/useAuth'
 import { LanguageProvider } from '@/contexts/LanguageContext'
@@ -13,8 +13,6 @@ export const metadata: Metadata = {
   description: '連携（Flow）×動画×習得度で学ぶ柔術プラットフォーム。多言語対応。監修：村田 良蔵。',
   keywords: ['BJJ', '柔術', 'ブラジリアン柔術', '村田良蔵', 'フロー学習', '動画学習'],
   manifest: '/manifest.json',
-  themeColor: '#ea384c',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -25,6 +23,15 @@ export const metadata: Metadata = {
     description: 'Flow × Video × Progress',
     type: 'website',
   },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#ea384c',
 }
 
 export default function RootLayout({
