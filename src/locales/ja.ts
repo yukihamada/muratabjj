@@ -26,7 +26,6 @@ export const ja = {
       start: '無料で始める',
       features: '機能を見る',
     },
-    note: '※AI画像9枚の機能は使用していません。',
   },
 
   // 機能セクション

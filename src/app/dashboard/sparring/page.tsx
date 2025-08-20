@@ -144,7 +144,7 @@ export default function SparringPage() {
     } catch (error) {
       console.error('Error fetching sparring logs:', error)
       // Only show error if it's not an empty table issue
-      if (!error.message?.includes('relation') && !error.message?.includes('does not exist')) {
+      if (!(error as any).message?.includes('relation') && !(error as any).message?.includes('does not exist')) {
         toast.error(
           language === 'ja' ? 'スパーログの取得に失敗しました' :
           language === 'en' ? 'Failed to fetch sparring logs' :

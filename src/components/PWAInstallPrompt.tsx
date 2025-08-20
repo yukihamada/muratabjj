@@ -70,7 +70,7 @@ export default function PWAInstallPrompt() {
   useEffect(() => {
     // Check if running as PWA
     const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches ||
-                           window.navigator.standalone === true ||
+                           (window.navigator as any).standalone === true ||
                            document.referrer.includes('android-app://')
     
     setIsStandalone(isStandaloneMode)

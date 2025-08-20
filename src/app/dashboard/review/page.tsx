@@ -175,7 +175,7 @@ export default function AdaptiveReviewPage() {
       
       // Add progress-based items
       if (progressData.data) {
-        progressData.data.forEach(progress => {
+        progressData.data.forEach((progress: any) => {
           items.push({
             id: progress.id,
             type: progress.content_type,
@@ -194,7 +194,7 @@ export default function AdaptiveReviewPage() {
 
       // Add videos as potential review items
       if (videoData.data) {
-        videoData.data.forEach(video => {
+        videoData.data.forEach((video: any) => {
           // Only add if not already in progress
           if (!items.find(item => item.type === 'video' && item.id === video.id)) {
             items.push({
@@ -216,7 +216,7 @@ export default function AdaptiveReviewPage() {
 
       // Add flows as potential review items
       if (flowData.data) {
-        flowData.data.forEach(flow => {
+        flowData.data.forEach((flow: any) => {
           if (!items.find(item => item.type === 'flow' && item.id === flow.id)) {
             items.push({
               id: flow.id,

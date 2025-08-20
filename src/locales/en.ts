@@ -26,7 +26,6 @@ export const en = {
       start: 'Start Free',
       features: 'View Features',
     },
-    note: '*AI-generated images are not used in this platform.',
   },
 
   // Features Section

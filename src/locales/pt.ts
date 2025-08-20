@@ -26,7 +26,6 @@ export const pt = {
       start: 'Começar Grátis',
       features: 'Ver Recursos',
     },
-    note: '*Imagens geradas por IA não são usadas nesta plataforma.',
   },
 
   // Seção de Recursos

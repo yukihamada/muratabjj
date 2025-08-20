@@ -115,7 +115,7 @@ export default function DojoManagementPage() {
 
       if (memberError) throw memberError
 
-      const dojoList = memberData?.map(m => ({
+      const dojoList = memberData?.map((m: any) => ({
         ...m.dojos,
         role: m.role,
       })) || []

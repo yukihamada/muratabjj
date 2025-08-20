@@ -67,9 +67,6 @@ export default function Hero() {
             </Link>
           </div>
           
-          <small className="text-bjj-muted">
-            {t.hero.note}
-          </small>
         </div>
         
         <div className="reveal opacity-0 delay-100 h-full min-h-[400px]">

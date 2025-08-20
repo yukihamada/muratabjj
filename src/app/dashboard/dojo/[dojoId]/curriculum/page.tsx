@@ -182,7 +182,7 @@ export default function CurriculumManagementPage() {
       if (error) throw error
 
       // Fetch item details
-      const itemsWithDetails = await Promise.all((data || []).map(async (item) => {
+      const itemsWithDetails = await Promise.all((data || []).map(async (item: any) => {
         let title = ''
         
         if (item.item_type === 'video') {
