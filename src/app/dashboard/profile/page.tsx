@@ -147,9 +147,9 @@ export default function ProfilePage() {
   const fetchProfile = async () => {
     try {
       const { data, error } = await supabase
-        .from('profiles')
+        .from('users_profile')
         .select('*')
-        .eq('id', user!.id)
+        .eq('user_id', user!.id)
         .single()
 
       if (error) throw error
@@ -206,14 +206,14 @@ export default function ProfilePage() {
 
     try {
       const { error } = await supabase
-        .from('profiles')
+        .from('users_profile')
         .update({
           full_name: formData.full_name,
           belt: formData.belt,
           stripes: formData.stripes,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', user!.id)
+        .eq('user_id', user!.id)
 
       if (error) throw error
 
@@ -263,7 +263,7 @@ export default function ProfilePage() {
                   <label className="block text-sm font-medium mb-2">{t.email}</label>
                   <input
                     type="email"
-                    value={profile?.email || ''}
+                    value={user?.email || ''}
                     disabled
                     className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 opacity-50 cursor-not-allowed"
                   />
@@ -371,7 +371,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <p className="text-sm text-bjj-muted">{t.role}</p>
-                  <p className="font-medium">{t[profile?.role as keyof typeof t] || t.user}</p>
+                  <p className="font-medium">{profile?.is_coach ? t.coach : (profile?.is_admin ? t.admin : t.user)}</p>
                 </div>
               </div>
             </div>
