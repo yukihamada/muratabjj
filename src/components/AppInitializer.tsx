@@ -33,8 +33,10 @@ export default function AppInitializer({ children }: { children: React.ReactNode
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <noscript>
+            <p className="text-gray-600 mt-4">JavaScript is required to run this application.</p>
+          </noscript>
         </div>
       </div>
     )

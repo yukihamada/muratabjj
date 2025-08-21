@@ -17,8 +17,8 @@ export const en = {
     badge: 'Flow × Video × Progress',
     title1: 'Master BJJ with',
     title2: 'Flow and',
-    titleHighlight: 'Video',
-    description: 'Murata BJJ is a flow-first learning platform for Brazilian Jiu-Jitsu.',
+    titleHighlight: 'Video.',
+    description: 'Murata BJJ is a flow-first learning platform for Brazilian Jiu-Jitsu. ',
     descriptionPoints: ['Videos', 'Flows', 'Progress', 'Sparring Logs'],
     descriptionEnd: 'to create a cycle of understanding → practice → application.',
     healthNote: 'Safe instruction supporting QOL & MQ improvement as a lifelong sport.',
@@ -112,7 +112,7 @@ export const en = {
   // Supervisor Section
   supervisor: {
     title: 'Supervised by Ryozo Murata',
-    description: 'SJJIF World Championship Master 2 Black Belt Featherweight Champion 2018 & 2019. President of SJJJF. Representative of YAWARA BJJ Academy and Over Limit Sapporo.',
+    description: 'SJJIF World Championship Master 2 Black Belt Featherweight Champion 2018 & 2019. President of SJJJF. Head of YAWARA Jiu-Jitsu Academy / Over Limit Jiu-Jitsu Association. SWEEP Kitasando.',
     details: [
       'From: Abashiri, Hokkaido / Born: April 24, 1980',
       'Silver 2016 & 2017, Gold 2018 & 2019 (SJJIF/M2 Black/Feather)',

@@ -50,13 +50,8 @@ export default function AdminVideosPage() {
 
     try {
       // 管理者権限チェック
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
-      if (profile?.role !== 'admin') {
+      const adminEmails = ['shu.shu.4029@gmail.com', 'yuki@hamada.tokyo']
+      if (!adminEmails.includes(user.email || '')) {
         toast.error('管理者権限が必要です')
         router.push('/dashboard')
         return
@@ -69,7 +64,7 @@ export default function AdminVideosPage() {
         .from('videos')
         .select(`
           *,
-          uploader:profiles!videos_uploaded_by_fkey(email, full_name)
+          uploader:users_profile!videos_uploaded_by_fkey(full_name)
         `)
         .order('created_at', { ascending: false })
 

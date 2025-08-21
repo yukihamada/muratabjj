@@ -51,9 +51,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchProfile = async (userId: string, userEmail?: string) => {
     try {
       const { data, error } = await supabase
-        .from('profiles')
+        .from('users_profile')
         .select('*')
-        .eq('id', userId)
+        .eq('user_id', userId)
         .single()
       
       if (error) {
@@ -61,11 +61,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (error.code === 'PGRST116') {
           console.log('[useAuth] Profile not found, creating new profile...')
           const { data: newProfile, error: createError } = await supabase
-            .from('profiles')
+            .from('users_profile')
             .insert([
               {
-                id: userId,
-                email: userEmail || user?.email,
+                user_id: userId,
+                full_name: '',
+                belt_rank: 'white',
+                stripes: 0,
+                years_training: 0,
+                is_coach: false,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
               }

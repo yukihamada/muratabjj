@@ -17,8 +17,8 @@ export const pt = {
     badge: 'Flow × Vídeo × Progresso',
     title1: 'Domine o BJJ com',
     title2: 'Flow e',
-    titleHighlight: 'Vídeo',
-    description: 'Murata BJJ é uma plataforma de aprendizado centrada em flow para Jiu-Jitsu Brasileiro.',
+    titleHighlight: 'Vídeo.',
+    description: 'Murata BJJ é uma plataforma de aprendizado centrada em flow para Jiu-Jitsu Brasileiro. ',
     descriptionPoints: ['Vídeos', 'Flows', 'Progresso', 'Logs de Sparring'],
     descriptionEnd: 'para criar um ciclo de compreensão → prática → aplicação.',
     healthNote: 'Instrução segura apoiando melhoria de QOL & MQ como esporte vitalício.',
@@ -112,7 +112,7 @@ export const pt = {
   // Seção do Supervisor
   supervisor: {
     title: 'Supervisionado por Ryozo Murata',
-    description: 'Campeão Mundial SJJIF Master 2 Faixa Preta Pena 2018 e 2019. Presidente da SJJJF. Representante da Academia YAWARA BJJ e Over Limit Sapporo.',
+    description: 'Campeão Mundial SJJIF Master 2 Faixa Preta Pena 2018 e 2019. Presidente da SJJJF. Diretor da Academia YAWARA Jiu-Jitsu / Over Limit Jiu-Jitsu Association. SWEEP Kitasando.',
     details: [
       'De: Abashiri, Hokkaido / Nascido: 24 de abril de 1980',
       'Prata 2016 e 2017, Ouro 2018 e 2019 (SJJIF/M2 Preta/Pena)',

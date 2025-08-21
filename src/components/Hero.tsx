@@ -46,7 +46,7 @@ export default function Hero() {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
             {t.hero.title1}
             <br />
-            {t.hero.title2}<span className="text-gradient">{t.hero.titleHighlight}</span>。
+            {t.hero.title2}<span className="text-gradient">{t.hero.titleHighlight}</span>
           </h1>
           
           <p className="text-bjj-muted text-lg mb-4">

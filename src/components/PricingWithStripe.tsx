@@ -84,10 +84,24 @@ export default function PricingWithStripe() {
 
     // Free plan button
     if (planId === 'free') {
-      if (!user || (!isPro && !isDojo)) {
+      // If not logged in, show start free button
+      if (!user) {
         return (
           <button
             className="btn-primary w-full"
+            onClick={() => router.push('/signup')}
+          >
+            {language === 'ja' ? '無料で始める' : 
+             language === 'en' ? 'Start Free' : 
+             'Começar Grátis'}
+          </button>
+        )
+      }
+      // If logged in but not Pro/Dojo, show current plan
+      if (!isPro && !isDojo) {
+        return (
+          <button
+            className="btn-secondary w-full"
             disabled
           >
             {language === 'ja' ? '現在のプラン' : 
@@ -175,6 +189,13 @@ export default function PricingWithStripe() {
                   {planId === 'pro' && (language === 'ja' ? '¥1,200/月' : language === 'en' ? '$12/month' : 'R$60/mês')}
                   {planId === 'dojo' && (language === 'ja' ? '¥6,000/月〜' : language === 'en' ? '$60/month+' : 'R$300/mês+')}
                 </p>
+                {planId === 'pro' && (
+                  <p className="text-sm text-bjj-muted mt-1">
+                    {language === 'ja' ? '年払いで¥1,080/月' : 
+                     language === 'en' ? '$10.80/month billed yearly' : 
+                     'R$54/mês cobrado anualmente'}
+                  </p>
+                )}
               </div>
               
               <ul className="space-y-2 mb-6">
