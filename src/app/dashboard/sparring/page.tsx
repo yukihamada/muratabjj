@@ -114,9 +114,17 @@ export default function SparringPage() {
     partner_name: '',
     duration: 300, // 5 minutes default
     starting_position: 'standing',
-    date: new Date().toISOString().split('T')[0],
+    date: formatDateForInput(new Date()),
     notes: '',
   })
+  
+  // 日付をinput[type="date"]用にフォーマット
+  function formatDateForInput(date: Date): string {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
 
   useEffect(() => {
     if (user) {
@@ -374,7 +382,7 @@ export default function SparringPage() {
         partner_name: '',
         duration: 300,
         starting_position: 'standing',
-        date: new Date().toISOString().split('T')[0],
+        date: formatDateForInput(new Date()),
         notes: '',
       })
       fetchSparringLogs()
@@ -670,13 +678,18 @@ export default function SparringPage() {
                     {language === 'ja' ? '日付' : language === 'en' ? 'Date' : 'Data'}
                     <span className="text-bjj-accent ml-1">*</span>
                   </label>
-                  <input
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none transition-all duration-200 focus:bg-white/15"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                      className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none transition-all duration-200 focus:bg-white/15 [color-scheme:dark]"
+                      style={{ colorScheme: 'dark' }}
+                      max={formatDateForInput(new Date())}
+                      required
+                    />
+                    <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-bjj-muted pointer-events-none" />
+                  </div>
                 </div>
 
                 <div>

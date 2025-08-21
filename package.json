@@ -16,7 +16,8 @@
     "seed": "node scripts/seed-data.js",
     "seed:users": "node scripts/seed-users.js",
     "setup:database": "node scripts/setup-database.js",
-    "add:sample-videos": "npx tsx src/scripts/add-sample-videos.ts"
+    "add:sample-videos": "npx tsx src/scripts/add-sample-videos.ts",
+    "fix:admin-users": "node scripts/fix-admin-users.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",

@@ -29,7 +29,11 @@ interface ProgressData {
 const progressLevels = {
   ja: ['理解', '手順', '再現', '連携', '実戦'],
   en: ['Understanding', 'Steps', 'Reproduction', 'Flow', 'Sparring'],
-  pt: ['Compreensão', 'Passos', 'Reprodução', 'Fluxo', 'Sparring']
+  pt: ['Compreensão', 'Passos', 'Reprodução', 'Fluxo', 'Sparring'],
+  es: ['Comprensión', 'Pasos', 'Ejecución', 'Flow', 'En Vivo'],
+  fr: ['Compréhension', 'Étapes', 'Exécution', 'Flow', 'En Direct'],
+  ko: ['이해', '단계', '실행', 'Flow', '라이브'],
+  ru: ['Понимание', 'Шаги', 'Выполнение', 'Flow', 'Вживую']
 }
 
 const levelDescriptions = {
@@ -53,6 +57,34 @@ const levelDescriptions = {
     'Pode reproduzir a técnica sozinho',
     'Pode executar dentro de um fluxo',
     'Pode usar no sparring ao vivo'
+  ],
+  es: [
+    'Vi el video y entendí el concepto',
+    'Memoricé los pasos y puedo explicar',
+    'Puedo reproducir la técnica solo',
+    'Puedo ejecutar dentro de un flow',
+    'Puedo usar en sparring en vivo'
+  ],
+  fr: [
+    'A regardé la vidéo et compris le concept',
+    'A mémorisé les étapes et peut expliquer',
+    'Peut reproduire la technique seul',
+    'Peut exécuter dans un flow',
+    'Peut utiliser en sparring en direct'
+  ],
+  ko: [
+    '비디오를 시청하고 개념을 이해했습니다',
+    '단계를 암기하고 설명할 수 있습니다',
+    '혼자서 기술을 재현할 수 있습니다',
+    'Flow 내에서 실행할 수 있습니다',
+    '라이브 스파링에서 사용할 수 있습니다'
+  ],
+  ru: [
+    'Просмотрел видео и понял концепцию',
+    'Запомнил шаги и могу объяснить',
+    'Могу воспроизвести технику в одиночку',
+    'Могу выполнить в рамках flow',
+    'Могу использовать в живом спарринге'
   ]
 }
 

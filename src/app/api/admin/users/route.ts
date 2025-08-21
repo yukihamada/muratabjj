@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     const { data: profiles, error: profilesError } = await supabaseAdmin
       .from('users_profile')
       .select(`
-        user_id:id,
+        user_id,
         full_name,
         belt,
         stripes,
@@ -77,7 +77,14 @@ export async function GET(request: NextRequest) {
     
     if (profilesError) {
       console.error('Error fetching profiles:', profilesError)
-      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+      // テーブルが存在しない場合の詳細なエラーメッセージ
+      if (profilesError.message.includes('users_profile') && profilesError.message.includes('not exist')) {
+        return NextResponse.json({ 
+          error: 'Database table not found. Please run the migration: npm run fix:admin-users',
+          details: profilesError.message 
+        }, { status: 500 })
+      }
+      return NextResponse.json({ error: 'Database error', details: profilesError.message }, { status: 500 })
     }
 
     // 認証情報からemailを取得

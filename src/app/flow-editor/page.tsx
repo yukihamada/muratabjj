@@ -12,6 +12,7 @@ import ReactFlow, {
   Background,
   MiniMap,
 } from 'reactflow'
+import 'reactflow/dist/style.css'
 import DashboardNav from '@/components/DashboardNav'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'

@@ -89,9 +89,9 @@ const faqs: FAQItem[] = [
       pt: 'Pessoas idosas e mulheres podem começar o BJJ?'
     },
     answer: {
-      ja: '柔術は生涯スポーツです。年齢や性別に関係なく、個人の身体特性に合わせたカリキュラムを提供します。無理のない範囲で心血管系の健康向上、筋力・柔軟性の改善、メンタルヘルスの向上、そしてQOL・MQの向上が期待できます。',
-      en: 'BJJ is a lifelong sport. Regardless of age or gender, we provide curriculum adapted to individual physical characteristics. Improvements in cardiovascular health, strength/flexibility, mental health, and QOL & MQ can be expected within comfortable limits.',
-      pt: 'O BJJ é um esporte vitalício. Independentemente da idade ou sexo, fornecemos currículo adaptado às características físicas individuais. Melhorias na saúde cardiovascular, força/flexibilidade, saúde mental e QOL & MQ podem ser esperadas dentro de limites confortáveis.'
+      ja: '柔術は生涯スポーツです。年齢や性別に関係なく、個人の身体特性に合わせたカリキュラムを提供します。無理のない範囲で心血管系の健康向上、筋力・柔軟性の改善、メンタルヘルスの向上、そして生活の質（QOL）と心の健康の向上が期待できます。',
+      en: 'BJJ is a lifelong sport. Regardless of age or gender, we provide curriculum adapted to individual physical characteristics. Improvements in cardiovascular health, strength/flexibility, mental health, and Quality of Life (QOL) & Mental Quality can be expected within comfortable limits.',
+      pt: 'O BJJ é um esporte vitalício. Independentemente da idade ou sexo, fornecemos currículo adaptado às características físicas individuais. Melhorias na saúde cardiovascular, força/flexibilidade, saúde mental e Qualidade de Vida (QOL) & Qualidade Mental podem ser esperadas dentro de limites confortáveis.'
     }
   },
   {

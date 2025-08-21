@@ -469,9 +469,12 @@ export default function ProfilePage() {
                 <div>
                   <p className="text-sm text-bjj-muted">{t.memberSince}</p>
                   <p className="font-medium">
-                    {new Date(profile?.created_at || '').toLocaleDateString(
-                      language === 'ja' ? 'ja-JP' : language === 'pt' ? 'pt-BR' : 'en-US'
-                    )}
+                    {profile?.created_at 
+                      ? new Date(profile.created_at).toLocaleDateString(
+                          language === 'ja' ? 'ja-JP' : language === 'pt' ? 'pt-BR' : 'en-US'
+                        )
+                      : '-'
+                    }
                   </p>
                 </div>
                 <div>

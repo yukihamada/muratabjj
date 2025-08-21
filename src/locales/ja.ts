@@ -15,13 +15,13 @@ export const ja = {
   // ヒーローセクション
   hero: {
     badge: 'Flow × Video × Progress',
-    title1: 'フローと動画で、',
+    title1: 'フローと動画で',
     title2: '柔術を',
-    titleHighlight: '最短学習',
+    titleHighlight: '最速マスター',
     description: 'Murata BJJは、連携（Flow）中心で学ぶ柔術プラットフォーム。',
-    descriptionPoints: ['動画', 'フロー', '習得度', 'スパーログ'],
+    descriptionPoints: ['動画', 'フロー', '習得度', 'スパーリングログ'],
     descriptionEnd: 'で、理解→再現→実戦を循環させます。',
-    healthNote: '安全な指導で生涯スポーツとしてのQOL・MQ向上をサポート。',
+    healthNote: '安全な指導で生涯スポーツとしての生活の質(QOL)と動きの質(MQ)向上をサポート。',
     cta: {
       start: '無料で始める',
       features: '機能を見る',
@@ -45,7 +45,7 @@ export const ja = {
         description: '理解→手順→再現→実戦の5段階。弱点と次の一手を提示。',
       },
       sparringLog: {
-        title: 'スパーログ',
+        title: 'スパーリングログ',
         description: '開始体勢/イベント（パス/スイープ/サブミット）を時系列で記録。',
       },
       adaptiveReview: {
@@ -93,7 +93,7 @@ export const ja = {
       personal: {
         name: '個人',
         price: '¥0',
-        features: ['動画（基本）', 'ドリル/スパーログ', '習得度（基本）'],
+        features: ['動画（基本）', 'ドリル/スパーリングログ', '習得度（基本）'],
       },
       pro: {
         name: 'Pro',

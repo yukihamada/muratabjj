@@ -12,6 +12,8 @@ INSERT INTO videos (
   belt_level, 
   tags, 
   position,
+  is_published,
+  is_premium,
   created_at,
   updated_at
 ) VALUES
