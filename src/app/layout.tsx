@@ -9,29 +9,105 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Murata BJJ | フローと動画で強くなる',
-  description: '連携（Flow）×動画×習得度で学ぶ柔術プラットフォーム。多言語対応。監修：村田 良蔵。',
-  keywords: ['BJJ', '柔術', 'ブラジリアン柔術', '村田良蔵', 'フロー学習', '動画学習'],
+  title: 'Murata BJJ | フローと動画で強くなる柔術学習プラットフォーム',
+  description: 'ブラジリアン柔術を連携（Flow）中心で学ぶWebプラットフォーム。動画カタログ、フローエディタ、習得度トラッキング、アダプティブ復習システムを提供。監修：村田良蔵（SJJIF世界選手権マスター2黒帯フェザー級2018・2019連覇）',
+  keywords: ['BJJ', '柔術', 'ブラジリアン柔術', '村田良蔵', 'フロー学習', '動画学習', 'Brazilian Jiu-Jitsu', 'オンライン学習', '格闘技', 'マーシャルアーツ'],
+  authors: [{ name: '村田良蔵', url: 'https://muratabjj.com' }],
+  creator: 'Murata BJJ',
+  publisher: 'Murata BJJ',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://muratabjjv2.vercel.app'),
+  alternates: {
+    canonical: '/',
+    languages: {
+      'ja': '/ja',
+      'en': '/en',
+      'pt': '/pt',
+    },
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    other: [
+      {
+        rel: 'mask-icon',
+        url: '/favicon.svg',
+        color: '#1e40af',
+      },
+    ],
+  },
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Murata BJJ'
+    title: 'Murata BJJ',
+    startupImage: [
+      {
+        url: '/apple-touch-icon.png',
+        media: '(device-width: 768px) and (device-height: 1024px)',
+      },
+    ],
   },
   openGraph: {
-    title: 'Murata BJJ',
-    description: 'Flow × Video × Progress',
     type: 'website',
+    locale: 'ja_JP',
+    alternateLocale: ['en_US', 'pt_BR'],
+    url: 'https://muratabjj.com',
+    siteName: 'Murata BJJ',
+    title: 'Murata BJJ | フローと動画で強くなる柔術学習プラットフォーム',
+    description: 'ブラジリアン柔術を連携（Flow）中心で学ぶWebプラットフォーム。監修：村田良蔵（SJJIF世界選手権2連覇）',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Murata BJJ - フローと動画で強くなる柔術学習プラットフォーム',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Murata BJJ | フローと動画で強くなる',
+    description: 'ブラジリアン柔術を連携（Flow）中心で学ぶWebプラットフォーム',
+    images: ['/og-image.png'],
+    creator: '@muratabjj',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'google-site-verification-code',
+    yandex: 'yandex-verification-code',
+    yahoo: 'yahoo-site-verification-code',
   },
 }
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
   viewportFit: 'cover',
-  themeColor: '#ea384c',
+  themeColor: '#1e40af',
 }
 
 export default function RootLayout({

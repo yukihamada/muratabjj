@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useLanguage } from '@/contexts/LanguageContext'
 import AuthDialog from './AuthDialog'
 import LanguageSwitcher from './LanguageSwitcher'
-import { User, LogOut } from 'lucide-react'
+import { User, LogOut, Menu, X } from 'lucide-react'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -20,68 +20,92 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 glass border-b border-white/10">
-      <nav className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+      <nav className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2 font-extrabold text-lg">
-            <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true">
-              <defs>
-                <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stopColor="#ea384c"/>
-                  <stop offset="1" stopColor="#d21f33"/>
-                </linearGradient>
-              </defs>
-              <circle cx="32" cy="32" r="30" fill="url(#g)" opacity=".12"/>
-              <path d="M12 40c6-12 11-18 20-18s14 6 20 18" fill="none" stroke="url(#g)" strokeWidth="4" strokeLinecap="round"/>
-              <circle cx="32" cy="32" r="4" fill="#ea384c"/>
+            <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <rect width="32" height="32" rx="4" fill="#1e40af"/>
+              <text x="16" y="20" fontFamily="Arial, sans-serif" fontSize="20" fontWeight="bold" fill="white" textAnchor="middle">柔</text>
             </svg>
-            Murata BJJ
+            <span className="text-gray-900">Murata BJJ</span>
           </Link>
           
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="#features" className="hover:text-bjj-accent transition-colors">{t.nav.features}</Link>
-            <Link href="#how" className="hover:text-bjj-accent transition-colors">{t.nav.howToUse}</Link>
-            <Link href="#pricing" className="hover:text-bjj-accent transition-colors">{t.nav.pricing}</Link>
-            <Link href="#supervisor" className="hover:text-bjj-accent transition-colors">{t.nav.supervisor}</Link>
-            <Link href="#faq" className="hover:text-bjj-accent transition-colors">{t.nav.faq}</Link>
+          <div className="hidden md:flex items-center gap-1">
+            <Link href="#features" className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors">{t.nav.features}</Link>
+            <Link href="#how" className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors">{t.nav.howToUse}</Link>
+            <Link href="#pricing" className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors">{t.nav.pricing}</Link>
+            <Link href="#supervisor" className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors">{t.nav.supervisor}</Link>
+            <Link href="#faq" className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors">{t.nav.faq}</Link>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <LanguageSwitcher />
             {loading ? (
-              <div className="px-5 py-3">{t.common.loading}</div>
+              <div className="px-5 py-3 text-gray-500">{t.common.loading}</div>
             ) : user ? (
-              <div className="flex items-center gap-3">
-                <Link href="/dashboard" className="flex items-center gap-2 text-sm">
-                  <User size={18} />
-                  <span className="hidden sm:inline">{user.email}</span>
+              <div className="flex items-center gap-4">
+                <Link href="/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors">
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:inline text-sm">{user.email?.split('@')[0]}</span>
                 </Link>
                 <button
                   onClick={signOut}
-                  className="btn-ghost flex items-center gap-2"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
                 >
-                  <LogOut size={18} />
-                  <span className="hidden sm:inline">{t.nav.logout}</span>
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline text-sm">{t.nav.logout}</span>
                 </button>
               </div>
             ) : (
               <>
                 <button
                   onClick={() => setShowAuthDialog(true)}
-                  className="hover:text-bjj-accent transition-colors"
+                  className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
                 >
                   {t.nav.login}
                 </button>
                 <button
                   onClick={() => setShowAuthDialog(true)}
-                  className="btn-primary"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   {t.nav.freeStart}
                 </button>
               </>
             )}
+            
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            >
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+        
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden py-4 border-t">
+            <div className="flex flex-col space-y-2">
+              <Link href="#features" className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                {t.nav.features}
+              </Link>
+              <Link href="#how" className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                {t.nav.howToUse}
+              </Link>
+              <Link href="#pricing" className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                {t.nav.pricing}
+              </Link>
+              <Link href="#supervisor" className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                {t.nav.supervisor}
+              </Link>
+              <Link href="#faq" className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                {t.nav.faq}
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
       
       <AuthDialog

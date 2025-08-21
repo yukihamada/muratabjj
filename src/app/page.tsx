@@ -10,12 +10,14 @@ import FAQ from '@/components/FAQ'
 import Signup from '@/components/Signup'
 import Footer from '@/components/Footer'
 import AuthRedirect from '@/components/AuthRedirect'
+import StructuredData from '@/components/StructuredData'
 
 export default function Home() {
   return (
     <>
       <AuthRedirect />
-      <main className="min-h-screen">
+      <StructuredData />
+      <main className="min-h-screen bg-gray-50">
         <Header />
         <Hero />
         <Features />
