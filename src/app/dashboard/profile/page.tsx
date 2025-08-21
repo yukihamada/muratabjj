@@ -274,8 +274,67 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bjj-accent"></div>
+      <div className="min-h-screen bg-bjj-bg">
+        <DashboardNav />
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+          <h1 className="text-3xl font-bold mb-8">{t.profile}</h1>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Profile Info Skeleton */}
+            <div className="md:col-span-2">
+              <div className="card-gradient border border-white/10 rounded-bjj p-6 animate-pulse">
+                <div className="h-6 w-32 bg-white/10 rounded mb-6"></div>
+                
+                <div className="space-y-6">
+                  <div>
+                    <div className="h-4 w-20 bg-white/10 rounded mb-2"></div>
+                    <div className="h-10 w-full bg-white/10 rounded"></div>
+                  </div>
+                  
+                  <div>
+                    <div className="h-4 w-16 bg-white/10 rounded mb-2"></div>
+                    <div className="h-10 w-full bg-white/10 rounded"></div>
+                  </div>
+                  
+                  <div>
+                    <div className="h-4 w-24 bg-white/10 rounded mb-2"></div>
+                    <div className="h-10 w-full bg-white/10 rounded"></div>
+                  </div>
+                  
+                  <div className="h-12 w-full bg-bjj-accent/20 rounded-lg"></div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Stats Skeleton */}
+            <div className="space-y-4">
+              <div className="card-gradient border border-white/10 rounded-bjj p-6 animate-pulse">
+                <div className="h-6 w-24 bg-white/10 rounded mb-4"></div>
+                <div className="space-y-2">
+                  <div className="h-4 w-full bg-white/10 rounded"></div>
+                  <div className="h-4 w-3/4 bg-white/10 rounded"></div>
+                  <div className="h-4 w-5/6 bg-white/10 rounded"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Loading text */}
+          <div className="text-center mt-8">
+            <p className="text-bjj-muted animate-pulse">
+              {language === 'ja' ? 'プロフィールを読み込んでいます...' :
+               language === 'en' ? 'Loading profile...' :
+               'Carregando perfil...'}
+            </p>
+            <div className="flex justify-center mt-4">
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-bjj-accent rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-bjj-accent rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-bjj-accent rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }

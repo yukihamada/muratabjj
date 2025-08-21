@@ -4,6 +4,7 @@ import { AuthProvider } from '@/hooks/useAuth'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { Toaster } from 'react-hot-toast'
 import PWAInstallPrompt from '@/components/PWAInstallPrompt'
+import MobileBottomNav from '@/components/MobileBottomNav'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -131,6 +132,7 @@ export default function RootLayout({
         <LanguageProvider initialLocale="ja">
           <AuthProvider>
             {children}
+            <MobileBottomNav />
             <Toaster
             position="top-center"
             toastOptions={{

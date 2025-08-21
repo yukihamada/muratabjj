@@ -82,7 +82,7 @@ export default function DashboardNav() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-2 lg:gap-6">
             {navItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
@@ -91,14 +91,18 @@ export default function DashboardNav() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 transition-all ${
+                  className={`relative flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${
                     isActive
-                      ? 'text-bjj-accent'
-                      : 'text-bjj-muted hover:text-bjj-text'
+                      ? 'text-bjj-accent bg-bjj-accent/10'
+                      : 'text-bjj-muted hover:text-bjj-text hover:bg-white/5'
                   }`}
+                  title={item.label}
                 >
                   <Icon className="w-5 h-5" />
                   <span className="text-sm font-medium hidden lg:inline">{item.label}</span>
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-bjj-accent rounded-full"></span>
+                  )}
                 </Link>
               )
             })}
@@ -130,7 +134,8 @@ export default function DashboardNav() {
                 {/* Mobile menu button */}
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="md:hidden p-2"
+                  className="md:hidden p-3 -mr-3"
+                  aria-label={isMenuOpen ? 'メニューを閉じる' : 'メニューを開く'}
                 >
                   {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
@@ -151,14 +156,14 @@ export default function DashboardNav() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                  className={`flex items-center gap-3 px-4 py-4 rounded-xl transition-all min-h-[56px] ${
                     isActive
                       ? 'bg-bjj-accent/20 text-bjj-accent'
                       : 'hover:bg-white/5 text-bjj-text'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium">{item.label}</span>
+                  <Icon className="w-6 h-6" />
+                  <span className="font-medium text-base">{item.label}</span>
                 </Link>
               )
             })}

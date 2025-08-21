@@ -124,11 +124,12 @@ export default function FlowEditorPage() {
       style: {
         background: '#13131a',
         color: '#e9e9ee',
-        border: '1px solid rgba(255,255,255,0.1)',
+        border: '2px solid #ea384c',
         borderRadius: '14px',
         padding: '10px 20px',
         width: 150,
         textAlign: 'center',
+        animation: 'bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
       },
     }
     console.log('[FlowEditor] Adding new node:', newNode)
@@ -137,6 +138,14 @@ export default function FlowEditorPage() {
       console.log('[FlowEditor] Updated nodes:', updatedNodes)
       return updatedNodes
     })
+    
+    // 成功フィードバック
+    toast.success(
+      language === 'ja' ? 'ノードを追加しました' :
+      language === 'en' ? 'Node added' :
+      'Nó adicionado',
+      { duration: 2000 }
+    )
   }
 
   const saveFlow = async () => {
@@ -175,7 +184,15 @@ export default function FlowEditorPage() {
       en: 'Flow saved locally',
       pt: 'Fluxo salvo com sucesso'
     }
-    toast.success(successMsg[language as keyof typeof successMsg])
+    toast.success(successMsg[language as keyof typeof successMsg], {
+      icon: '✓',
+      style: {
+        background: 'linear-gradient(135deg, #1a1a23 0%, #2a2a33 100%)',
+        color: '#fff',
+        border: '1px solid #ea384c',
+      },
+      duration: 3000,
+    })
   }
 
   const exportFlow = () => {
