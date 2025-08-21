@@ -41,7 +41,7 @@ async function runBatchAnalysis(batchSize: number = 5): Promise<{
 }> {
   try {
     // 未解析の動画を取得
-    const { data: pendingVideos, error: fetchError } = await supabaseAdmin
+    const { data: pendingVideos, error: fetchError } = await getSupabaseAdmin()
       .from('videos')
       .select('id, title, url')
       .eq('ai_analysis_completed', false)
@@ -64,9 +64,11 @@ async function runBatchAnalysis(batchSize: number = 5): Promise<{
 
     // 各動画を順次処理（並行処理は負荷を考慮して避ける）
     for (const video of pendingVideos) {
+      let logEntryId: string | null = null
+      
       try {
         // AI解析ログにエントリを作成
-        const { data: logEntry, error: logError } = await supabaseAdmin
+        const { data: logEntry, error: logError } = await getSupabaseAdmin()
           .from('ai_analysis_logs')
           .insert({
             video_id: video.id,
@@ -84,6 +86,8 @@ async function runBatchAnalysis(batchSize: number = 5): Promise<{
         if (logError) {
           throw logError
         }
+        
+        logEntryId = logEntry.id
 
         const startTime = Date.now()
 
@@ -102,7 +106,7 @@ async function runBatchAnalysis(batchSize: number = 5): Promise<{
           const analysisResult = await analysisResponse.json()
 
           // ログを更新（成功）
-          await supabaseAdmin
+          await getSupabaseAdmin()
             .from('ai_analysis_logs')
             .update({
               status: 'completed',
@@ -121,14 +125,17 @@ async function runBatchAnalysis(batchSize: number = 5): Promise<{
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error'
         
-        // ログを更新（失敗）
-        await supabaseAdmin
-          .from('ai_analysis_logs')
-          .update({
-            status: 'failed',
-            error_message: errorMessage,
-            completed_at: new Date().toISOString()
-          })
+        // ログを更新（失敗） - logEntryIdが存在する場合のみ
+        if (logEntryId) {
+          await getSupabaseAdmin()
+            .from('ai_analysis_logs')
+            .update({
+              status: 'failed',
+              error_message: errorMessage,
+              completed_at: new Date().toISOString()
+            })
+            .eq('id', logEntryId)
+        }
 
         results.failed++
         results.errors.push(`Video ${video.title}: ${errorMessage}`)
