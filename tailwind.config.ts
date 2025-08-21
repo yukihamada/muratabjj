@@ -12,7 +12,7 @@ const config: Config = {
         'bjj-bg': '#0f0f12',
         'bjj-bg2': '#1a1a23',  // より明るく調整
         'bjj-text': '#f0f0f5',  // コントラストを向上
-        'bjj-muted': '#9ca3af',  // より読みやすいグレー
+        'bjj-muted': '#a8b2c1',  // コントラストを改善したグレー
         'bjj-line': '#2d2d38',   // 少し明るく
         'bjj-accent': '#ea384c',
         'bjj-accent-hover': '#dc2626', // ホバー時の色

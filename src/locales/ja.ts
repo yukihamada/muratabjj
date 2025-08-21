@@ -17,11 +17,11 @@ export const ja = {
     badge: 'Flow × Video × Progress',
     title1: 'フローと動画で',
     title2: '柔術を',
-    titleHighlight: '最速マスター',
+    titleHighlight: '最速で習得',
     description: 'Murata BJJは、連携（Flow）中心で学ぶ柔術プラットフォーム。',
     descriptionPoints: ['動画', 'フロー', '習得度', 'スパーリングログ'],
     descriptionEnd: 'で、理解→再現→実戦を循環させます。',
-    healthNote: '安全な指導で生涯スポーツとしての生活の質(QOL)と動きの質(MQ)向上をサポート。',
+    healthNote: '安全な指導で生涯スポーツとしての生活の質（Quality of Life）と心の健康向上をサポート。',
     cta: {
       start: '無料で始める',
       features: '機能を見る',

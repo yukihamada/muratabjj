@@ -21,7 +21,7 @@ export const en = {
     description: 'Murata BJJ is a flow-first learning platform for Brazilian Jiu-Jitsu. ',
     descriptionPoints: ['Videos', 'Flows', 'Progress', 'Sparring Logs'],
     descriptionEnd: 'to create a cycle of understanding → practice → application.',
-    healthNote: 'Safe instruction supporting QOL & MQ improvement as a lifelong sport.',
+    healthNote: 'Safe instruction supporting Quality of Life (QOL) and mental health improvement as a lifelong sport.',
     cta: {
       start: 'Start Free',
       features: 'View Features',
