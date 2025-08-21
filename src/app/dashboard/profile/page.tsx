@@ -158,7 +158,7 @@ export default function ProfilePage() {
         setProfile(data)
         setFormData({
           full_name: data.full_name || '',
-          belt: data.belt || 'white',
+          belt: data.belt_rank || 'white',
           stripes: data.stripes || 0,
         })
       }
@@ -209,7 +209,7 @@ export default function ProfilePage() {
         .from('profiles')
         .update({
           full_name: formData.full_name,
-          belt: formData.belt,
+          belt_rank: formData.belt,
           stripes: formData.stripes,
           updated_at: new Date().toISOString(),
         })
