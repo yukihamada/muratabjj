@@ -17,7 +17,22 @@ export default function Header() {
   
   // tが読み込まれていない場合の早期リターン
   if (!t || !t.nav) {
-    return null
+    return (
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+        <nav className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-2 font-extrabold text-lg">
+              <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="4" fill="#1e40af"/>
+                <text x="16" y="20" fontFamily="Arial, sans-serif" fontSize="20" fontWeight="bold" fill="white" textAnchor="middle">柔</text>
+              </svg>
+              <span className="text-gray-900">Murata BJJ</span>
+            </div>
+            <div className="animate-pulse bg-gray-200 h-10 w-24 rounded-lg"></div>
+          </div>
+        </nav>
+      </header>
+    )
   }
 
   return (
@@ -43,7 +58,10 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
             {loading ? (
-              <div className="px-5 py-3 text-gray-500">{t.common.loading}</div>
+              <div className="flex items-center gap-2 px-4 py-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                <span className="text-gray-500 text-sm">{t.common?.loading || '読み込み中...'}</span>
+              </div>
             ) : user ? (
               <div className="flex items-center gap-4">
                 <Link href="/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors">

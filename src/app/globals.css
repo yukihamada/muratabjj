@@ -185,16 +185,48 @@
 
 /* Touch-friendly mobile interactions */
 @media (max-width: 768px) {
+  /* Enhanced typography for mobile */
+  html {
+    font-size: 16px;
+  }
+  
+  body {
+    line-height: 1.65;
+  }
+  
+  h1 {
+    @apply text-2xl leading-tight;
+  }
+  
+  h2 {
+    @apply text-xl leading-tight;
+  }
+  
+  h3 {
+    @apply text-lg leading-tight;
+  }
+  
+  p, .text-base {
+    @apply text-base;
+    line-height: 1.75;
+  }
+  
   /* Larger touch targets */
   button, .btn, [role="button"], input[type="button"], input[type="submit"] {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 48px;
+    min-width: 48px;
   }
 
   /* Better mobile form inputs */
   input, textarea, select {
     font-size: 16px; /* Prevents iOS zoom */
-    padding: 12px 16px;
+    padding: 14px 16px;
+  }
+  
+  /* Enhanced button styling for mobile */
+  .btn-primary, .btn-ghost {
+    @apply py-3.5 px-6 text-base;
+    border-radius: 16px;
   }
   
   /* Bottom padding for mobile nav */
@@ -211,6 +243,7 @@
   /* Better mobile card spacing */
   .card-gradient, .card {
     margin-bottom: 16px;
+    @apply p-5;
   }
 
   /* Mobile-optimized video player */
@@ -224,6 +257,11 @@
   .modal {
     margin: 16px;
     max-height: calc(100vh - 32px);
+  }
+  
+  /* Rounded corners for better mobile UX */
+  .rounded-bjj {
+    border-radius: 16px;
   }
 }
 

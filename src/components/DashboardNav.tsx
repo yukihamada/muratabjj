@@ -172,10 +172,10 @@ export default function DashboardNav() {
               <Link
                 href="/dashboard/profile"
                 onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-bjj-text transition-all"
+                className="flex items-center gap-3 px-4 py-4 rounded-xl hover:bg-white/5 text-bjj-text transition-all min-h-[56px]"
               >
-                <User className="w-5 h-5" />
-                <span className="font-medium">{t.profile}</span>
+                <User className="w-6 h-6" />
+                <span className="font-medium text-base">{t.profile}</span>
               </Link>
               
               <button
@@ -183,10 +183,10 @@ export default function DashboardNav() {
                   signOut()
                   setIsMenuOpen(false)
                 }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-bjj-text transition-all"
+                className="w-full flex items-center gap-3 px-4 py-4 rounded-xl hover:bg-white/5 text-bjj-text transition-all min-h-[56px]"
               >
-                <LogOut className="w-5 h-5" />
-                <span className="font-medium">{t.logout}</span>
+                <LogOut className="w-6 h-6" />
+                <span className="font-medium text-base">{t.logout}</span>
               </button>
             </div>
           </div>

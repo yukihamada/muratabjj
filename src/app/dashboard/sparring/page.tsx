@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { Plus, Calendar, Clock, Trophy, TrendingUp, Users, X, Play, Pause, RotateCcw } from 'lucide-react'
+import Link from 'next/link'
 import toast from 'react-hot-toast'
 import DashboardNav from '@/components/DashboardNav'
 import SparringEventLogger from '@/components/SparringEventLogger'
@@ -453,13 +454,13 @@ export default function SparringPage() {
                 {language === 'ja' ? 'セッション終了' : language === 'en' ? 'End Session' : 'Finalizar Sessão'}
               </button>
             )}
-            <button
-              onClick={() => setShowNewLog(true)}
+            <Link
+              href="/dashboard/sparring/new"
               className="btn-ghost flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
               {language === 'ja' ? '新規記録' : language === 'en' ? 'New Log' : 'Novo Registro'}
-            </button>
+            </Link>
           </div>
         </div>
 

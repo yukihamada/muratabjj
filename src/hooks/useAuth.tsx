@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (userId: string, userEmail?: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -57,12 +57,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) {
         // プロファイルが存在しない場合は作成
         if (error.code === 'PGRST116') {
+          console.log('[useAuth] Profile not found, creating new profile...')
           const { data: newProfile, error: createError } = await supabase
             .from('profiles')
             .insert([
               {
                 id: userId,
-                email: user?.email,
+                email: userEmail || user?.email,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
               }
@@ -70,16 +71,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .select()
             .single()
           
-          if (createError) throw createError
+          if (createError) {
+            console.error('[useAuth] Error creating profile:', createError)
+            // プロファイル作成に失敗してもログインは成功させる
+            return
+          }
           setProfile(newProfile)
         } else {
-          throw error
+          console.error('[useAuth] Error fetching profile:', error)
+          // プロファイル取得に失敗してもログインは成功させる
+          return
         }
       } else {
         setProfile(data)
       }
     } catch (error) {
-      console.error('Error fetching profile:', error)
+      console.error('[useAuth] Error in fetchProfile:', error)
+      // エラーが発生してもログインは成功させる
     }
   }
 
@@ -90,44 +98,74 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
+    let isSubscribed = true
+    let timeoutId: NodeJS.Timeout
+
     // 初期セッションの取得
     console.log('[useAuth] Checking initial session...')
     
-    supabase.auth.getSession().then(async (response: any) => {
-      const session = response.data.session
-      
-      console.log('[useAuth] Initial session check:', {
-        hasSession: !!session,
-        user: session?.user?.email,
-        expiresAt: session?.expires_at,
-      })
-      
-      setSession(session)
-      setUser(session?.user ?? null)
-      const adminEmails = ['shu.shu.4029@gmail.com', 'yuki@hamada.tokyo']
-      setIsAdmin(adminEmails.includes(session?.user?.email || ''))
-      
-      if (session?.user) {
-        await fetchProfile(session.user.id)
+    const checkSession = async () => {
+      try {
+        // より短いタイムアウトで早期解決
+        timeoutId = setTimeout(() => {
+          if (isSubscribed && loading) {
+            console.warn('[useAuth] Session check timeout - forcing completion')
+            setLoading(false)
+          }
+        }, 1500) // 1.5秒のタイムアウト
+
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (!isSubscribed) return
+        
+        if (error) {
+          console.error('[useAuth] Error getting session:', error)
+          setLoading(false)
+          return
+        }
+        
+        console.log('[useAuth] Initial session check:', {
+          hasSession: !!session,
+          user: session?.user?.email,
+          expiresAt: session?.expires_at,
+        })
+        
+        setSession(session)
+        setUser(session?.user ?? null)
+        const adminEmails = ['shu.shu.4029@gmail.com', 'yuki@hamada.tokyo']
+        setIsAdmin(adminEmails.includes(session?.user?.email || ''))
+        
+        if (session?.user) {
+          // プロファイル取得は非同期で実行（ブロックしない）
+          fetchProfile(session.user.id, session.user.email).catch(err => {
+            console.warn('[useAuth] Profile fetch failed:', err)
+          })
+        }
+        
+        setLoading(false)
+      } catch (error: any) {
+        console.error('[useAuth] Error in checkSession:', error)
+        if (isSubscribed) {
+          setLoading(false)
+        }
       }
-      
-      setLoading(false)
-    }).catch((error: any) => {
-      console.error('[useAuth] Error getting initial session:', error)
-      setLoading(false)
-    })
+    }
+    
+    checkSession()
 
     // 認証状態の変更を監視
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event: any, session: any) => {
+      console.log('[useAuth] Auth state changed:', _event, session?.user?.email)
+      
       setSession(session)
       setUser(session?.user ?? null)
       const adminEmails = ['shu.shu.4029@gmail.com', 'yuki@hamada.tokyo']
       setIsAdmin(adminEmails.includes(session?.user?.email || ''))
       
       if (session?.user) {
-        await fetchProfile(session.user.id)
+        await fetchProfile(session.user.id, session.user.email)
       } else {
         setProfile(null)
       }
@@ -135,7 +173,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      isSubscribed = false
+      if (timeoutId) clearTimeout(timeoutId)
+      subscription.unsubscribe()
+    }
   }, [])
 
   const signIn = async (email: string, password: string) => {

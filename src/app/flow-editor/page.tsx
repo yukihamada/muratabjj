@@ -81,6 +81,7 @@ export default function FlowEditorPage() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
   const [flowName, setFlowName] = useState('')
+  const [isMobileView, setIsMobileView] = useState(false)
   const { user, loading } = useAuth()
   const router = useRouter()
   const { language } = useLanguage()
@@ -89,6 +90,14 @@ export default function FlowEditorPage() {
     if (language === 'ja') setFlowName('新しいフロー')
     else if (language === 'en') setFlowName('New Flow')
     else if (language === 'pt') setFlowName('Novo Fluxo')
+    
+    // モバイルビューの検出
+    const checkMobile = () => {
+      setIsMobileView(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
   }, [language])
 
   useEffect(() => {
@@ -240,6 +249,15 @@ export default function FlowEditorPage() {
               ? 'The Flow Editor is currently under development. Save functionality is limited and unexpected behavior may occur.'
               : 'O Editor de Fluxo está atualmente em desenvolvimento. A funcionalidade de salvamento é limitada e comportamentos inesperados podem ocorrer.'}
           </p>
+          {isMobileView && (
+            <p className="text-xs text-yellow-200 mt-2">
+              {language === 'ja' 
+                ? '📱 モバイルでは閲覧モードです。編集はPCをご利用ください。' 
+                : language === 'en'
+                ? '📱 View-only mode on mobile. Please use a PC for editing.'
+                : '📱 Modo somente visualização no celular. Use um PC para editar.'}
+            </p>
+          )}
         </div>
       </div>
       
@@ -247,9 +265,12 @@ export default function FlowEditorPage() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
+          onNodesChange={isMobileView ? undefined : onNodesChange}
+          onEdgesChange={isMobileView ? undefined : onEdgesChange}
+          onConnect={isMobileView ? undefined : onConnect}
+          nodesDraggable={!isMobileView}
+          nodesConnectable={!isMobileView}
+          elementsSelectable={!isMobileView}
           fitView
           attributionPosition="bottom-left"
         >
@@ -272,31 +293,33 @@ export default function FlowEditorPage() {
               />
             </div>
             
-            <div className="flex gap-2 flex-wrap">
-              <button
-                onClick={addNode}
-                className="btn-ghost text-sm flex items-center gap-2"
-              >
-                <Plus size={16} />
-                {language === 'ja' ? 'ノード追加' : language === 'en' ? 'Add Node' : 'Adicionar Nó'}
-              </button>
-              
-              <button
-                onClick={saveFlow}
-                className="btn-ghost text-sm flex items-center gap-2"
-              >
-                <Save size={16} />
-                {language === 'ja' ? '保存' : language === 'en' ? 'Save' : 'Salvar'}
-              </button>
-              
-              <button
-                onClick={exportFlow}
-                className="btn-ghost text-sm flex items-center gap-2"
-              >
-                <Download size={16} />
-                {language === 'ja' ? 'エクスポート' : language === 'en' ? 'Export' : 'Exportar'}
-              </button>
-            </div>
+            {!isMobileView && (
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={addNode}
+                  className="btn-ghost text-sm flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  {language === 'ja' ? 'ノード追加' : language === 'en' ? 'Add Node' : 'Adicionar Nó'}
+                </button>
+                
+                <button
+                  onClick={saveFlow}
+                  className="btn-ghost text-sm flex items-center gap-2"
+                >
+                  <Save size={16} />
+                  {language === 'ja' ? '保存' : language === 'en' ? 'Save' : 'Salvar'}
+                </button>
+                
+                <button
+                  onClick={exportFlow}
+                  className="btn-ghost text-sm flex items-center gap-2"
+                >
+                  <Download size={16} />
+                  {language === 'ja' ? 'エクスポート' : language === 'en' ? 'Export' : 'Exportar'}
+                </button>
+              </div>
+            )}
           </div>
           
           <div className="absolute top-4 right-4 bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-bjj p-4">
