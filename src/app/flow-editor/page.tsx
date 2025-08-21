@@ -11,7 +11,7 @@ import ReactFlow, {
   Controls,
   Background,
   MiniMap,
-} from 'react-flow-renderer'
+} from 'reactflow'
 import DashboardNav from '@/components/DashboardNav'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
@@ -86,12 +86,15 @@ export default function FlowEditorPage() {
   const router = useRouter()
   const { language } = useLanguage()
   
+  const [hasInitialized, setHasInitialized] = useState(false)
+  
   useEffect(() => {
-    // 初回のみフロー名を設定
-    if (flowName === '') {
+    // 初回のみフロー名を設定（言語変更時に上書きしない）
+    if (!hasInitialized && flowName === '') {
       if (language === 'ja') setFlowName('新しいフロー')
       else if (language === 'en') setFlowName('New Flow')
       else if (language === 'pt') setFlowName('Novo Fluxo')
+      setHasInitialized(true)
     }
     
     // モバイルビューの検出
@@ -101,7 +104,7 @@ export default function FlowEditorPage() {
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
-  }, [language])
+  }, [language, hasInitialized])
 
   useEffect(() => {
     if (!loading && !user) {
@@ -127,12 +130,16 @@ export default function FlowEditorPage() {
     [setEdges]
   )
 
-  const addNode = () => {
+  const addNode = useCallback(() => {
     const newNode: Node = {
-      id: `${nodes.length + 1}`,
+      id: `node-${Date.now()}`, // ユニークIDで重複を防ぐ
       type: 'default',
-      position: { x: 250 + nodes.length * 50, y: 100 + nodes.length * 50 },
-      data: { label: language === 'ja' ? `新しい技術 ${nodes.length + 1}` : language === 'en' ? `New Technique ${nodes.length + 1}` : `Nova Técnica ${nodes.length + 1}` },
+      position: { x: 250 + Math.random() * 100, y: 100 + Math.random() * 100 }, // ランダム配置
+      data: { 
+        label: language === 'ja' ? `新しい技術 ${nodes.length + 1}` : 
+               language === 'en' ? `New Technique ${nodes.length + 1}` : 
+               `Nova Técnica ${nodes.length + 1}` 
+      },
       style: {
         background: '#13131a',
         color: '#e9e9ee',
@@ -141,24 +148,26 @@ export default function FlowEditorPage() {
         padding: '10px 20px',
         width: 150,
         textAlign: 'center',
-        animation: 'bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
       },
     }
+    
     console.log('[FlowEditor] Adding new node:', newNode)
+    console.log('[FlowEditor] Current nodes count:', nodes.length)
+    
     setNodes((nds) => {
       const updatedNodes = [...nds, newNode]
-      console.log('[FlowEditor] Updated nodes:', updatedNodes)
+      console.log('[FlowEditor] Updated nodes count:', updatedNodes.length)
       return updatedNodes
     })
     
     // 成功フィードバック
     toast.success(
-      language === 'ja' ? 'ノードを追加しました' :
-      language === 'en' ? 'Node added' :
-      'Nó adicionado',
+      language === 'ja' ? `ノードを追加しました (${nodes.length + 1}個目)` :
+      language === 'en' ? `Node added (${nodes.length + 1} total)` :
+      `Nó adicionado (${nodes.length + 1} total)`,
       { duration: 2000 }
     )
-  }
+  }, [nodes, language, setNodes])
 
   const saveFlow = async () => {
     if (!flowName.trim()) {
@@ -303,8 +312,13 @@ export default function FlowEditorPage() {
             {!isMobileView && (
               <div className="flex gap-2 flex-wrap">
                 <button
-                  onClick={addNode}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    console.log('[FlowEditor] Add node button clicked')
+                    addNode()
+                  }}
                   className="btn-ghost text-sm flex items-center gap-2"
+                  type="button"
                 >
                   <Plus size={16} />
                   {language === 'ja' ? 'ノード追加' : language === 'en' ? 'Add Node' : 'Adicionar Nó'}

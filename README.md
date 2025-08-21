@@ -151,6 +151,12 @@ npm run seed
 
 # テストユーザーの作成
 npm run seed:users
+
+# データベーステーブルの作成（必要に応じて）
+# Supabaseダッシュボード > SQL Editor で以下を実行：
+# 1. src/lib/supabase/create-sparring-tables.sql
+# 2. src/lib/supabase/insert-sample-videos.sql  
+# 3. src/lib/supabase/setup-test-users.sql
 ```
 
 ### 8. テストユーザーアカウント
