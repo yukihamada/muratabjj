@@ -182,7 +182,25 @@ export default function FlowEditorPage() {
     <main className="min-h-screen bg-bjj-bg">
       <DashboardNav />
       
-      <div className="h-[calc(100vh-64px)] relative">
+      {/* Beta Banner */}
+      <div className="p-4 bg-yellow-500/10 border-b border-yellow-500/20">
+        <div className="container mx-auto">
+          <div className="flex items-center gap-2">
+            <span className="text-yellow-400 font-semibold">
+              {language === 'ja' ? '🚧 ベータ版機能' : language === 'en' ? '🚧 Beta Feature' : '🚧 Recurso Beta'}
+            </span>
+          </div>
+          <p className="text-sm text-yellow-200 mt-1">
+            {language === 'ja' 
+              ? 'フローエディタは現在開発中です。保存機能は一部制限されており、予期しない動作が発生する可能性があります。' 
+              : language === 'en'
+              ? 'The Flow Editor is currently under development. Save functionality is limited and unexpected behavior may occur.'
+              : 'O Editor de Fluxo está atualmente em desenvolvimento. A funcionalidade de salvamento é limitada e comportamentos inesperados podem ocorrer.'}
+          </p>
+        </div>
+      </div>
+      
+      <div className="h-[calc(100vh-120px)] relative">
         <ReactFlow
           nodes={nodes}
           edges={edges}

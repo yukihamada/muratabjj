@@ -146,15 +146,54 @@ export default function ProfilePage() {
 
   const fetchProfile = async () => {
     try {
+      console.log('[Profile] Fetching profile for user:', user?.id)
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user!.id)
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.log('[Profile] Error fetching profile:', error)
+        
+        // プロファイルが存在しない場合は作成
+        if (error.code === 'PGRST116') {
+          console.log('[Profile] Profile not found, creating new profile...')
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert({
+              id: user!.id,
+              full_name: '',
+              belt_rank: 'white',
+              stripes: 0,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .select()
+            .single()
+          
+          if (createError) {
+            console.error('[Profile] Error creating profile:', createError)
+            throw createError
+          }
+          
+          if (newProfile) {
+            console.log('[Profile] New profile created:', newProfile)
+            setProfile(newProfile)
+            setFormData({
+              full_name: newProfile.full_name || '',
+              belt: newProfile.belt_rank || 'white',
+              stripes: newProfile.stripes || 0,
+            })
+          }
+          return
+        }
+        throw error
+      }
 
       if (data) {
+        console.log('[Profile] Profile loaded:', data)
         setProfile(data)
         setFormData({
           full_name: data.full_name || '',
@@ -163,7 +202,13 @@ export default function ProfilePage() {
         })
       }
     } catch (error) {
-      console.error('Error fetching profile:', error)
+      console.error('[Profile] Error fetching profile:', error)
+      // エラーが発生してもローディングを終了し、デフォルトフォームを表示
+      setFormData({
+        full_name: '',
+        belt: 'white',
+        stripes: 0,
+      })
     } finally {
       setLoading(false)
     }

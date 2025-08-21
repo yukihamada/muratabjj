@@ -72,6 +72,8 @@ export default function ProgressPage() {
 
   const fetchProgressData = async () => {
     try {
+      console.log('[Progress] Fetching progress data for user:', user?.id)
+      
       let query = supabase
         .from('progress_tracking')
         .select(`
@@ -89,12 +91,32 @@ export default function ProgressPage() {
 
       const { data, error } = await query
 
-      if (error) throw error
+      if (error) {
+        console.error('[Progress] Database error:', error)
+        // テーブルが存在しない場合はエラーではなく空の状態として扱う
+        if (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
+          console.log('[Progress] Table does not exist yet, showing empty state')
+          setProgressData([])
+          return
+        }
+        throw error
+      }
 
+      console.log('[Progress] Data fetched:', data?.length || 0, 'items')
       setProgressData(data || [])
-    } catch (error) {
-      console.error('Error fetching progress:', error)
-      toast.error('進捗データの取得に失敗しました')
+    } catch (error: any) {
+      console.error('[Progress] Error fetching progress:', error)
+      
+      // ネットワークエラーや設定問題の場合
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('Network')) {
+        toast.error('ネットワークエラーが発生しました。接続を確認してください。')
+      } else if (error.message?.includes('JWT') || error.message?.includes('auth')) {
+        toast.error('認証の問題が発生しました。ページをリロードしてください。')
+      } else {
+        // 一般的なエラーでも空の状態を表示
+        console.log('[Progress] Showing empty state due to error')
+        setProgressData([])
+      }
     } finally {
       setLoading(false)
     }

@@ -289,22 +289,68 @@ export default function SparringPage() {
 
   const createSparringLog = async () => {
     try {
+      console.log('[SparringLog] Creating log with data:', formData)
+      
+      // バリデーション
+      if (!formData.partner_name.trim()) {
+        toast.error(
+          language === 'ja' ? 'パートナー名を入力してください' :
+          language === 'en' ? 'Please enter partner name' :
+          'Por favor, insira o nome do parceiro'
+        )
+        return
+      }
+      
+      if (!formData.date) {
+        toast.error(
+          language === 'ja' ? '日付を選択してください' :
+          language === 'en' ? 'Please select a date' :
+          'Por favor, selecione uma data'
+        )
+        return
+      }
+      
+      if (formData.duration <= 0) {
+        toast.error(
+          language === 'ja' ? '有効な時間を入力してください' :
+          language === 'en' ? 'Please enter a valid duration' :
+          'Por favor, insira uma duração válida'
+        )
+        return
+      }
+
       // Use Supabase client directly
       const { data, error } = await supabase
         .from('sparring_logs')
         .insert({
           user_id: user!.id,
-          ...formData,
+          partner_name: formData.partner_name.trim(),
+          duration: formData.duration,
+          starting_position: formData.starting_position,
           date: new Date(formData.date).toISOString(),
+          notes: formData.notes.trim(),
         })
         .select()
         .single()
 
       if (error) {
-        console.error('Supabase error:', error)
+        console.error('[SparringLog] Supabase error:', error)
+        
+        // テーブルが存在しない場合
+        if (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
+          toast.error(
+            language === 'ja' ? 'スパーリングログ機能はまだセットアップされていません。' :
+            language === 'en' ? 'Sparring log feature is not set up yet.' :
+            'A função de registro de sparring ainda não foi configurada.'
+          )
+          return
+        }
+        
         throw error
       }
 
+      console.log('[SparringLog] Log created successfully:', data)
+      
       toast.success(
         language === 'ja' ? 'スパーログを作成しました' :
         language === 'en' ? 'Sparring log created successfully' :
@@ -319,13 +365,29 @@ export default function SparringPage() {
         notes: '',
       })
       fetchSparringLogs()
-    } catch (error) {
-      console.error('Error creating sparring log:', error)
-      toast.error(
-        language === 'ja' ? 'スパーログの作成に失敗しました' :
-        language === 'en' ? 'Failed to create sparring log' :
-        'Falha ao criar registro de sparring'
-      )
+    } catch (error: any) {
+      console.error('[SparringLog] Error creating log:', error)
+      
+      // ネットワークエラーや認証エラーの場合
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('Network')) {
+        toast.error(
+          language === 'ja' ? 'ネットワークエラーが発生しました。接続を確認してください。' :
+          language === 'en' ? 'Network error occurred. Please check your connection.' :
+          'Erro de rede ocorreu. Verifique sua conexão.'
+        )
+      } else if (error.message?.includes('JWT') || error.message?.includes('auth')) {
+        toast.error(
+          language === 'ja' ? '認証の問題が発生しました。ページをリロードしてください。' :
+          language === 'en' ? 'Authentication issue occurred. Please reload the page.' :
+          'Problema de autenticação ocorreu. Recarregue a página.'
+        )
+      } else {
+        toast.error(
+          language === 'ja' ? 'スパーログの作成に失敗しました: ' + (error.message || '不明なエラー') :
+          language === 'en' ? 'Failed to create sparring log: ' + (error.message || 'Unknown error') :
+          'Falha ao criar registro de sparring: ' + (error.message || 'Erro desconhecido')
+        )
+      }
     }
   }
 

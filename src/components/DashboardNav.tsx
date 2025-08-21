@@ -120,10 +120,11 @@ export default function DashboardNav() {
                 
                 <button
                   onClick={signOut}
-                  className="hidden md:flex items-center gap-2 text-bjj-muted hover:text-bjj-text transition-all"
+                  className="hidden md:flex items-center gap-2 text-bjj-muted hover:text-bjj-accent transition-all"
                   title={t.logout}
                 >
                   <LogOut className="w-5 h-5" />
+                  <span className="text-sm">{t.logout}</span>
                 </button>
 
                 {/* Mobile menu button */}

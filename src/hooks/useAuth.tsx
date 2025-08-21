@@ -188,10 +188,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     try {
+      console.log('[useAuth] Starting sign out...')
       const { error } = await supabase.auth.signOut()
       if (error) throw error
+      
+      // 状態をクリア
+      setUser(null)
+      setSession(null)
+      setProfile(null)
+      setIsAdmin(false)
+      
       toast.success('ログアウトしました')
+      
+      // ダッシュボードにいる場合はホームにリダイレクト
+      if (typeof window !== 'undefined' && window.location.pathname.startsWith('/dashboard')) {
+        window.location.href = '/'
+      }
     } catch (error: any) {
+      console.error('[useAuth] Sign out error:', error)
       toast.error(error.message || 'ログアウトに失敗しました')
       throw error
     }
