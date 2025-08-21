@@ -99,8 +99,13 @@ export default function Header() {
                   <span className="hidden sm:inline text-sm">{user.email?.split('@')[0]}</span>
                 </Link>
                 <button
-                  onClick={signOut}
+                  onClick={() => {
+                    if (window.confirm('ログアウトしますか？')) {
+                      signOut()
+                    }
+                  }}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+                  title={translations.nav.logout}
                 >
                   <LogOut className="w-4 h-4" />
                   <span className="hidden sm:inline text-sm">{translations.nav.logout}</span>

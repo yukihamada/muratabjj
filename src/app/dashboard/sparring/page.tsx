@@ -237,7 +237,19 @@ export default function SparringPage() {
         .select()
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('[LiveSession] Error:', error)
+        // テーブルが存在しない場合のエラー
+        if (error.code === '42P01' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
+          toast.error(
+            language === 'ja' ? 'スパーリングログ機能はまだセットアップされていません。\n\nデータベースの設定が必要です。' :
+            language === 'en' ? 'Sparring log feature is not set up yet.\n\nDatabase configuration required.' :
+            'A função de registro de sparring ainda não foi configurada.\n\nÉ necessário configurar o banco de dados.'
+          )
+          return
+        }
+        throw error
+      }
 
       setActiveLogId(data.id)
       setSelectedLog(data)
@@ -248,12 +260,12 @@ export default function SparringPage() {
         language === 'en' ? 'Live session started' :
         'Sessão ao vivo iniciada'
       )
-    } catch (error) {
-      console.error('Error starting live session:', error)
+    } catch (error: any) {
+      console.error('[LiveSession] Error starting session:', error)
       toast.error(
-        language === 'ja' ? 'セッションの開始に失敗しました' :
-        language === 'en' ? 'Failed to start session' :
-        'Falha ao iniciar sessão'
+        language === 'ja' ? `セッションの開始に失敗しました\n${error.message || ''}` :
+        language === 'en' ? `Failed to start session\n${error.message || ''}` :
+        `Falha ao iniciar sessão\n${error.message || ''}`
       )
     }
   }
@@ -338,11 +350,11 @@ export default function SparringPage() {
         console.error('[SparringLog] Supabase error:', error)
         
         // テーブルが存在しない場合
-        if (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
+        if (error.code === '42P01' || error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
           toast.error(
-            language === 'ja' ? 'スパーリングログ機能はまだセットアップされていません。' :
-            language === 'en' ? 'Sparring log feature is not set up yet.' :
-            'A função de registro de sparring ainda não foi configurada.'
+            language === 'ja' ? 'スパーリングログ機能はまだセットアップされていません。\n\nデータベースの設定が必要です。' :
+            language === 'en' ? 'Sparring log feature is not set up yet.\n\nDatabase configuration required.' :
+            'A função de registro de sparring ainda não foi configurada.\n\nÉ necessário configurar o banco de dados.'
           )
           return
         }

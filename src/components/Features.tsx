@@ -43,9 +43,9 @@ const features: Feature[] = [
       pt: 'Rastreador de Progresso'
     },
     description: {
-      ja: '理解→手順→再現→実戦の5段階。弱点と次の一手を提示。',
-      en: '5 stages: Understanding → Steps → Reproduction → Practice. Shows weaknesses and next moves.',
-      pt: '5 estágios: Compreensão → Passos → Reprodução → Prática. Mostra pontos fracos e próximos movimentos.'
+      ja: '理解→手順→再現→実戦→復習（定着）の5段階。弱点と次の一手を提示。',
+      en: '5 stages: Understanding → Steps → Reproduction → Application → Review. Shows weaknesses and next moves.',
+      pt: '5 estágios: Compreensão → Passos → Reprodução → Aplicação → Revisão. Mostra pontos fracos e próximos movimentos.'
     },
     icon: '📊'
   },

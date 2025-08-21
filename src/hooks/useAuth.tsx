@@ -31,6 +31,7 @@ interface AuthContextType {
   profile: Profile | null
   loading: boolean
   isAdmin: boolean
+  isCoach: boolean
   signIn: (email: string, password: string) => Promise<void>
   signUp: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
@@ -45,6 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [isCoach, setIsCoach] = useState(false)
 
   const fetchProfile = async (userId: string, userEmail?: string) => {
     try {
@@ -77,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return
           }
           setProfile(newProfile)
+          setIsCoach(newProfile?.is_coach || false)
         } else {
           console.error('[useAuth] Error fetching profile:', error)
           // プロファイル取得に失敗してもログインは成功させる
@@ -84,6 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } else {
         setProfile(data)
+        setIsCoach(data?.is_coach || false)
       }
     } catch (error) {
       console.error('[useAuth] Error in fetchProfile:', error)
@@ -168,6 +172,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await fetchProfile(session.user.id, session.user.email)
       } else {
         setProfile(null)
+        setIsCoach(false)
       }
       
       setLoading(false)
@@ -239,6 +244,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(null)
       setProfile(null)
       setIsAdmin(false)
+      setIsCoach(false)
       
       toast.success('ログアウトしました')
       
@@ -259,6 +265,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     profile,
     loading,
     isAdmin,
+    isCoach,
     signIn,
     signUp,
     signOut,

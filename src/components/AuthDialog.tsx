@@ -202,6 +202,10 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck="false"
                 className="w-full px-4 py-3 rounded-xl border border-white/10 bg-bjj-bg text-bjj-text focus:border-bjj-accent focus:outline-none"
                 placeholder={t.auth.emailPlaceholder}
               />

@@ -46,7 +46,7 @@ const translations = {
 
 export default function DashboardNav() {
   const pathname = usePathname()
-  const { user, signOut, isAdmin } = useAuth()
+  const { user, signOut, isAdmin, isCoach } = useAuth()
   const { language } = useLanguage()
   const t = translations[language as keyof typeof translations]
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -58,6 +58,7 @@ export default function DashboardNav() {
     { href: '/dashboard/sparring', label: t.sparring, icon: Swords },
     { href: '/dashboard/review', label: t.review, icon: Brain },
     { href: '/flows', label: t.flows, icon: PenTool },
+    ...(isCoach ? [{ href: '/coach', label: language === 'ja' ? 'コーチ' : language === 'en' ? 'Coach' : 'Treinador', icon: Shield }] : []),
     ...(isAdmin ? [{ href: '/admin', label: t.admin, icon: Shield }] : []),
   ]
 
@@ -123,7 +124,11 @@ export default function DashboardNav() {
                 </Link>
                 
                 <button
-                  onClick={signOut}
+                  onClick={() => {
+                    if (window.confirm(language === 'ja' ? 'ログアウトしますか？' : language === 'en' ? 'Are you sure you want to logout?' : 'Tem certeza que deseja sair?')) {
+                      signOut()
+                    }
+                  }}
                   className="hidden md:flex items-center gap-2 text-bjj-muted hover:text-bjj-accent transition-all"
                   title={t.logout}
                 >
@@ -180,8 +185,10 @@ export default function DashboardNav() {
               
               <button
                 onClick={() => {
-                  signOut()
-                  setIsMenuOpen(false)
+                  if (window.confirm(language === 'ja' ? 'ログアウトしますか？' : language === 'en' ? 'Are you sure you want to logout?' : 'Tem certeza que deseja sair?')) {
+                    signOut()
+                    setIsMenuOpen(false)
+                  }
                 }}
                 className="w-full flex items-center gap-3 px-4 py-4 rounded-xl hover:bg-white/5 text-bjj-text transition-all min-h-[56px]"
               >

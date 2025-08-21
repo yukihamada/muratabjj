@@ -87,9 +87,12 @@ export default function FlowEditorPage() {
   const { language } = useLanguage()
   
   useEffect(() => {
-    if (language === 'ja') setFlowName('新しいフロー')
-    else if (language === 'en') setFlowName('New Flow')
-    else if (language === 'pt') setFlowName('Novo Fluxo')
+    // 初回のみフロー名を設定
+    if (flowName === '') {
+      if (language === 'ja') setFlowName('新しいフロー')
+      else if (language === 'en') setFlowName('New Flow')
+      else if (language === 'pt') setFlowName('Novo Fluxo')
+    }
     
     // モバイルビューの検出
     const checkMobile = () => {
@@ -288,6 +291,10 @@ export default function FlowEditorPage() {
                 type="text"
                 value={flowName}
                 onChange={(e) => setFlowName(e.target.value)}
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck="false"
                 className="px-3 py-2 bg-bjj-bg border border-white/10 rounded-lg text-bjj-text focus:border-bjj-accent focus:outline-none"
                 placeholder={language === 'ja' ? 'フロー名' : language === 'en' ? 'Flow Name' : 'Nome do Fluxo'}
               />
