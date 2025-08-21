@@ -160,14 +160,23 @@ export default function RootLayout({
             dangerouslySetInnerHTML={{
               __html: `
                 if ('serviceWorker' in navigator) {
-                  window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/sw.js')
-                      .then(registration => {
-                        console.log('SW registered: ', registration);
-                      })
-                      .catch(registrationError => {
-                        console.log('SW registration failed: ', registrationError);
-                      });
+                  window.addEventListener('load', async () => {
+                    try {
+                      // First unregister old service workers
+                      const registrations = await navigator.serviceWorker.getRegistrations();
+                      for (const registration of registrations) {
+                        if (registration.active && registration.active.scriptURL.includes('/sw.js')) {
+                          await registration.unregister();
+                          console.log('Old SW unregistered');
+                        }
+                      }
+                      
+                      // Then register new simple service worker
+                      const registration = await navigator.serviceWorker.register('/sw-simple.js');
+                      console.log('New SW registered: ', registration);
+                    } catch (error) {
+                      console.error('SW error:', error);
+                    }
                   });
                 }
               `,

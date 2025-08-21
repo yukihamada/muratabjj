@@ -85,6 +85,18 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  // Skip Next.js RSC requests
+  if (url.searchParams.has('_rsc') || request.headers.get('RSC')) {
+    return
+  }
+
+  // Skip Next.js specific routes
+  if (url.pathname.startsWith('/_next/') || 
+      url.pathname.includes('__nextjs') ||
+      url.pathname.includes('.json')) {
+    return
+  }
+
   // Handle API requests
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
@@ -132,6 +144,14 @@ self.addEventListener('fetch', (event) => {
 
   // Handle navigation requests (pages)
   if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
+    // Skip auth routes to avoid caching issues
+    if (url.pathname.includes('/auth/') || 
+        url.pathname === '/signup' || 
+        url.pathname === '/login' ||
+        url.pathname === '/signin') {
+      return
+    }
+
     event.respondWith(
       fetch(request)
         .then((response) => {
@@ -142,10 +162,14 @@ self.addEventListener('fetch', (event) => {
               .then((cache) => {
                 cache.put(request, responseClone)
               })
+              .catch((error) => {
+                console.error('[SW] Cache put error:', error)
+              })
           }
           return response
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error('[SW] Fetch error:', error)
           // Try to return cached page
           return caches.match(request)
             .then((cachedResponse) => {
@@ -156,6 +180,22 @@ self.addEventListener('fetch', (event) => {
               // Return offline page for navigation requests
               if (request.mode === 'navigate') {
                 return caches.match('/offline.html')
+                  .then((offlineResponse) => {
+                    if (offlineResponse) {
+                      return offlineResponse
+                    }
+                    // Return basic offline response if offline.html not found
+                    return new Response(
+                      '<!DOCTYPE html><html><head><title>Offline</title></head><body><h1>オフライン</h1><p>インターネット接続を確認してください。</p></body></html>',
+                      {
+                        status: 503,
+                        statusText: 'Service Unavailable',
+                        headers: {
+                          'Content-Type': 'text/html; charset=utf-8'
+                        }
+                      }
+                    )
+                  })
               }
               
               // Return a basic offline response
