@@ -118,7 +118,8 @@ export default function FlowEditorPage() {
   const addNode = () => {
     const newNode: Node = {
       id: `${nodes.length + 1}`,
-      position: { x: Math.random() * 500, y: Math.random() * 400 },
+      type: 'default',
+      position: { x: 250 + nodes.length * 50, y: 100 + nodes.length * 50 },
       data: { label: language === 'ja' ? `新しい技術 ${nodes.length + 1}` : language === 'en' ? `New Technique ${nodes.length + 1}` : `Nova Técnica ${nodes.length + 1}` },
       style: {
         background: '#13131a',
@@ -126,12 +127,37 @@ export default function FlowEditorPage() {
         border: '1px solid rgba(255,255,255,0.1)',
         borderRadius: '14px',
         padding: '10px 20px',
+        width: 150,
+        textAlign: 'center',
       },
     }
-    setNodes((nds) => [...nds, newNode])
+    console.log('[FlowEditor] Adding new node:', newNode)
+    setNodes((nds) => {
+      const updatedNodes = [...nds, newNode]
+      console.log('[FlowEditor] Updated nodes:', updatedNodes)
+      return updatedNodes
+    })
   }
 
-  const saveFlow = () => {
+  const saveFlow = async () => {
+    if (!flowName.trim()) {
+      toast.error(
+        language === 'ja' ? 'フロー名を入力してください' :
+        language === 'en' ? 'Please enter a flow name' :
+        'Por favor, insira um nome para o fluxo'
+      )
+      return
+    }
+
+    if (nodes.length === 0) {
+      toast.error(
+        language === 'ja' ? 'ノードを追加してください' :
+        language === 'en' ? 'Please add nodes' :
+        'Por favor, adicione nós'
+      )
+      return
+    }
+
     const flowData = {
       name: flowName,
       nodes,
@@ -139,14 +165,14 @@ export default function FlowEditorPage() {
       createdAt: new Date().toISOString(),
     }
     
-    // LocalStorageに保存（実際はSupabaseに保存）
+    // LocalStorageに保存（Supabaseのflows tableが準備できるまでの暫定対応）
     const savedFlows = JSON.parse(localStorage.getItem('bjj-flows') || '[]')
     savedFlows.push(flowData)
     localStorage.setItem('bjj-flows', JSON.stringify(savedFlows))
     
     const successMsg = {
-      ja: 'フローを保存しました',
-      en: 'Flow saved successfully',
+      ja: 'フローをローカルに保存しました',
+      en: 'Flow saved locally',
       pt: 'Fluxo salvo com sucesso'
     }
     toast.success(successMsg[language as keyof typeof successMsg])

@@ -35,6 +35,7 @@ const sampleVideos = [
   {
     title: 'ガードの基本概念',
     description: 'オープンガード、クローズドガードの基本的な考え方と使い分けを学びます。',
+    filename: 'guard-basics.mp4',
     video_url: 'https://www.youtube.com/watch?v=sample2',
     thumbnail_url: 'https://placehold.co/1280x720/1a1a1a/ea384c?text=Guard+Basics',
     duration: 600, // 10 minutes
@@ -45,6 +46,7 @@ const sampleVideos = [
   {
     title: 'アームバーの基本',
     description: 'クローズドガードからのアームバー（腕十字）の基本的なセットアップと仕掛け方。',
+    filename: 'armbar-basics.mp4',
     video_url: 'https://www.youtube.com/watch?v=sample3',
     thumbnail_url: 'https://placehold.co/1280x720/1a1a1a/ea384c?text=Armbar+Basics',
     duration: 480, // 8 minutes
@@ -55,6 +57,7 @@ const sampleVideos = [
   {
     title: 'パスガードの基本戦略',
     description: 'ガードを突破するための基本的な考え方と、圧力のかけ方を解説。',
+    filename: 'pass-guard-strategy.mp4',
     video_url: 'https://www.youtube.com/watch?v=sample4',
     thumbnail_url: 'https://placehold.co/1280x720/1a1a1a/ea384c?text=Pass+Guard+Strategy',
     duration: 720, // 12 minutes
@@ -65,6 +68,7 @@ const sampleVideos = [
   {
     title: 'スイープの連携 - フラワースイープからの展開',
     description: 'フラワースイープから次の技への連携を学ぶ、フロー重視のレッスン。',
+    filename: 'sweep-flow-flower.mp4',
     video_url: 'https://www.youtube.com/watch?v=sample5',
     thumbnail_url: 'https://placehold.co/1280x720/1a1a1a/ea384c?text=Sweep+Flow',
     duration: 900, // 15 minutes
