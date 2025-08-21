@@ -4,6 +4,16 @@
   "description": "ブラジリアン柔術を連携（Flow）中心で学ぶWebプラットフォーム。監修：村田良蔵（SJJIF世界選手権2連覇）",
   "icons": [
     {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
       "src": "/favicon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
