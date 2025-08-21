@@ -31,12 +31,30 @@
 
 ## 🛠 技術スタック
 
-- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS
-- **Backend**: Supabase (PostgreSQL + Auth + Storage)
+### フロントエンド
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript (Strict Mode)
+- **Styling**: Tailwind CSS
+- **State Management**: React Context API
+- **Form Validation**: Zod + react-hook-form
+- **UI Components**: Lucide Icons, React Hot Toast
+- **Video Player**: Video.js
+- **Flow Editor**: React Flow
+
+### バックエンド
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **Storage**: Supabase Storage
 - **Payment**: Stripe
 - **AI/ML**: OpenAI (Whisper API, GPT-4 Vision)
+
+### 開発ツール
+- **Testing**: Jest + React Testing Library
+- **Linting**: ESLint (Next.js設定)
+- **CI/CD**: GitHub Actions
 - **Deployment**: Vercel
 - **PWA**: Service Worker, Web Manifest
+- **Developer Tools**: Claude Code対応
 
 ## 🚀 セットアップ
 
@@ -133,6 +151,52 @@ npm run dev
 
 [http://localhost:3000](http://localhost:3000)でアプリケーションにアクセス
 
+## 🧪 開発環境
+
+### Claude Codeを使用した開発
+
+本プロジェクトはClaude Code対応しています：
+
+```bash
+# Claude Codeの起動
+claude
+
+# 利用可能なコマンド
+/help              # ヘルプ表示
+/fix-lint          # Lint/型エラーの自動修正
+/add-technique     # 新技術の追加
+/pre-deploy-check  # デプロイ前チェック
+/setup-dev         # 開発環境セットアップ
+```
+
+詳細は[CLAUDE.md](./CLAUDE.md)を参照してください。
+
+### テストの実行
+
+```bash
+# 単体テストの実行
+npm test
+
+# カバレッジレポートの生成
+npm run test:coverage
+
+# ウォッチモードでテスト
+npm run test:watch
+```
+
+### コード品質
+
+```bash
+# Lintチェック
+npm run lint
+
+# TypeScriptの型チェック
+npm run typecheck
+
+# デプロイ前の総合チェック
+npm run pre-deploy
+```
+
 ## 📦 デプロイ
 
 ### Vercelへのデプロイ
@@ -188,27 +252,49 @@ npm run build        # プロダクションビルド
 npm run start        # プロダクションサーバー起動
 npm run lint         # ESLintチェック
 npm run typecheck    # TypeScriptチェック
+npm test             # テスト実行
+npm run test:watch   # テスト（ウォッチモード）
+npm run test:coverage # カバレッジレポート生成
+npm run pre-deploy   # デプロイ前チェック
+npm run setup-stripe # Stripe初期設定
+npm run seed         # シードデータ投入
 ```
 
 ## 🏗 プロジェクト構成
 
 ```
 muratabjjv2/
+├── .claude/             # Claude Code設定
+│   ├── settings.json    # 権限設定
+│   └── commands/        # スラッシュコマンド
+├── .github/             
+│   └── workflows/       # GitHub Actions
 ├── src/
-│   ├── app/              # Next.js App Router
-│   │   ├── admin/        # 管理者向けページ
-│   │   ├── api/          # APIルート
-│   │   └── dashboard/    # ユーザーダッシュボード
-│   ├── components/       # Reactコンポーネント
-│   ├── contexts/         # Reactコンテキスト
+│   ├── app/             # Next.js App Router
+│   │   ├── [locale]/    # 多言語対応ルート
+│   │   ├── admin/       # 管理者向けページ
+│   │   ├── api/         # APIルート
+│   │   └── dashboard/   # ユーザーダッシュボード
+│   ├── components/      # Reactコンポーネント
+│   │   ├── __tests__/   # コンポーネントテスト
+│   │   └── forms/       # フォームコンポーネント
+│   ├── contexts/        # Reactコンテキスト
+│   ├── features/        # 機能別モジュール
+│   │   └── flow/        # フローエディタ機能
 │   ├── hooks/           # カスタムフック
 │   ├── lib/             # ユーティリティ
+│   │   └── validation/  # Zodスキーマ
 │   ├── locales/         # 多言語対応
+│   ├── types/           # TypeScript型定義
 │   └── utils/           # ヘルパー関数
+├── docs/                # ドキュメント
 ├── public/              # 静的ファイル
-├── supabase/           # データベース設定
-│   └── migrations/     # SQLマイグレーション
-└── scripts/            # ユーティリティスクリプト
+├── scripts/             # ユーティリティスクリプト
+├── supabase/            # データベース設定
+│   └── migrations/      # SQLマイグレーション
+├── jest.config.js       # Jest設定
+├── jest.setup.js        # テスト環境設定
+└── CLAUDE.md            # Claude Code用ガイドライン
 ```
 
 ## 💳 料金プラン
@@ -245,6 +331,31 @@ muratabjjv2/
 ## 🤝 貢献
 
 プルリクエストを歓迎します。大きな変更の場合は、まずissueを作成して変更内容を議論してください。
+
+### 貢献の流れ
+
+1. このリポジトリをフォーク
+2. フィーチャーブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'feat: Add amazing feature'`)
+4. ブランチをプッシュ (`git push origin feature/amazing-feature`)
+5. プルリクエストを作成
+
+### コミットメッセージ規約
+
+- `feat:` 新機能
+- `fix:` バグ修正
+- `docs:` ドキュメントのみの変更
+- `style:` コードの意味に影響しない変更
+- `refactor:` バグ修正や機能追加を伴わないコード変更
+- `test:` テストの追加や修正
+- `chore:` ビルドプロセスやツールの変更
+
+### 開発前の確認事項
+
+- [ ] `npm test`が通ること
+- [ ] `npm run lint`でエラーがないこと
+- [ ] `npm run typecheck`で型エラーがないこと
+- [ ] 新機能にはテストを追加すること
 
 ## 📄 ライセンス
 
