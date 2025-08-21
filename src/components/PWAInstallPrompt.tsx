@@ -143,7 +143,8 @@ export default function PWAInstallPrompt() {
 
   const handleClose = () => {
     setShowPrompt(false)
-    localStorage.setItem('pwa-install-dismissed', 'true')
+    // Don't permanently dismiss, just close for this session
+    localStorage.setItem('pwa-install-last-prompt', new Date().getTime().toString())
   }
 
   // Don't show if already installed or running as PWA
@@ -162,9 +163,10 @@ export default function PWAInstallPrompt() {
           </div>
           <button
             onClick={handleClose}
-            className="text-bjj-muted hover:text-bjj-text"
+            className="p-2 -m-2 text-bjj-muted hover:text-bjj-text transition-colors"
+            aria-label={t.close}
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
         
@@ -205,7 +207,8 @@ export default function PWAInstallPrompt() {
             </div>
             <button
               onClick={handleClose}
-              className="text-bjj-muted hover:text-bjj-text"
+              className="p-2 -m-2 text-bjj-muted hover:text-bjj-text transition-colors"
+              aria-label={t.close}
             >
               <X className="w-5 h-5" />
             </button>
