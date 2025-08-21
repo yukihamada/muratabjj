@@ -1,7 +1,10 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useAuth } from '@/hooks/useAuth'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 interface Plan {
   name: { [key: string]: string }
@@ -69,6 +72,8 @@ const plans: Plan[] = [
 export default function Pricing() {
   const sectionRef = useRef<HTMLElement>(null)
   const { t, language } = useLanguage()
+  const { user } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -148,6 +153,58 @@ export default function Pricing() {
                     ))}
                   </ul>
                 </div>
+              </div>
+
+              {/* Subscribe button */}
+              <div className="mt-6">
+                {plan.name[language].includes('Free') || plan.name[language].includes('無料') ? (
+                  <button
+                    onClick={() => {
+                      
+                      if (!user) {
+                        toast.error(
+                          language === 'ja' ? 'アカウントを作成するにはログインが必要です' :
+                          language === 'en' ? 'Please log in to create an account' :
+                          'Faça login para criar uma conta'
+                        )
+                        // ログインダイアログを表示
+                        const loginButton = document.querySelector('[data-testid="login-button"]') as HTMLButtonElement
+                        if (loginButton) {
+                          loginButton.click()
+                        }
+                      } else {
+                        router.push('/dashboard')
+                      }
+                    }}
+                    className="w-full btn-ghost py-3"
+                  >
+                    {language === 'ja' ? '無料で始める' : language === 'en' ? 'Start Free' : 'Começar Grátis'}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      
+                      if (!user) {
+                        toast.error(
+                          language === 'ja' ? 'サブスクリプションを購入するにはログインが必要です' :
+                          language === 'en' ? 'Please log in to subscribe' :
+                          'Faça login para assinar'
+                        )
+                        // ログインダイアログを表示
+                        const loginButton = document.querySelector('[data-testid="login-button"]') as HTMLButtonElement
+                        if (loginButton) {
+                          loginButton.click()
+                        }
+                      } else {
+                        // サブスクリプションページへ
+                        router.push('/dashboard/subscription')
+                      }
+                    }}
+                    className={`w-full py-3 ${plan.popular ? 'btn-primary' : 'btn-ghost'}`}
+                  >
+                    {language === 'ja' ? '購入する' : language === 'en' ? 'Subscribe' : 'Assinar'}
+                  </button>
+                )}
               </div>
             </div>
           ))}

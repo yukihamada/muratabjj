@@ -230,6 +230,18 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
               </>
             )}
           </p>
+
+          {/* Cookie notice */}
+          <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+            <p className="text-xs text-yellow-200">
+              {language === 'ja' ? 
+                '⚠️ ログインができない場合は、ブラウザの第三者Cookieを有効にしてください。' :
+                language === 'en' ?
+                '⚠️ If you cannot log in, please enable third-party cookies in your browser.' :
+                '⚠️ Se você não conseguir fazer login, ative os cookies de terceiros no seu navegador.'
+              }
+            </p>
+          </div>
         </div>
       </div>
     </div>

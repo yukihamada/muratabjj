@@ -27,6 +27,14 @@ export function LanguageProvider({
   const getLocaleFromPath = (): Locale => {
     if (initialLocale) return initialLocale
     
+    // LocalStorageから保存された言語を取得
+    if (typeof window !== 'undefined') {
+      const savedLocale = localStorage.getItem('locale') as Locale
+      if (savedLocale && savedLocale in locales) {
+        return savedLocale
+      }
+    }
+    
     const segments = pathname.split('/')
     const possibleLocale = segments[1] as Locale
     
