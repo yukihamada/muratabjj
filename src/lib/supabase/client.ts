@@ -8,26 +8,49 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
 // ダミークライアントを作成（環境変数が未設定の場合）
 const createDummyClient = () => {
-  console.warn('⚠️ Supabase環境変数が設定されていません。')
-  console.warn('以下の手順で設定してください：')
-  console.warn('1. Supabaseでプロジェクトを作成: https://supabase.com')
-  console.warn('2. .env.localファイルに以下を追加:')
-  console.warn('   NEXT_PUBLIC_SUPABASE_URL=your_project_url')
-  console.warn('   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key')
+  // 本番環境でのみ警告を表示
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    console.warn('⚠️ Supabase環境変数が設定されていません。')
+    console.warn('以下の手順で設定してください：')
+    console.warn('1. Supabaseでプロジェクトを作成: https://supabase.com')
+    console.warn('2. .env.localファイルに以下を追加:')
+    console.warn('   NEXT_PUBLIC_SUPABASE_URL=your_project_url')
+    console.warn('   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key')
+  }
   
   // ダミーのクライアントを返す（エラーを防ぐため）
   return {
     auth: {
-      getSession: async () => ({ data: { session: null }, error: null }),
-      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      getSession: async () => {
+        // セッション確認時にタイムアウトしないよう即座に返す
+        return Promise.resolve({ data: { session: null }, error: null })
+      },
+      onAuthStateChange: (callback: any) => {
+        // 即座にnullセッションを通知
+        if (callback) {
+          setTimeout(() => callback('INITIAL', null), 0)
+        }
+        return { 
+          data: { 
+            subscription: { 
+              unsubscribe: () => {} 
+            } 
+          } 
+        }
+      },
       signInWithPassword: async () => ({ data: null, error: new Error('Supabaseが設定されていません') }),
       signUp: async () => ({ data: null, error: new Error('Supabaseが設定されていません') }),
       signOut: async () => ({ data: null, error: new Error('Supabaseが設定されていません') }),
       signInWithOAuth: async () => ({ data: null, error: new Error('Supabaseが設定されていません') }),
       exchangeCodeForSession: async () => ({ data: null, error: new Error('Supabaseが設定されていません') }),
     },
-    from: () => ({
-      select: async () => ({ data: [], error: null }),
+    from: (table: string) => ({
+      select: () => ({
+        eq: () => ({
+          single: async () => ({ data: null, error: { code: 'PGRST116' } }),
+        }),
+        async then(resolve: any) { resolve({ data: [], error: null }) }
+      }),
       insert: async () => ({ data: null, error: new Error('Supabaseが設定されていません') }),
       update: async () => ({ data: null, error: new Error('Supabaseが設定されていません') }),
       delete: async () => ({ data: null, error: new Error('Supabaseが設定されていません') }),

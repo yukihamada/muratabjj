@@ -5,6 +5,8 @@ import { LanguageProvider } from '@/contexts/LanguageContext'
 import { Toaster } from 'react-hot-toast'
 import PWAInstallPrompt from '@/components/PWAInstallPrompt'
 import MobileBottomNav from '@/components/MobileBottomNav'
+import AppInitializer from '@/components/AppInitializer'
+import ErrorBoundary from '@/components/ErrorBoundary'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -129,11 +131,13 @@ export default function RootLayout({
         <meta name="msapplication-config" content="/browserconfig.xml" />
       </head>
       <body className={inter.className}>
-        <LanguageProvider initialLocale="ja">
-          <AuthProvider>
-            {children}
-            <MobileBottomNav />
-            <Toaster
+        <ErrorBoundary>
+          <AppInitializer>
+            <LanguageProvider initialLocale="ja">
+              <AuthProvider>
+                {children}
+                <MobileBottomNav />
+                <Toaster
             position="top-center"
             toastOptions={{
               duration: 4000,
@@ -169,8 +173,10 @@ export default function RootLayout({
               `,
             }}
           />
-          </AuthProvider>
-        </LanguageProvider>
+            </AuthProvider>
+          </LanguageProvider>
+        </AppInitializer>
+      </ErrorBoundary>
       </body>
     </html>
   )
