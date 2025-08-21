@@ -103,9 +103,9 @@ export default function DashboardPage() {
 
       // Load user profile
       const { data: profileData, error: profileError } = await supabase
-        .from('users_profile')
+        .from('profiles')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('id', user.id)
         .single()
       
       if (profileError) {

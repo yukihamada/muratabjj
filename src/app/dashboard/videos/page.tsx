@@ -116,9 +116,9 @@ export default function VideosPage() {
     try {
       // Check if user is a coach or admin
       const { data: profile } = await supabase
-        .from('users_profile')
+        .from('profiles')
         .select('is_coach')
-        .eq('user_id', user!.id)
+        .eq('id', user!.id)
         .single()
       
       if (profile?.is_coach) {

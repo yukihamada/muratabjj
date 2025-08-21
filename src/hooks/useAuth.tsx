@@ -61,9 +61,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (error.code === 'PGRST116') {
           console.log('[useAuth] Profile not found, creating new profile...')
           const { data: newProfile, error: createError } = await supabase
-            .from('users_profile')
+            .from('profiles')
             .insert([
               {
+                id: userId,
                 user_id: userId,
                 full_name: '',
                 belt_rank: 'white',
