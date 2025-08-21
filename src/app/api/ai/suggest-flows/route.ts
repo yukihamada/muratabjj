@@ -6,20 +6,37 @@ import OpenAI from 'openai'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-)
+// Supabase Admin Client を関数内で作成
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    throw new Error('Missing required environment variables')
+  }
+
+  return createClient(
+    supabaseUrl,
+    supabaseServiceRoleKey,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  )
+}
+
+// OpenAI Client を関数内で作成
+function getOpenAIClient() {
+  const apiKey = process.env.OPENAI_API_KEY
+  
+  if (!apiKey) {
+    throw new Error('Missing OpenAI API key')
+  }
+  
+  return new OpenAI({ apiKey })
+}
 
 // 管理者チェック
 function isAdmin(email: string | undefined): boolean {
@@ -47,6 +64,7 @@ interface FlowSuggestion {
 async function findRelatedTechniques(videoId: string): Promise<any[]> {
   try {
     // 分析対象の動画情報を取得
+    const supabaseAdmin = getSupabaseAdmin()
     const { data: sourceVideo, error: sourceError } = await supabaseAdmin
       .from('videos')
       .select('*')
@@ -130,6 +148,7 @@ ${techniquesInfo.map((tech, index) =>
 各フローは論理的な流れを持ち、初心者から上級者まで段階的に学習できるよう構成してください。
 `
 
+    const openai = getOpenAIClient()
     const response = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
@@ -246,6 +265,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const supabaseAdmin = getSupabaseAdmin()
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(authCookie.value)
     
     if (authError || !user || !isAdmin(user.email)) {

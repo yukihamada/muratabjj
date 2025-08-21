@@ -5,21 +5,32 @@ import { createClient } from '@supabase/supabase-js'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
+// Supabase Admin Client を関数内で作成
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    throw new Error('Missing required environment variables')
   }
-)
+
+  return createClient(
+    supabaseUrl,
+    supabaseServiceRoleKey,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  )
+}
 
 // 自動AI分析を実行（バックグラウンド）
 async function scheduleAutoAnalysis(videoId: string, userId: string) {
   try {
     // AI解析ログにエントリを作成（ペンディング状態）
+    const supabaseAdmin = getSupabaseAdmin()
     const { error: logError } = await supabaseAdmin
       .from('ai_analysis_logs')
       .insert({
@@ -72,6 +83,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const supabaseAdmin = getSupabaseAdmin()
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(authCookie.value)
     
     if (authError || !user) {

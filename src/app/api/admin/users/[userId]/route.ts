@@ -5,16 +5,26 @@ import { cookies } from 'next/headers'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
+// Supabase Admin Client を関数内で作成
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    throw new Error('Missing required environment variables')
   }
-)
+
+  return createClient(
+    supabaseUrl,
+    supabaseServiceRoleKey,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  )
+}
 
 // 管理者チェック
 function isAdmin(email: string | undefined): boolean {
@@ -35,6 +45,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const supabaseAdmin = getSupabaseAdmin()
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(authCookie.value)
     
     if (authError || !user || !isAdmin(user.email)) {
@@ -107,6 +118,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const supabaseAdmin = getSupabaseAdmin()
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(authCookie.value)
     
     if (authError || !user || !isAdmin(user.email)) {
