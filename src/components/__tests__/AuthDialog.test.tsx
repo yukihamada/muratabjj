@@ -7,11 +7,24 @@ import { useLanguage } from '@/contexts/LanguageContext'
 // モック
 jest.mock('@/hooks/useAuth')
 jest.mock('@/contexts/LanguageContext')
+jest.mock('@/lib/supabase/client', () => ({
+  supabase: {
+    auth: {
+      signInWithPassword: jest.fn(),
+      signUp: jest.fn(),
+      signInWithOAuth: jest.fn(),
+      getSession: jest.fn(),
+    },
+  },
+}))
 
 const mockSignIn = jest.fn()
 const mockSignUp = jest.fn()
 const mockPush = jest.fn()
 const mockUseRouter = jest.fn()
+
+// Supabaseのモックを取得
+const { supabase } = require('@/lib/supabase/client')
 
 describe('AuthDialog', () => {
   beforeEach(() => {
@@ -20,6 +33,22 @@ describe('AuthDialog', () => {
     ;(useAuth as jest.Mock).mockReturnValue({
       signIn: mockSignIn,
       signUp: mockSignUp,
+    })
+    
+    // Supabaseのモックをリセット
+    supabase.auth.signInWithPassword.mockReset()
+    supabase.auth.signUp.mockReset()
+    supabase.auth.signInWithOAuth.mockReset()
+    supabase.auth.getSession.mockReset()
+    
+    // デフォルトのモック実装
+    supabase.auth.signInWithPassword.mockResolvedValue({
+      data: { user: { email: 'test@example.com' }, session: {} },
+      error: null,
+    })
+    supabase.auth.getSession.mockResolvedValue({
+      data: { session: {} },
+      error: null,
     })
     
     ;(useLanguage as jest.Mock).mockReturnValue({
@@ -54,7 +83,7 @@ describe('AuthDialog', () => {
   it('ログインモードで表示される', () => {
     render(<AuthDialog isOpen={true} onClose={jest.fn()} initialMode="login" />)
     
-    expect(screen.getByText('ログイン')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'ログイン' })).toBeInTheDocument()
     expect(screen.getByLabelText('メールアドレス')).toBeInTheDocument()
     expect(screen.getByLabelText('パスワード')).toBeInTheDocument()
   })
@@ -69,7 +98,6 @@ describe('AuthDialog', () => {
   })
 
   it('ログインフォームを送信できる', async () => {
-    mockSignIn.mockResolvedValue(undefined)
     const onClose = jest.fn()
     
     render(<AuthDialog isOpen={true} onClose={onClose} initialMode="login" />)
@@ -83,9 +111,11 @@ describe('AuthDialog', () => {
     fireEvent.click(submitButton)
     
     await waitFor(() => {
-      expect(mockSignIn).toHaveBeenCalledWith('test@example.com', 'password123')
+      expect(supabase.auth.signInWithPassword).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'password123',
+      })
       expect(onClose).toHaveBeenCalled()
-      // expect(mockPush).toHaveBeenCalledWith('/dashboard')
     })
   })
 
