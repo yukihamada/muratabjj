@@ -28,6 +28,7 @@ describe('Header', () => {
           loading: '読み込み中...',
         },
       },
+      locale: 'ja',
     })
   })
 
