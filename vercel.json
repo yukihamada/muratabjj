@@ -18,7 +18,16 @@
       "maxDuration": 60
     },
     "src/app/api/stripe/webhook/route.ts": {
-      "maxDuration": 30
+      "maxDuration": 60
+    },
+    "src/app/api/ai/analyze-video/route.ts": {
+      "maxDuration": 300
+    },
+    "src/app/api/ai/batch-analyze/route.ts": {
+      "maxDuration": 300
+    },
+    "src/app/api/ai/suggest-flows/route.ts": {
+      "maxDuration": 60
     }
   },
   "headers": [
@@ -29,6 +38,15 @@
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
         { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     }
   ]
