@@ -1,11 +1,23 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  },
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
+  "regions": ["hnd1"],
   "functions": {
     "src/app/api/**/*": {
+      "maxDuration": 30
+    },
+    "src/app/api/videos/transcribe/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/stripe/webhook/route.ts": {
       "maxDuration": 30
     }
   },
