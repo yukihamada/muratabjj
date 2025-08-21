@@ -5,22 +5,25 @@ import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
+import { useLanguage } from '@/contexts/LanguageContext'
 import toast from 'react-hot-toast'
 import { X } from 'lucide-react'
 
 interface AuthDialogProps {
   isOpen: boolean
   onClose: () => void
+  initialMode?: 'login' | 'signup'
 }
 
-export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
-  const [mode, setMode] = useState<'login' | 'signup'>('login')
+export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: AuthDialogProps) {
+  const [mode, setMode] = useState<'login' | 'signup'>(initialMode)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { signIn, signUp } = useAuth()
   const router = useRouter()
+  const { t, locale } = useLanguage()
 
   useEffect(() => {
     setMounted(true)
@@ -29,10 +32,17 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
 
   useEffect(() => {
     if (isOpen) {
-      setEmail('')
-      setPassword('')
+      // モーダルを開いた時にモードを設定（フォームはリセットしない）
+      setMode(initialMode)
     }
-  }, [isOpen])
+  }, [isOpen, initialMode])
+
+  // モーダルを閉じる時にフォームをリセット
+  const handleClose = () => {
+    setEmail('')
+    setPassword('')
+    onClose()
+  }
 
   if (!mounted || !isOpen) return null
 
@@ -43,14 +53,27 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
     try {
       if (mode === 'login') {
         await signIn(email, password)
+        toast.success(t.auth.loginSuccess || 'ログインしました')
+        onClose()
+        // ログイン成功後、ダッシュボードへリダイレクト
+        router.push('/dashboard')
       } else {
         await signUp(email, password)
+        toast.success(t.auth.signupSuccess || '確認メールを送信しました')
+        onClose()
       }
-      onClose()
-      // ログイン成功後、ダッシュボードへリダイレクト
-      router.push('/dashboard')
-    } catch (error) {
-      // エラーはuseAuthで処理済み
+    } catch (error: any) {
+      console.error('Authentication error:', error)
+      // エラーメッセージを表示（フォームはリセットしない）
+      if (error.message?.includes('Invalid login credentials')) {
+        toast.error(t.auth.invalidCredentials || 'メールアドレスまたはパスワードが正しくありません')
+      } else if (error.message?.includes('User already registered')) {
+        toast.error(t.auth.userAlreadyExists || 'このメールアドレスは既に登録されています')
+      } else if (error.message?.includes('Supabaseが設定されていません')) {
+        toast.error('認証サービスが設定されていません。管理者にお問い合わせください。')
+      } else {
+        toast.error(error.message || (mode === 'login' ? t.auth.loginFailed : t.auth.signupFailed))
+      }
     } finally {
       setLoading(false)
     }
@@ -71,7 +94,7 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
       if (error) throw error
     } catch (error: any) {
       console.error('Google OAuth error:', error)
-      toast.error('Googleログインに失敗しました')
+      toast.error(t.auth.googleLoginFailed)
     }
   }
 
@@ -80,7 +103,7 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={handleClose}
       />
 
       {/* Dialog */}
@@ -88,7 +111,7 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
         <div className="card-gradient border border-white/10 rounded-bjj p-6 bg-bjj-bg2 shadow-2xl">
           {/* Close button */}
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute top-4 right-4 text-bjj-muted hover:text-bjj-text transition-colors"
           >
             <X size={20} />
@@ -96,14 +119,14 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
 
           {/* Title */}
           <h2 className="text-2xl font-bold mb-6">
-            {mode === 'login' ? 'ログイン' : '新規登録'}
+            {mode === 'login' ? t.auth.login : t.auth.signup}
           </h2>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium mb-2">
-                メールアドレス
+                {t.auth.email}
               </label>
               <input
                 id="email"
@@ -112,13 +135,13 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 rounded-xl border border-white/10 bg-bjj-bg text-bjj-text focus:border-bjj-accent focus:outline-none"
-                placeholder="you@example.com"
+                placeholder={t.auth.emailPlaceholder}
               />
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium mb-2">
-                パスワード
+                {t.auth.password}
               </label>
               <input
                 id="password"
@@ -128,7 +151,7 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                 required
                 minLength={6}
                 className="w-full px-4 py-3 rounded-xl border border-white/10 bg-bjj-bg text-bjj-text focus:border-bjj-accent focus:outline-none"
-                placeholder="••••••••"
+                placeholder={t.auth.passwordPlaceholder}
               />
             </div>
 
@@ -137,7 +160,7 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
               disabled={loading}
               className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? '処理中...' : mode === 'login' ? 'ログイン' : '登録'}
+              {loading ? t.auth.processing : mode === 'login' ? t.auth.login : t.auth.signup}
             </button>
           </form>
 
@@ -147,7 +170,7 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
               <div className="w-full border-t border-white/10" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="bg-bjj-bg2 px-2 text-bjj-muted">または</span>
+              <span className="bg-bjj-bg2 px-2 text-bjj-muted">{t.auth.or}</span>
             </div>
           </div>
 
@@ -174,29 +197,29 @@ export default function AuthDialog({ isOpen, onClose }: AuthDialogProps) {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Googleでログイン
+            {t.auth.googleLogin}
           </button>
 
           {/* Switch mode */}
           <p className="text-center text-sm text-bjj-muted mt-6">
             {mode === 'login' ? (
               <>
-                アカウントをお持ちでない方は{' '}
+                {t.auth.noAccount}{' '}
                 <button
                   onClick={() => setMode('signup')}
                   className="text-bjj-accent hover:underline"
                 >
-                  新規登録
+                  {t.auth.signup}
                 </button>
               </>
             ) : (
               <>
-                すでにアカウントをお持ちの方は{' '}
+                {t.auth.hasAccount}{' '}
                 <button
                   onClick={() => setMode('login')}
                   className="text-bjj-accent hover:underline"
                 >
-                  ログイン
+                  {t.auth.login}
                 </button>
               </>
             )}

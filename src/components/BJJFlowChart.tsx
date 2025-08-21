@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/contexts/LanguageContext'
 
 interface FlowNode {
@@ -410,6 +411,7 @@ export default function BJJFlowChart() {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['start']))
   const [selectedNode, setSelectedNode] = useState<FlowNode | null>(null)
   const { language } = useLanguage()
+  const router = useRouter()
 
   const toggleNode = (nodeId: string) => {
     const newExpanded = new Set(expandedNodes)
@@ -497,7 +499,14 @@ export default function BJJFlowChart() {
               {selectedNode.description && (
                 <p className="text-bjj-muted mb-4">{selectedNode.description[language]}</p>
               )}
-              <button className="px-6 py-3 bg-bjj-accent text-white rounded-bjj hover:bg-bjj-accent/90 transition-all duration-200 transform hover:scale-105">
+              <button 
+                onClick={() => {
+                  // Navigate to videos page with search query for the selected technique
+                  const searchQuery = selectedNode.label[language]
+                  router.push(`/dashboard/videos?search=${encodeURIComponent(searchQuery)}`)
+                }}
+                className="px-6 py-3 bg-bjj-accent text-white rounded-bjj hover:bg-bjj-accent/90 transition-all duration-200 transform hover:scale-105"
+              >
                 {language === 'ja' && 'この技術の動画を見る →'}
                 {language === 'en' && 'Watch videos for this technique →'}
                 {language === 'pt' && 'Assistir vídeos desta técnica →'}

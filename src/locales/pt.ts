@@ -164,6 +164,9 @@ export const pt = {
     logoutFailed: 'Falha no logout',
     googleLoginFailed: 'Falha no login com Google',
     supabaseNotConfigured: 'Supabase não configurado',
+    invalidCredentials: 'Email ou senha inválidos',
+    userAlreadyExists: 'Este email já está registrado',
+    signupSuccess: 'Email de confirmação enviado. Verifique sua caixa de entrada.',
   },
 
   // Painel

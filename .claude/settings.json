@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit",
+      "Write",
+      "MultiEdit",
+      "Bash(npm run dev)",
+      "Bash(npm run build)",
+      "Bash(npm run lint)",
+      "Bash(npm run test:*)",
+      "Bash(npm run typecheck)",
+      "Bash(git status:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "ask": [
+      "WebFetch(*)",
+      "WebSearch(*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)"
+    ]
+  },
+  "defaultMode": "acceptEdits"
+}

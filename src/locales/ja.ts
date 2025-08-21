@@ -164,6 +164,9 @@ export const ja = {
     logoutFailed: 'ログアウトに失敗しました',
     googleLoginFailed: 'Googleログインに失敗しました',
     supabaseNotConfigured: 'Supabaseが設定されていません',
+    invalidCredentials: 'メールアドレスまたはパスワードが正しくありません',
+    userAlreadyExists: 'このメールアドレスは既に登録されています',
+    signupSuccess: '確認メールを送信しました。メールをご確認ください。',
   },
 
   // ダッシュボード

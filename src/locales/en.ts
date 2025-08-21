@@ -164,6 +164,9 @@ export const en = {
     logoutFailed: 'Logout failed',
     googleLoginFailed: 'Google login failed',
     supabaseNotConfigured: 'Supabase not configured',
+    invalidCredentials: 'Invalid email or password',
+    userAlreadyExists: 'This email is already registered',
+    signupSuccess: 'Confirmation email sent. Please check your inbox.',
   },
 
   // Dashboard

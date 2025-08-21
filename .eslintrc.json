@@ -1,3 +1,20 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["next/core-web-vitals"],
+  "rules": {
+    "@next/next/no-img-element": "off",
+    "react-hooks/exhaustive-deps": "warn",
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "prefer-const": "warn",
+    "no-var": "error",
+    "object-shorthand": "warn",
+    "quote-props": ["warn", "as-needed"]
+  },
+  "overrides": [
+    {
+      "files": ["*.test.ts", "*.test.tsx"],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
 }

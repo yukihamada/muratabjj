@@ -41,3 +41,8 @@ supabase/.branches
 
 # docs with sensitive info
 docs/ADMIN_SETUP.md
+
+# claude settings (local only)
+.claude/settings.local.json
+.claude/*.local.*
+CLAUDE.local.md

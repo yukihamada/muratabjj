@@ -2,36 +2,111 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '18.x'
 
 jobs:
-  test:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
       
       - name: Install dependencies
         run: npm ci
       
-      - name: Run type check
-        run: npm run typecheck
-      
-      - name: Run linter
+      - name: Run ESLint
         run: npm run lint
+
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       
-      - name: Check build
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run TypeScript compiler
+        run: npm run typecheck
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm test
+      
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        if: success()
+        with:
+          file: ./coverage/lcov.info
+          fail_ci_if_error: false
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, test]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Create .env.local
+        run: |
+          cat > .env.local << EOF
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          STRIPE_PRO_PRICE_ID_MONTHLY=${{ secrets.STRIPE_PRO_PRICE_ID_MONTHLY }}
+          STRIPE_PRO_PRICE_ID_YEARLY=${{ secrets.STRIPE_PRO_PRICE_ID_YEARLY }}
+          STRIPE_DOJO_PRICE_ID_MONTHLY=${{ secrets.STRIPE_DOJO_PRICE_ID_MONTHLY }}
+          STRIPE_DOJO_PRICE_ID_YEARLY=${{ secrets.STRIPE_DOJO_PRICE_ID_YEARLY }}
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_ADMIN_EMAIL=${{ secrets.NEXT_PUBLIC_ADMIN_EMAIL }}
+          EOF
+      
+      - name: Build application
         run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
-          NEXT_PUBLIC_APP_URL: https://muratabjjv2.vercel.app
+      
+      - name: Run deployment checks
+        run: npm run pre-deploy

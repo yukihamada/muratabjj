@@ -11,6 +11,7 @@ import { User, LogOut, Menu, X } from 'lucide-react'
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [showAuthDialog, setShowAuthDialog] = useState(false)
+  const [authDialogMode, setAuthDialogMode] = useState<'login' | 'signup'>('login')
   const { user, signOut, loading } = useAuth()
   const { t } = useLanguage()
   
@@ -60,13 +61,19 @@ export default function Header() {
             ) : (
               <>
                 <button
-                  onClick={() => setShowAuthDialog(true)}
+                  onClick={() => {
+                    setAuthDialogMode('login')
+                    setShowAuthDialog(true)
+                  }}
                   className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
                 >
                   {t.nav.login}
                 </button>
                 <button
-                  onClick={() => setShowAuthDialog(true)}
+                  onClick={() => {
+                    setAuthDialogMode('signup')
+                    setShowAuthDialog(true)
+                  }}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   {t.nav.freeStart}
@@ -111,6 +118,7 @@ export default function Header() {
       <AuthDialog
         isOpen={showAuthDialog}
         onClose={() => setShowAuthDialog(false)}
+        initialMode={authDialogMode}
       />
     </header>
   )

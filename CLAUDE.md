@@ -1,139 +1,107 @@
-# Murata BJJ - プロジェクト概要
+# CLAUDE.md — Murata BJJ (root)
 
-## プロジェクト概要
-Murata BJJは、ブラジリアン柔術（BJJ）を「連携（Flow）」中心で学ぶためのWebプラットフォームです。動画、フロー可視化、習得度トラッキング、スパーログの4つの主要機能を通じて、「理解→再現→実戦」のサイクルを効率化します。
+> このファイルは Claude Code が Murata BJJ で作業する際の「行動規範・手順」です。
+> ここに書いたルールを最優先し、いきなり大変更せず **計画 → 実装 → 検証 → コミット** で進めてください。
 
-監修：村田 良蔵（Ryozo Murata）
-- SJJIF世界選手権マスター2黒帯フェザー級 2018・2019 連覇
-- スポーツ柔術日本連盟（SJJJF）会長
-- YAWARA/Over Limit SWEEP
+## 0) 役割 & 目的
+- 役割: **フルスタックエンジニア / テックライター / QA**
+- 目的: 「理解→再現→実戦」の学習体験を、動画・フロー・トラッキング・スパーログで最短化
+- 原則:
+  1. 小さく計画し、小さくコミット（1コミット=1目的）
+  2. 型安全（TypeScript strict）/ アクセシビリティ（WCAG 2.1 AA）/ パフォーマンスを常に担保
+  3. 個人データ（顔・声・スパーログ等）は最小権限・最小収集で扱う
 
-## 主要機能
+## 1) プロジェクト構成（重要パス）
+- ルート: `package.json`, `tsconfig.json`, `next.config.js`, `tailwind.config.ts`, `.env.local`, `vercel.json`
+- `/src/app` (Next.js App Router)
+  - `layout.tsx`, `page.tsx`（ルート）
+  - `/[locale]`（i18n ルート）
+  - `/admin`（ユーザー/動画/AI 分析の管理）
+  - `/dashboard`（ユーザ向け）
+    - `dojo/` 道場管理
+    - `videos/` 動画一覧・アップロード
+    - `review/` アダプティブ復習
+    - `sparring/` スパーログ
+    - `progress/` 進捗管理
+    - `profile/` プロフィール
+    - `subscription/` サブスク管理
+  - `/api`
+    - `admin/` 管理 API
+    - `ai/` AI（動画分析・フロー提案）
+    - `stripe/` 決済
+    - `dojos/` 道場 API
+    - `transcribe/` 音声文字起こし
+- `/components`
+  - `AuthDialog.tsx`, `Header.tsx`, `Footer.tsx`, `Hero.tsx`, `Features.tsx`
+  - `FlowEditor.tsx`
+  - `VideoPlayer.tsx`, `VideoUpload.tsx`
+  - `DashboardNav.tsx`, `AppNav.tsx`
+  - `ProgressTracker.tsx`, `PricingWithStripe.tsx`
+- `/lib`
+  - `supabase/`（クライアント）
+  - `stripe/`
+  - `whisper/`（OpenAI Whisper API 連携）
+  - `adaptive-review.ts`（SRS）
+- `/locales`：`ja.ts` / `en.ts` / `pt.ts`
+- `/contexts`：`LanguageContext.tsx`
+- `/hooks`：`useAuth.tsx`
+- `/types`：`database.ts`
+- `/public`：`manifest.json`（PWA）, `sw.js`, 各種アイコン
+- `/scripts`：`setup-stripe.js`, `generate-icons.js`, `pre-deploy-check.js`
 
-### 1. 動画カタログ
-- 帯別、ポジション別、技種別でカテゴライズ
-- チャプター機能による詳細な区切り
-- キーポイントのマーキング
-- 再生速度調整（0.5x〜2.0x）
-- **自動文字起こし機能**：動画アップロード時にWhisper APIで音声を自動文字起こし
-- トランスクリプトの検索・タイムスタンプ連動
-- **一括アップロード機能**：複数動画の同時アップロード・処理
+## 2) コーディング規約（抜粋）
+- Server/Client Components を明示。入出力バリデーションは **Zod**（未導入の場合は手動検証）
+- フォームは **react-hook-form + zodResolver**（未導入の場合は制御コンポーネント）
+- ファイルは 1責務・短く保つ（目安 200–300行）
+- 例外パスは `never` 到達で `exhaustiveCheck()`
 
-### 2. フローエディタ
-- ノード（技/体勢）とエッジ（遷移）による連携の可視化
-- 分岐・代替ルートの表現
-- ドラッグ&ドロップによる直感的な編集
-- フローの保存・共有機能
+## 3) セキュリティ & プライバシー
+- Supabase: **RLS 必須**。全テーブルで認可ポリシーを定義
+- ストレージ: 動画等は**プライベート**保管。署名付きURLで配信
+- API: すべて Zod で入力検証 → 認可チェック → 実処理の順
+- ログ: 個人特定情報は出力しない（ID参照のみ）
+- `.env*` / `secrets/**` は読み取り禁止（設定で遮断・下記参照）
 
-### 3. 習得度トラッカー
-- 5段階評価システム：
-  1. 理解（動画視聴・概念把握）
-  2. 手順（ステップ記憶）
-  3. 再現（単独実行）
-  4. 連携（フロー内実行）
-  5. 実戦（スパーリング適用）
-- 弱点分析と次の練習提案
+## 4) よく使う npm スクリプト
+- `npm run dev` / `build` / `test` / `lint` / `typecheck`
+- `npm run pre-deploy` - デプロイ前チェック
+- `npm run setup-stripe` - Stripe初期設定
+- `npm run seed` - シードデータ投入
 
-### 4. スパーログ
-- 開始体勢の記録
-- イベント記録（パスガード、スイープ、サブミッション等）
-- 時系列での可視化
-- 統計分析（成功率、頻度等）
+## 5) タスク手順テンプレ（Claude 用）
+### A) 動画追加 → 文字起こし → 章/キーポイント反映
+1. `VideoUpload.tsx` でアップロード（R2/S3 直送なら署名URL方式）
+2. `/src/app/api/transcribe/` 経由で Whisper を実行（非同期）
+3. `videos` レコードへ `transcript/chapter/keypoints` を保存
+4. プレイヤー連動（トランスクリプト→タイムスタンプシーク）を検証
+5. `search` インデックス更新 & スナップショットテスト
 
-### 5. アダプティブ復習
-- 忘却曲線アルゴリズムによる最適な復習間隔
-- ボトルネック遷移の重点化
-- 個人の習熟度に応じた出題
+### B) フロー編集（フローエディタ/連携/SRS）
+1. ノード/エッジを追加（循環が出題をループさせないこと）
+2. 失敗率の高い「ボトルネック遷移」に重み付け（SRS で優先復習）
+3. 変更は最小差分コミット＋スクショを残す
 
-### 6. コーチ・道場向け機能
-- カリキュラムの作成・配信
-- 帯別の課題設定
-- 生徒の進捗レポート
-- 非公開スペースでの限定コンテンツ
+### C) スパーログ可視化
+1. `spar_events(t_sec, event_type, success)` を蓄積
+2. 時系列チャート/ヒートマップ描画（Canvas/SVG）
+3. フィルタ（帯/体勢/相手）と成功率を UI で検証
 
-## 技術スタック（予定）
+## 6) Definition of Done
+- `typecheck` / `lint` / 必要テストがパス
+- UI: キーボード操作・コントラスト OK（WCAG 2.1 AA）
+- セキュリティ: RLS/認可/入力検証を実装・確認
+- 文書: 使い方/既知の制約/移行手順を追記
 
-### フロントエンド
-- Next.js 14（App Router）
-- TypeScript
-- Tailwind CSS
-- フロー可視化：React Flow または vis.js
-- 状態管理：Zustand または Redux Toolkit
-- 動画プレーヤー：Video.js または Plyr
+## 7) 作業ルール（Permissions）
+- 書き込み・依存追加・DBマイグレーションは **必ず計画を先に提示**（何を・どこに・なぜ）
+- 危険操作（削除や大規模置換）は必ず diff とバックアップをセットで提示
+- 自動化のために権限を緩める場合は、`.claude/settings.json` の allow/deny を編集してから実行
 
-### バックエンド
-- Node.js + Express または Next.js API Routes
-- データベース：PostgreSQL（Supabase推奨）
-- 認証：NextAuth.js または Supabase Auth
-- ファイルストレージ：Cloudflare R2 または AWS S3
-- 音声文字起こし：OpenAI Whisper API
-- 動画処理：FFmpeg（サムネイル生成、メタデータ抽出）
-
-### その他
-- 多言語対応：next-i18next
-- 決済：Stripe
-- メール送信：SendGrid または Resend
-- ホスティング：Vercel
-
-## 料金プラン
-
-1. **個人プラン（無料）**
-   - 基本動画アクセス
-   - ドリル・スパーログ
-   - 基本的な習得度トラッキング
-
-2. **Proプラン（¥1,200/月）**
-   - フローエディタ全機能
-   - アダプティブ復習
-   - 詳細レポート・分析
-
-3. **道場プラン（¥6,000/月〜）**
-   - カリキュラム配信機能
-   - 非公開スペース
-   - コーチ評価機能
-   - 複数ユーザー管理
-
-## 開発フェーズ
-
-### Phase 1: 基盤構築（1-2週間）
-- プロジェクトセットアップ
-- 認証システム
-- 基本的なUI/UXフレームワーク
-- データベース設計
-
-### Phase 2: コア機能（3-4週間）
-- 動画カタログシステム
-- 基本的なフローエディタ
-- ユーザープロファイル
-- 基本的な習得度トラッキング
-
-### Phase 3: 高度な機能（3-4週間）
-- 完全なフローエディタ機能
-- スパーログシステム
-- アダプティブ復習アルゴリズム
-- レポート・分析機能
-
-### Phase 4: プレミアム機能（2-3週間）
-- コーチ・道場向け機能
-- 決済システム統合
-- 多言語対応の完全実装
-
-### Phase 5: 最適化とローンチ（1-2週間）
-- パフォーマンス最適化
-- セキュリティ監査
-- ベータテスト
-- 本番環境デプロイ
-
-## 特記事項
-- モバイルファーストで設計
-- アクセシビリティ（WCAG 2.1 AA準拠）を重視
-- プログレッシブWebアプリ（PWA）として実装予定
-- オフライン対応（一部機能）
-
-## コマンド
-開発時に使用する主なコマンド：
-- `npm run dev` - 開発サーバー起動
-- `npm run build` - プロダクションビルド
-- `npm run test` - テスト実行
-- `npm run lint` - リンターチェック
-- `npm run typecheck` - TypeScript型チェック
+## 8) 参照（imports）
+- @README.md
+- @package.json
+- @public/manifest.json
+- @scripts/pre-deploy-check.js
+- @src/app/layout.tsx
+- @~/.claude/my-project-instructions.md   # 個人の追記（任意）
+- @docs/SETUP_VALIDATION.md   # セットアップ検証ドキュメント
