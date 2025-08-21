@@ -617,64 +617,79 @@ export default function SparringPage() {
 
         {/* New Log Modal */}
         {showNewLog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-            <div className="bg-bjj-bg2 border border-white/10 rounded-bjj p-6 w-full max-w-md">
-              <div className="flex justify-between items-center mb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+            <div className="bg-bjj-bg2 border border-white/10 rounded-bjj p-6 md:p-8 w-full max-w-md animate-scale-in">
+              <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold">
                   {language === 'ja' ? '新規スパーリングログ' : language === 'en' ? 'New Sparring Log' : 'Novo Registro de Sparring'}
                 </h2>
-                <button onClick={() => setShowNewLog(false)}>
+                <button 
+                  onClick={() => setShowNewLog(false)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <form onSubmit={(e) => { e.preventDefault(); createSparringLog(); }} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-3">
                     {language === 'ja' ? 'パートナー名' : language === 'en' ? 'Partner Name' : 'Nome do Parceiro'}
+                    <span className="text-bjj-accent ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     value={formData.partner_name}
                     onChange={(e) => setFormData({ ...formData, partner_name: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none"
-                    placeholder={language === 'ja' ? '任意' : language === 'en' ? 'Optional' : 'Opcional'}
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none transition-all duration-200 focus:bg-white/15"
+                    placeholder={language === 'ja' ? '例：田中太郎' : language === 'en' ? 'e.g. John Doe' : 'ex: João Silva'}
+                    required
                   />
+                  {formData.partner_name === '' && (
+                    <p className="text-red-400 text-xs mt-2 animate-fade-in">
+                      {language === 'ja' ? '必須項目です' : language === 'en' ? 'Required field' : 'Campo obrigatório'}
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-3">
                     {language === 'ja' ? '日付' : language === 'en' ? 'Date' : 'Data'}
+                    <span className="text-bjj-accent ml-1">*</span>
                   </label>
                   <input
                     type="date"
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none"
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none transition-all duration-200 focus:bg-white/15"
+                    required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-3">
                     {language === 'ja' ? '時間（分）' : language === 'en' ? 'Duration (minutes)' : 'Duração (minutos)'}
+                    <span className="text-bjj-accent ml-1">*</span>
                   </label>
                   <input
                     type="number"
                     value={Math.floor(formData.duration / 60)}
                     onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) * 60 })}
-                    className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none"
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none transition-all duration-200 focus:bg-white/15"
                     min="1"
+                    placeholder="5"
+                    required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-3">
                     {language === 'ja' ? '開始ポジション' : language === 'en' ? 'Starting Position' : 'Posição Inicial'}
                   </label>
                   <select
                     value={formData.starting_position}
                     onChange={(e) => setFormData({ ...formData, starting_position: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none"
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none transition-all duration-200 focus:bg-white/15 cursor-pointer"
                   >
                     {Object.entries(positionLabels).map(([key, label]) => (
                       <option key={key} value={key} className="bg-bjj-bg">
@@ -685,32 +700,37 @@ export default function SparringPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-3">
                     {language === 'ja' ? 'メモ' : language === 'en' ? 'Notes' : 'Notas'}
+                    <span className="text-bjj-muted text-xs ml-2">({language === 'ja' ? '任意' : language === 'en' ? 'Optional' : 'Opcional'})</span>
                   </label>
                   <textarea
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none h-24 resize-none"
-                    placeholder={language === 'ja' ? '任意のメモ' : language === 'en' ? 'Optional notes' : 'Notas opcionais'}
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none h-24 resize-none transition-all duration-200 focus:bg-white/15"
+                    placeholder={language === 'ja' ? '技術的な気づきや次回の課題...' : language === 'en' ? 'Technical insights or next goals...' : 'Insights técnicos ou próximos objetivos...'}
                   />
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 pt-4 border-t border-white/10">
                   <button
-                    onClick={createSparringLog}
-                    className="flex-1 btn-primary"
+                    type="submit"
+                    className="flex-1 btn-primary relative overflow-hidden group"
                   >
-                    {language === 'ja' ? '作成' : language === 'en' ? 'Create' : 'Criar'}
+                    <span className="relative z-10">
+                      {language === 'ja' ? '作成' : language === 'en' ? 'Create' : 'Criar'}
+                    </span>
+                    <span className="absolute inset-0 bg-gradient-to-r from-bjj-accent to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                   </button>
                   <button
+                    type="button"
                     onClick={() => setShowNewLog(false)}
-                    className="flex-1 btn-ghost"
+                    className="flex-1 btn-ghost hover:bg-white/10"
                   >
                     {language === 'ja' ? 'キャンセル' : language === 'en' ? 'Cancel' : 'Cancelar'}
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         )}
