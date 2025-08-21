@@ -36,7 +36,8 @@ export const SUBSCRIPTION_PLANS = {
     name: 'Pro Plan',
     price: 1200,
     currency: 'jpy',
-    priceId: process.env.STRIPE_PRO_PRICE_ID!,
+    priceIdMonthly: process.env.STRIPE_PRO_PRICE_ID_MONTHLY!,
+    priceIdYearly: process.env.STRIPE_PRO_PRICE_ID_YEARLY!,
     features: {
       ja: [
         '全動画へのフルアクセス',
@@ -66,7 +67,8 @@ export const SUBSCRIPTION_PLANS = {
     name: 'Dojo Plan',
     price: 6000,
     currency: 'jpy',
-    priceId: process.env.STRIPE_DOJO_PRICE_ID!,
+    priceIdMonthly: process.env.STRIPE_DOJO_PRICE_ID_MONTHLY!,
+    priceIdYearly: process.env.STRIPE_DOJO_PRICE_ID_YEARLY!,
     features: {
       ja: [
         'Pro Planの全機能',

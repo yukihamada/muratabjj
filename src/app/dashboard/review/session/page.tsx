@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase/client'
@@ -113,7 +113,7 @@ const translations = {
   },
 }
 
-export default function ReviewSessionPage() {
+function ReviewSessionPageContent() {
   const { user } = useAuth()
   const { language } = useLanguage()
   const router = useRouter()
@@ -518,5 +518,17 @@ export default function ReviewSessionPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ReviewSessionPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-bjj-bg flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bjj-accent"></div>
+      </div>
+    }>
+      <ReviewSessionPageContent />
+    </Suspense>
   )
 }

@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { planId, locale = 'ja' } = await request.json();
+    const { planId, locale = 'ja', billingPeriod = 'monthly' } = await request.json();
 
     // Validate plan
     if (!planId || !SUBSCRIPTION_PLANS[planId as keyof typeof SUBSCRIPTION_PLANS]) {
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: plan.priceId!,
+          price: billingPeriod === 'yearly' ? plan.priceIdYearly! : plan.priceIdMonthly!,
           quantity: 1,
         },
       ],

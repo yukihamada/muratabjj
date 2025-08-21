@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "pre-deploy": "node scripts/pre-deploy-check.js",
+    "setup-stripe": "node scripts/setup-stripe.js",
+    "seed": "node scripts/seed-data.js"
   },
   "dependencies": {
     "@stripe/stripe-js": "^2.4.0",

@@ -418,9 +418,11 @@ export default function VideoPage() {
             {user && video.technique_id && (
               <ProgressTracker
                 techniqueId={video.technique_id}
-                techniqueName={technique?.[`name_${language}`] || video[`title_${language}`] || video.title}
-                videoId={video.id}
-                initialProgress={progress?.progress_level || 0}
+                currentLevel={progress?.progress_level || 0}
+                onLevelChange={(level) => {
+                  // Handle level change - will be implemented
+                  console.log('Progress level changed:', level)
+                }}
               />
             )}
 
