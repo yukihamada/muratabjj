@@ -143,7 +143,29 @@ Supabaseダッシュボードで以下のバケットを作成：
 const adminEmails = ['your-email@example.com']
 ```
 
-### 7. 開発サーバーの起動
+### 7. データベースの初期化とシード
+
+```bash
+# サンプルデータの投入（技術・カテゴリ・帯要件）
+npm run seed
+
+# テストユーザーの作成
+npm run seed:users
+```
+
+### 8. テストユーザーアカウント
+
+開発環境で以下のテストユーザーを使用できます：
+
+| 役割 | メールアドレス | パスワード | 権限 |
+|------|---------------|------------|------|
+| 管理者 | admin@test.muratabjj.com | Admin123!@# | 全機能アクセス可能 |
+| コーチ | coach@test.muratabjj.com | Coach123!@# | 道場管理・生徒管理 |
+| Proユーザー | pro@test.muratabjj.com | Pro123!@# | Pro機能全て利用可能 |
+| 一般ユーザー | user@test.muratabjj.com | User123!@# | 無料プラン機能のみ |
+| 初心者 | beginner@test.muratabjj.com | Beginner123!@# | 無料プラン・白帯 |
+
+### 9. 開発サーバーの起動
 
 ```bash
 npm run dev

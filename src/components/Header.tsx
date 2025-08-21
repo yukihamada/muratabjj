@@ -66,6 +66,7 @@ export default function Header() {
                     setShowAuthDialog(true)
                   }}
                   className="px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+                  data-testid="login-button"
                 >
                   {t.nav.login}
                 </button>

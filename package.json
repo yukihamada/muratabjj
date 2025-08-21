@@ -13,7 +13,8 @@
     "test:coverage": "jest --coverage",
     "pre-deploy": "node scripts/pre-deploy-check.js",
     "setup-stripe": "node scripts/setup-stripe.js",
-    "seed": "node scripts/seed-data.js"
+    "seed": "node scripts/seed-data.js",
+    "seed:users": "node scripts/seed-users.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",

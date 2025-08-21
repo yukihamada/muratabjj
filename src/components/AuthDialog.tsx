@@ -34,6 +34,9 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
     if (isOpen) {
       // モーダルを開いた時にモードを設定（フォームはリセットしない）
       setMode(initialMode)
+    } else {
+      // モーダルを閉じた時にローディング状態をリセット
+      setLoading(false)
     }
   }, [isOpen, initialMode])
 
@@ -41,6 +44,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
   const handleClose = () => {
     setEmail('')
     setPassword('')
+    setLoading(false) // ローディング状態もリセット
     onClose()
   }
 
@@ -54,13 +58,13 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
       if (mode === 'login') {
         await signIn(email, password)
         toast.success(t.auth.loginSuccess || 'ログインしました')
-        onClose()
+        handleClose() // onClose()の代わりにhandleClose()を使用
         // ログイン成功後、ダッシュボードへリダイレクト
         router.push('/dashboard')
       } else {
         await signUp(email, password)
         toast.success(t.auth.signupSuccess || '確認メールを送信しました')
-        onClose()
+        handleClose() // onClose()の代わりにhandleClose()を使用
       }
     } catch (error: any) {
       console.error('Authentication error:', error)
@@ -71,8 +75,10 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
         toast.error(t.auth.userAlreadyExists || 'このメールアドレスは既に登録されています')
       } else if (error.message?.includes('Supabaseが設定されていません')) {
         toast.error('認証サービスが設定されていません。管理者にお問い合わせください。')
+      } else if (error.message?.includes('Network request failed')) {
+        toast.error('ネットワークエラーが発生しました。接続を確認してください。')
       } else {
-        toast.error(error.message || (mode === 'login' ? t.auth.loginFailed : t.auth.signupFailed))
+        toast.error(error.message || (mode === 'login' ? t.auth.loginFailed || 'ログインに失敗しました' : t.auth.signupFailed || '登録に失敗しました'))
       }
     } finally {
       setLoading(false)

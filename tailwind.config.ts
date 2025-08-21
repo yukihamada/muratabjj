@@ -10,11 +10,12 @@ const config: Config = {
     extend: {
       colors: {
         'bjj-bg': '#0f0f12',
-        'bjj-bg2': '#13131a',
-        'bjj-text': '#e9e9ee',
-        'bjj-muted': '#b7b7c2',
-        'bjj-line': '#2a2a33',
+        'bjj-bg2': '#1a1a23',  // より明るく調整
+        'bjj-text': '#f0f0f5',  // コントラストを向上
+        'bjj-muted': '#9ca3af',  // より読みやすいグレー
+        'bjj-line': '#2d2d38',   // 少し明るく
         'bjj-accent': '#ea384c',
+        'bjj-accent-hover': '#dc2626', // ホバー時の色
       },
       borderRadius: {
         'bjj': '14px',

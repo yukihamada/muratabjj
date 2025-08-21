@@ -49,13 +49,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchProfile = async (userId: string) => {
     try {
       const { data, error } = await supabase
-        .from('users_profile')
+        .from('profiles')
         .select('*')
-        .eq('user_id', userId)
+        .eq('id', userId)
         .single()
       
-      if (error) throw error
-      setProfile(data)
+      if (error) {
+        // プロファイルが存在しない場合は作成
+        if (error.code === 'PGRST116') {
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert([
+              {
+                id: userId,
+                email: user?.email,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              }
+            ])
+            .select()
+            .single()
+          
+          if (createError) throw createError
+          setProfile(newProfile)
+        } else {
+          throw error
+        }
+      } else {
+        setProfile(data)
+      }
     } catch (error) {
       console.error('Error fetching profile:', error)
     }
@@ -111,9 +133,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
       })
       if (error) throw error
-      toast.success('ログインしました')
+      // トーストメッセージはAuthDialogで表示するためここでは削除
     } catch (error: any) {
-      toast.error(error.message || 'ログインに失敗しました')
+      // エラーメッセージも呼び出し元で処理するため、ここでは表示しない
       throw error
     }
   }
@@ -128,9 +150,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       })
       if (error) throw error
-      toast.success('確認メールを送信しました。メールをご確認ください。')
+      // トーストメッセージはAuthDialogで表示するためここでは削除
     } catch (error: any) {
-      toast.error(error.message || '登録に失敗しました')
+      // エラーメッセージも呼び出し元で処理するため、ここでは表示しない
       throw error
     }
   }

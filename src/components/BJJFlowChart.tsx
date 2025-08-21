@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useAuth } from '@/hooks/useAuth'
+import toast from 'react-hot-toast'
 
 interface FlowNode {
   id: string
@@ -412,6 +414,8 @@ export default function BJJFlowChart() {
   const [selectedNode, setSelectedNode] = useState<FlowNode | null>(null)
   const { language } = useLanguage()
   const router = useRouter()
+  const { user } = useAuth()
+  const [showLoginDialog, setShowLoginDialog] = useState(false)
 
   const toggleNode = (nodeId: string) => {
     const newExpanded = new Set(expandedNodes)
@@ -501,9 +505,23 @@ export default function BJJFlowChart() {
               )}
               <button 
                 onClick={() => {
-                  // Navigate to videos page with search query for the selected technique
-                  const searchQuery = selectedNode.label[language]
-                  router.push(`/dashboard/videos?search=${encodeURIComponent(searchQuery)}`)
+                  if (!user) {
+                    // 未ログインの場合はメッセージを表示
+                    toast.error(
+                      language === 'ja' ? '動画を視聴するにはログインが必要です' :
+                      language === 'en' ? 'Please log in to watch videos' :
+                      'Faça login para assistir aos vídeos'
+                    )
+                    // ログインダイアログを表示（ヘッダーのログインボタンをクリック）
+                    const loginButton = document.querySelector('[data-testid="login-button"]') as HTMLButtonElement
+                    if (loginButton) {
+                      loginButton.click()
+                    }
+                  } else {
+                    // Navigate to videos page with search query for the selected technique
+                    const searchQuery = selectedNode.label[language]
+                    router.push(`/dashboard/videos?search=${encodeURIComponent(searchQuery)}`)
+                  }
                 }}
                 className="px-6 py-3 bg-bjj-accent text-white rounded-bjj hover:bg-bjj-accent/90 transition-all duration-200 transform hover:scale-105"
               >
