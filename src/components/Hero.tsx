@@ -64,7 +64,7 @@ export default function Hero() {
           </p>
           
           <div className="flex gap-4 flex-wrap mb-6">
-            <Link href="/signup" className="btn-primary">
+            <Link href="/signup" className="btn-primary" prefetch={false}>
               {t.hero.cta.start}
             </Link>
             <Link href="#features" className="btn-ghost">

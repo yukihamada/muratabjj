@@ -1,11 +1,11 @@
-import { Metadata } from 'next'
+'use client'
+
 import Signup from '@/components/Signup'
 
-export const metadata: Metadata = {
-  title: 'Sign Up - Murata BJJ',
-  description: 'Create your free account to start learning BJJ with Murata BJJ.',
-}
-
 export default function SignupPage() {
-  return <Signup />
+  return (
+    <main className="min-h-screen">
+      <Signup />
+    </main>
+  )
 }
