@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { debugCookieIssues } from '@/lib/supabase/cookie-config'
 import toast from 'react-hot-toast'
 import { X } from 'lucide-react'
 
@@ -20,6 +21,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
   const { signIn, signUp } = useAuth()
   const router = useRouter()
@@ -45,6 +47,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
     setEmail('')
     setPassword('')
     setLoading(false) // ローディング状態もリセット
+    setError(null) // エラーメッセージもリセット
     onClose()
   }
 
@@ -55,31 +58,79 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
     setLoading(true)
 
     try {
+      console.log(`[Auth] ${mode} attempt for:`, email)
+      
       if (mode === 'login') {
-        await signIn(email, password)
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+        
+        console.log('[Auth] Login response:', { data: data?.user?.email, error: error?.message })
+        
+        if (error) {
+          throw error
+        }
+        
+        // セッションが確立したか確認
+        const { data: { session } } = await supabase.auth.getSession()
+        console.log('[Auth] Session after login:', session?.user?.email)
+        
+        if (!session) {
+          throw new Error('セッションの確立に失敗しました。Cookie設定を確認してください。')
+        }
+        
         toast.success(t.auth.loginSuccess || 'ログインしました')
-        handleClose() // onClose()の代わりにhandleClose()を使用
+        handleClose()
         // ログイン成功後、ダッシュボードへリダイレクト
         router.push('/dashboard')
       } else {
-        await signUp(email, password)
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
+        })
+        
+        console.log('[Auth] Signup response:', { data: data?.user?.email, error: error?.message })
+        
+        if (error) {
+          throw error
+        }
+        
         toast.success(t.auth.signupSuccess || '確認メールを送信しました')
-        handleClose() // onClose()の代わりにhandleClose()を使用
+        handleClose()
       }
     } catch (error: any) {
-      console.error('Authentication error:', error)
+      console.error('[Auth] Error details:', {
+        message: error.message,
+        status: error.status,
+        code: error.code,
+        details: error,
+      })
+      
       // エラーメッセージを表示（フォームはリセットしない）
+      let errorMessage = ''
+      
       if (error.message?.includes('Invalid login credentials')) {
-        toast.error(t.auth.invalidCredentials || 'メールアドレスまたはパスワードが正しくありません')
+        errorMessage = t.auth.invalidCredentials || 'メールアドレスまたはパスワードが正しくありません'
       } else if (error.message?.includes('User already registered')) {
-        toast.error(t.auth.userAlreadyExists || 'このメールアドレスは既に登録されています')
+        errorMessage = t.auth.userAlreadyExists || 'このメールアドレスは既に登録されています'
       } else if (error.message?.includes('Supabaseが設定されていません')) {
-        toast.error('認証サービスが設定されていません。管理者にお問い合わせください。')
-      } else if (error.message?.includes('Network request failed')) {
-        toast.error('ネットワークエラーが発生しました。接続を確認してください。')
+        errorMessage = '認証サービスが設定されていません。管理者にお問い合わせください。'
+      } else if (error.message?.includes('Network request failed') || error.message?.includes('Failed to fetch')) {
+        errorMessage = 'ネットワークエラーが発生しました。接続を確認してください。'
+      } else if (error.message?.includes('Email not confirmed')) {
+        errorMessage = 'メールアドレスが確認されていません。確認メールをご確認ください。'
+      } else if (error.message?.includes('セッションの確立に失敗')) {
+        errorMessage = error.message + '\n\nブラウザの第三者Cookieを有効にしてください。'
       } else {
-        toast.error(error.message || (mode === 'login' ? t.auth.loginFailed || 'ログインに失敗しました' : t.auth.signupFailed || '登録に失敗しました'))
+        errorMessage = error.message || (mode === 'login' ? t.auth.loginFailed || 'ログインに失敗しました' : t.auth.signupFailed || '登録に失敗しました')
       }
+      
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -87,7 +138,8 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
 
   const signInWithGoogle = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      console.log('[Auth] Google OAuth attempt')
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
@@ -97,10 +149,13 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
           },
         },
       })
+      
+      console.log('[Auth] Google OAuth response:', { data, error: error?.message })
+      
       if (error) throw error
     } catch (error: any) {
-      console.error('Google OAuth error:', error)
-      toast.error(t.auth.googleLoginFailed)
+      console.error('[Auth] Google OAuth error:', error)
+      toast.error(t.auth.googleLoginFailed || 'Googleログインに失敗しました')
     }
   }
 
@@ -127,6 +182,13 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
           <h2 className="text-2xl font-bold mb-6">
             {mode === 'login' ? t.auth.login : t.auth.signup}
           </h2>
+
+          {/* Error message display */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+              <p className="text-sm text-red-200">{error}</p>
+            </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -234,13 +296,27 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
           {/* Cookie notice */}
           <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
             <p className="text-xs text-yellow-200">
-              {language === 'ja' ? 
+              {locale === 'ja' ? 
                 '⚠️ ログインができない場合は、ブラウザの第三者Cookieを有効にしてください。' :
-                language === 'en' ?
+                locale === 'en' ?
                 '⚠️ If you cannot log in, please enable third-party cookies in your browser.' :
                 '⚠️ Se você não conseguir fazer login, ative os cookies de terceiros no seu navegador.'
               }
             </p>
+            
+            {/* Debug button for development */}
+            {process.env.NODE_ENV === 'development' && (
+              <button
+                type="button"
+                onClick={() => {
+                  debugCookieIssues()
+                  toast.success('デバッグ情報をコンソールに出力しました')
+                }}
+                className="mt-2 text-xs text-yellow-300 hover:text-yellow-100 underline"
+              >
+                Cookieデバッグ情報を表示
+              </button>
+            )}
           </div>
         </div>
       </div>

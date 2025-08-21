@@ -36,9 +36,16 @@ describe('AuthDialog', () => {
           googleLogin: 'Googleでログイン',
           noAccount: 'アカウントをお持ちでない方は',
           hasAccount: 'すでにアカウントをお持ちの方は',
+          loginSuccess: 'ログインしました',
+          signupSuccess: '確認メールを送信しました',
+          invalidCredentials: 'メールアドレスまたはパスワードが正しくありません',
+          userAlreadyExists: 'このメールアドレスは既に登録されています',
+          loginFailed: 'ログインに失敗しました',
+          signupFailed: '登録に失敗しました',
         },
       },
       locale: 'ja',
+      language: 'ja',
     })
     
     // useRouterのモックはjest.setup.jsで設定済み

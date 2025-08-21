@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
+import { getCookieConfig } from './cookie-config'
 
 // デフォルトの値を設定（実際のSupabaseプロジェクトが必要）
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
@@ -66,6 +67,9 @@ const customStorageAdapter = {
   },
 }
 
+// Cookie設定を取得
+const cookieConfig = getCookieConfig()
+
 // 環境変数が設定されている場合のみ実際のクライアントを作成
 export const supabase = supabaseUrl && supabaseAnonKey && isValidUrl(supabaseUrl)
   ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
@@ -75,6 +79,8 @@ export const supabase = supabaseUrl && supabaseAnonKey && isValidUrl(supabaseUrl
         storage: customStorageAdapter,
         detectSessionInUrl: true,
         flowType: 'pkce',
+        debug: process.env.NODE_ENV === 'development', // 開発環境でデバッグ有効化
+        storageKey: cookieConfig.name,
       },
     })
   : createDummyClient()

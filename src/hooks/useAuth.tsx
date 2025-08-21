@@ -91,8 +91,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // 初期セッションの取得
+    console.log('[useAuth] Checking initial session...')
+    
     supabase.auth.getSession().then(async (response: any) => {
       const session = response.data.session
+      
+      console.log('[useAuth] Initial session check:', {
+        hasSession: !!session,
+        user: session?.user?.email,
+        expiresAt: session?.expires_at,
+      })
+      
       setSession(session)
       setUser(session?.user ?? null)
       const adminEmails = ['shu.shu.4029@gmail.com', 'yuki@hamada.tokyo']
@@ -102,6 +111,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await fetchProfile(session.user.id)
       }
       
+      setLoading(false)
+    }).catch((error: any) => {
+      console.error('[useAuth] Error getting initial session:', error)
       setLoading(false)
     })
 
@@ -128,14 +140,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('[useAuth] Starting sign in for:', email)
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
+      
+      console.log('[useAuth] Sign in response:', {
+        success: !error,
+        user: data?.user?.email,
+        session: !!data?.session,
+        error: error?.message,
+      })
+      
       if (error) throw error
-      // トーストメッセージはAuthDialogで表示するためここでは削除
+      
+      // セッションが確立したか確認
+      if (!data?.session) {
+        console.error('[useAuth] No session returned after sign in')
+        throw new Error('セッションの確立に失敗しました')
+      }
+      
+      return data
     } catch (error: any) {
-      // エラーメッセージも呼び出し元で処理するため、ここでは表示しない
+      console.error('[useAuth] Sign in error:', error)
       throw error
     }
   }

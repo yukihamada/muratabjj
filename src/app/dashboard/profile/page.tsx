@@ -206,14 +206,14 @@ export default function ProfilePage() {
 
     try {
       const { error } = await supabase
-        .from('users_profile')
+        .from('profiles')
         .update({
           full_name: formData.full_name,
           belt: formData.belt,
           stripes: formData.stripes,
           updated_at: new Date().toISOString(),
         })
-        .eq('user_id', user!.id)
+        .eq('id', user!.id)
 
       if (error) throw error
 
