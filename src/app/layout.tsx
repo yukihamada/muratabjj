@@ -108,8 +108,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
-        <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192x192.png" />
-        <link rel="apple-touch-icon" sizes="512x512" href="/favicon-512x512.png" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Murata BJJ" />

@@ -5,38 +5,8 @@
   "icons": [
     {
       "src": "/favicon.ico",
-      "sizes": "48x48",
+      "sizes": "16x16 32x32 48x48",
       "type": "image/x-icon"
-    },
-    {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
-    },
-    {
-      "src": "/favicon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/favicon-512x512.png", 
-      "sizes": "512x512",
-      "type": "image/png"
-    },
-    {
-      "src": "/android-chrome-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/android-chrome-512x512.png",
-      "sizes": "512x512", 
-      "type": "image/png"
-    },
-    {
-      "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png"
     }
   ],
   "start_url": "/",
@@ -53,8 +23,8 @@
       "url": "/dashboard/videos",
       "icons": [
         {
-          "src": "/favicon-192x192.png",
-          "sizes": "192x192"
+          "src": "/favicon.ico",
+          "sizes": "48x48"
         }
       ]
     },
@@ -65,8 +35,8 @@
       "url": "/flows",
       "icons": [
         {
-          "src": "/icon-192x192.png", 
-          "sizes": "192x192"
+          "src": "/favicon.ico", 
+          "sizes": "48x48"
         }
       ]
     },
@@ -77,8 +47,8 @@
       "url": "/dashboard/sparring",
       "icons": [
         {
-          "src": "/favicon-192x192.png",
-          "sizes": "192x192"
+          "src": "/favicon.ico",
+          "sizes": "48x48"
         }
       ]
     },
@@ -89,8 +59,8 @@
       "url": "/dashboard/review",
       "icons": [
         {
-          "src": "/icon-192x192.png",
-          "sizes": "192x192" 
+          "src": "/favicon.ico",
+          "sizes": "48x48" 
         }
       ]
     }
