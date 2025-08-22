@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { AuthProvider } from '@/hooks/useAuth'
 import { LanguageProvider } from '@/contexts/LanguageContext'
+import { ThemeProvider } from '@/contexts/ThemeContext'
 import { Toaster } from 'react-hot-toast'
 import PWAInstallPrompt from '@/components/PWAInstallPrompt'
 import MobileBottomNav from '@/components/MobileBottomNav'
@@ -119,8 +120,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <ErrorBoundary>
           <AppInitializer>
-            <LanguageProvider initialLocale="ja">
-              <AuthProvider>
+            <ThemeProvider>
+              <LanguageProvider initialLocale="ja">
+                <AuthProvider>
                 {children}
                 <MobileBottomNav />
                 <Toaster
@@ -168,10 +170,11 @@ export default function RootLayout({
               `,
             }}
           />
-            </AuthProvider>
-          </LanguageProvider>
-        </AppInitializer>
-      </ErrorBoundary>
+                </AuthProvider>
+              </LanguageProvider>
+            </ThemeProvider>
+          </AppInitializer>
+        </ErrorBoundary>
       </body>
     </html>
   )

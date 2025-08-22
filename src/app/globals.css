@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+  /* ダークモード (デフォルト) */
   :root {
     --bjj-bg: 15 15 18;
     --bjj-bg2: 26 26 35;     /* より明るく調整 */
@@ -11,6 +12,16 @@
     --bjj-line: 45 45 56;     /* 見やすいボーダー */
     --bjj-accent: 234 56 76;
     --radius: 14px;
+  }
+  
+  /* ライトモード */
+  .light {
+    --bjj-bg: 255 255 255;
+    --bjj-bg2: 243 244 246;
+    --bjj-text: 15 23 42;
+    --bjj-muted: 100 116 139;
+    --bjj-line: 226 232 240;
+    --bjj-accent: 234 56 76;
   }
   
   * {
@@ -22,8 +33,17 @@
   }
   
   body {
-    @apply m-0 text-bjj-text;
-    background: radial-gradient(1100px 800px at 15% -10%, rgba(234,56,76,.18), transparent 50%), #0f0f12;
+    @apply m-0 text-bjj-text bg-bjj-bg;
+  }
+  
+  /* ダークモードの背景グラデーション */
+  :root body, .dark body {
+    background: radial-gradient(1100px 800px at 15% -10%, rgba(234,56,76,.18), transparent 50%), rgb(var(--bjj-bg));
+  }
+  
+  /* ライトモードの背景 */
+  .light body {
+    background: radial-gradient(1100px 800px at 15% -10%, rgba(234,56,76,.08), transparent 50%), rgb(var(--bjj-bg));
   }
 }
 
@@ -37,7 +57,7 @@
   }
   
   .input {
-    @apply w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-colors;
+    @apply w-full px-4 py-2 rounded-lg border border-bjj-line bg-bjj-bg text-bjj-text focus:border-bjj-accent focus:ring-2 focus:ring-bjj-accent focus:ring-opacity-50 transition-colors;
   }
 }
 
@@ -325,6 +345,22 @@ input[type="date"] {
   :root {
     color-scheme: dark;
   }
+}
+
+/* Light mode optimizations */
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+  }
+}
+
+/* Ensure proper color scheme */
+html.dark {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
 }
 
 /* Print styles for PWA */
