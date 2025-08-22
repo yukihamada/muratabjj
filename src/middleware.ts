@@ -4,8 +4,8 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   
-  // Only check for en and pt locales (ja is at root)
-  const pathnameHasLocale = /^\/(en|pt)(\/|$)/.test(pathname)
+  // Check for all supported locales except ja (ja is at root)
+  const pathnameHasLocale = /^\/(en|pt|es|fr|ko|ru)(\/|$)/.test(pathname)
   
   if (pathnameHasLocale) {
     return NextResponse.next()
