@@ -51,15 +51,26 @@ export default function DashboardNav() {
   const t = translations[language as keyof typeof translations]
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
+  // Helper function to get locale-aware href
+  const getHref = (path: string) => {
+    // If we're already in a locale route, use that locale
+    if (pathname.startsWith('/ja/') || pathname.startsWith('/en/') || pathname.startsWith('/pt/')) {
+      const currentLocale = pathname.split('/')[1]
+      return `/${currentLocale}${path}`
+    }
+    // Default to no locale prefix (which means Japanese)
+    return path
+  }
+
   const navItems = [
-    { href: '/dashboard', label: t.dashboard, icon: Home },
-    { href: '/dashboard/videos', label: t.videos, icon: Video },
-    { href: '/dashboard/progress', label: t.progress, icon: Target },
-    { href: '/dashboard/sparring', label: t.sparring, icon: Swords },
-    { href: '/dashboard/review', label: t.review, icon: Brain },
-    { href: '/flows', label: t.flows, icon: PenTool },
-    ...(isCoach ? [{ href: '/coach', label: language === 'ja' ? 'コーチ' : language === 'en' ? 'Coach' : 'Treinador', icon: Shield }] : []),
-    ...(isAdmin ? [{ href: '/admin', label: t.admin, icon: Shield }] : []),
+    { href: getHref('/dashboard'), label: t.dashboard, icon: Home },
+    { href: getHref('/dashboard/videos'), label: t.videos, icon: Video },
+    { href: getHref('/dashboard/progress'), label: t.progress, icon: Target },
+    { href: getHref('/dashboard/sparring'), label: t.sparring, icon: Swords },
+    { href: getHref('/dashboard/review'), label: t.review, icon: Brain },
+    { href: getHref('/dashboard/flows'), label: t.flows, icon: PenTool },
+    ...(isCoach ? [{ href: getHref('/coach'), label: language === 'ja' ? 'コーチ' : language === 'en' ? 'Coach' : 'Treinador', icon: Shield }] : []),
+    ...(isAdmin ? [{ href: getHref('/admin'), label: t.admin, icon: Shield }] : []),
   ]
 
   return (

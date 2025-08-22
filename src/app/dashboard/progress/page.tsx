@@ -139,14 +139,29 @@ export default function ProgressPage() {
     } catch (error: any) {
       console.error('[Progress] Error fetching progress:', error)
       
+      // Show user-friendly error messages
+      const errorMessage = 
+        language === 'ja' ? '進捗データの取得に失敗しました' :
+        language === 'en' ? 'Failed to fetch progress data' :
+        'Falha ao buscar dados de progresso'
+      
       // ネットワークエラーや設定問題の場合
       if (error.message?.includes('Failed to fetch') || error.message?.includes('Network')) {
-        toast.error('ネットワークエラーが発生しました。接続を確認してください。')
+        const networkMessage = 
+          language === 'ja' ? 'ネットワークエラーが発生しました。接続を確認してください。' :
+          language === 'en' ? 'Network error occurred. Please check your connection.' :
+          'Erro de rede. Verifique sua conexão.'
+        toast.error(networkMessage)
       } else if (error.message?.includes('JWT') || error.message?.includes('auth')) {
-        toast.error('認証の問題が発生しました。ページをリロードしてください。')
+        const authMessage = 
+          language === 'ja' ? '認証の問題が発生しました。ページをリロードしてください。' :
+          language === 'en' ? 'Authentication issue. Please reload the page.' :
+          'Problema de autenticação. Recarregue a página.'
+        toast.error(authMessage)
       } else {
-        // 一般的なエラーでも空の状態を表示
-        // Showing empty state due to error
+        // Show general error message
+        toast.error(errorMessage)
+        // Still show empty state for graceful degradation
         setProgressData([])
       }
     } finally {

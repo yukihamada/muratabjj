@@ -105,6 +105,8 @@ export default function FlowEditor() {
   const [videos, setVideos] = useState<any[]>([])
   const [showVideoModal, setShowVideoModal] = useState(false)
   const [selectedVideo, setSelectedVideo] = useState<any>(null)
+  const [editingNode, setEditingNode] = useState<string | null>(null)
+  const [editNodeLabel, setEditNodeLabel] = useState('')
 
   const labels = nodeTypes[language as keyof typeof nodeTypes]
 
@@ -173,7 +175,7 @@ export default function FlowEditor() {
 
   const addNode = (type: string = 'standing') => {
     const newNode: Node = {
-      id: `${nodes.length + 1}`,
+      id: `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type: 'default',
       position: { 
         x: 100 + (nodes.length * 50) % 400, 
@@ -190,6 +192,13 @@ export default function FlowEditor() {
       },
     }
     setNodes((nds) => [...nds, newNode])
+    
+    // Show feedback to user
+    toast.success(
+      language === 'ja' ? `ノード「${newNode.data.label}」を追加しました` :
+      language === 'en' ? `Added node "${newNode.data.label}"` :
+      `Nó "${newNode.data.label}" adicionado`
+    )
   }
 
   const addVideoNode = () => {
@@ -313,6 +322,30 @@ export default function FlowEditor() {
     setIsPublic(false)
     setNodes(initialNodes)
     setEdges(initialEdges)
+  }
+
+  const onNodeDoubleClick = (event: React.MouseEvent, node: Node) => {
+    setEditingNode(node.id)
+    setEditNodeLabel(node.data.label)
+  }
+
+  const updateNodeLabel = () => {
+    if (!editingNode || !editNodeLabel.trim()) return
+    
+    setNodes((nds) =>
+      nds.map((node) =>
+        node.id === editingNode
+          ? { ...node, data: { ...node.data, label: editNodeLabel.trim() } }
+          : node
+      )
+    )
+    setEditingNode(null)
+    setEditNodeLabel('')
+  }
+
+  const cancelNodeEdit = () => {
+    setEditingNode(null)
+    setEditNodeLabel('')
   }
 
   return (
@@ -446,6 +479,7 @@ export default function FlowEditor() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onNodeDoubleClick={onNodeDoubleClick}
           nodeTypes={customNodeTypes}
           fitView
           className="bg-bjj-bg"
@@ -513,6 +547,55 @@ export default function FlowEditor() {
                 className="btn-primary"
               >
                 {language === 'ja' ? '追加' : language === 'en' ? 'Add' : 'Adicionar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Node Edit Modal */}
+      {editingNode && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-bjj-bg2 rounded-bjj p-6 max-w-md w-full">
+            <h3 className="text-xl font-bold mb-4">
+              {language === 'ja' ? 'ノードを編集' : language === 'en' ? 'Edit Node' : 'Editar Nó'}
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  {language === 'ja' ? 'ラベル' : language === 'en' ? 'Label' : 'Rótulo'}
+                </label>
+                <input
+                  type="text"
+                  value={editNodeLabel}
+                  onChange={(e) => setEditNodeLabel(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10 focus:border-bjj-accent focus:outline-none"
+                  autoFocus
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      updateNodeLabel()
+                    } else if (e.key === 'Escape') {
+                      cancelNodeEdit()
+                    }
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={cancelNodeEdit}
+                className="btn-ghost"
+              >
+                {language === 'ja' ? 'キャンセル' : language === 'en' ? 'Cancel' : 'Cancelar'}
+              </button>
+              <button
+                onClick={updateNodeLabel}
+                disabled={!editNodeLabel.trim()}
+                className="btn-primary"
+              >
+                {language === 'ja' ? '更新' : language === 'en' ? 'Update' : 'Atualizar'}
               </button>
             </div>
           </div>

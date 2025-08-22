@@ -1,51 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { createClient } from '@supabase/supabase-js'
+import { createServerClient } from '@supabase/ssr'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-// Supabase Admin Client を関数内で作成
-function getSupabaseAdmin() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing required environment variables')
-  }
-
-  return createClient(
-    supabaseUrl,
-    supabaseServiceRoleKey,
+function createSupabaseServer() {
+  const cookieStore = cookies()
+  
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+        set(name: string, value: string, options) {
+          cookieStore.set({ name, value, ...options })
+        },
+        remove(name: string, options) {
+          cookieStore.set({ name, value: '', ...options })
+        },
+      },
     }
   )
 }
 
 export async function GET(request: NextRequest) {
   try {
-    // Check authentication
-    const cookieStore = cookies()
-    const authCookie = cookieStore.get('supabase-auth-token')
+    const supabase = createSupabaseServer()
     
-    if (!authCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const token = authCookie.value
-    const supabaseAdmin = getSupabaseAdmin()
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
+    // Check authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Fetch sparring logs for the user
-    const { data: logs, error } = await supabaseAdmin
+    const { data: logs, error } = await supabase
       .from('sparring_logs')
       .select(`
         *,
@@ -68,17 +62,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const cookieStore = cookies()
-    const authCookie = cookieStore.get('supabase-auth-token')
+    const supabase = createSupabaseServer()
     
-    if (!authCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const token = authCookie.value
-    const supabaseAdmin = getSupabaseAdmin()
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
+    // Check authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -88,13 +75,20 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { partner_name, duration, starting_position, date, notes } = body
 
+    // Validate required fields
+    if (!partner_name || !duration || !date) {
+      return NextResponse.json({ 
+        error: 'Missing required fields: partner_name, duration, date' 
+      }, { status: 400 })
+    }
+
     // Create sparring log
-    const { data: log, error } = await supabaseAdmin
+    const { data: log, error } = await supabase
       .from('sparring_logs')
       .insert({
         user_id: user.id,
         partner_name,
-        duration,
+        duration: parseInt(duration),
         starting_position,
         date: new Date(date).toISOString(),
         notes
