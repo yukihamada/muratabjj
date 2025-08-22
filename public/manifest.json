@@ -53,7 +53,7 @@
       "url": "/dashboard/videos",
       "icons": [
         {
-          "src": "/icon-192x192.png",
+          "src": "/favicon-192x192.png",
           "sizes": "192x192"
         }
       ]
@@ -77,7 +77,7 @@
       "url": "/dashboard/sparring",
       "icons": [
         {
-          "src": "/icon-192x192.png",
+          "src": "/favicon-192x192.png",
           "sizes": "192x192"
         }
       ]
