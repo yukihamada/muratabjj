@@ -1,5 +1,5 @@
 // フローエディタの状態管理（Zustand）
-import create from 'zustand'
+import { create } from 'zustand'
 import type { FlowNode, FlowEdge, FlowGraph, FlowFilter } from '@/types/flow'
 import { Node, Edge } from 'reactflow'
 
@@ -99,59 +99,59 @@ export const useFlowStore = create<FlowState & FlowActions>((set, get) => ({
       clipboard: null,
 
       // ノード操作
-      addNode: (node) => set((state) => ({
+      addNode: (node: FlowNode) => set((state) => ({
         nodes: [...state.nodes, node],
         isDirty: true,
       })),
 
-      updateNode: (nodeId, data) => set((state) => ({
-        nodes: state.nodes.map(n => 
+      updateNode: (nodeId: string, data: Partial<FlowNode>) => set((state) => ({
+        nodes: state.nodes.map((n: FlowNode) => 
           n.id === nodeId ? { ...n, ...data } : n
         ),
         isDirty: true,
       })),
 
-      deleteNodes: (nodeIds) => set((state) => {
+      deleteNodes: (nodeIds: string[]) => set((state) => {
         const nodeIdSet = new Set(nodeIds)
         return {
-          nodes: state.nodes.filter(n => !nodeIdSet.has(n.id)),
-          edges: state.edges.filter(e => 
+          nodes: state.nodes.filter((n: FlowNode) => !nodeIdSet.has(n.id)),
+          edges: state.edges.filter((e: FlowEdge) => 
             !nodeIdSet.has(e.source) && !nodeIdSet.has(e.target)
           ),
-          selectedNodeIds: state.selectedNodeIds.filter(id => !nodeIdSet.has(id)),
+          selectedNodeIds: state.selectedNodeIds.filter((id: string) => !nodeIdSet.has(id)),
           isDirty: true,
         }
       }),
 
       // エッジ操作
-      addEdge: (edge) => set((state) => ({
+      addEdge: (edge: FlowEdge) => set((state) => ({
         edges: [...state.edges, edge],
         isDirty: true,
       })),
 
-      updateEdge: (edgeId, data) => set((state) => ({
-        edges: state.edges.map(e => 
+      updateEdge: (edgeId: string, data: Partial<FlowEdge>) => set((state) => ({
+        edges: state.edges.map((e: FlowEdge) => 
           e.id === edgeId ? { ...e, ...data } : e
         ),
         isDirty: true,
       })),
 
-      deleteEdges: (edgeIds) => set((state) => {
+      deleteEdges: (edgeIds: string[]) => set((state) => {
         const edgeIdSet = new Set(edgeIds)
         return {
-          edges: state.edges.filter(e => !edgeIdSet.has(e.id)),
-          selectedEdgeIds: state.selectedEdgeIds.filter(id => !edgeIdSet.has(id)),
+          edges: state.edges.filter((e: FlowEdge) => !edgeIdSet.has(e.id)),
+          selectedEdgeIds: state.selectedEdgeIds.filter((id: string) => !edgeIdSet.has(id)),
           isDirty: true,
         }
       }),
 
       // 選択操作
-      selectNodes: (nodeIds) => set({ 
+      selectNodes: (nodeIds: string[]) => set({ 
         selectedNodeIds: nodeIds,
         selectedEdgeIds: [], // ノード選択時はエッジ選択をクリア
       }),
 
-      selectEdges: (edgeIds) => set({ 
+      selectEdges: (edgeIds: string[]) => set({ 
         selectedEdgeIds: edgeIds,
         selectedNodeIds: [], // エッジ選択時はノード選択をクリア
       }),
@@ -162,7 +162,7 @@ export const useFlowStore = create<FlowState & FlowActions>((set, get) => ({
       }),
 
       // フロー操作
-      loadFlow: (flow) => set({
+      loadFlow: (flow: FlowGraph) => set({
         flowId: flow.id,
         flowTitle: flow.title,
         flowDescription: flow.description || '',
@@ -179,12 +179,7 @@ export const useFlowStore = create<FlowState & FlowActions>((set, get) => ({
         try {
           const state = get()
           // TODO: 実際の保存処理を実装
-          console.log('Saving flow:', {
-            id: state.flowId,
-            title: state.flowTitle,
-            nodes: state.nodes,
-            edges: state.edges,
-          })
+          // フローの保存処理はここに実装
           set({ isDirty: false })
         } finally {
           set({ isSaving: false })
@@ -203,7 +198,7 @@ export const useFlowStore = create<FlowState & FlowActions>((set, get) => ({
         selectedEdgeIds: [],
       }),
 
-      setFlowInfo: (info) => set((state) => ({
+      setFlowInfo: (info: Partial<Pick<FlowGraph, 'title' | 'description' | 'visibility'>>) => set((state) => ({
         flowTitle: info.title ?? state.flowTitle,
         flowDescription: info.description ?? state.flowDescription,
         isPublic: info.visibility ? info.visibility === 'public' : state.isPublic,
@@ -211,34 +206,34 @@ export const useFlowStore = create<FlowState & FlowActions>((set, get) => ({
       })),
 
       // UI操作
-      toggleEdgeCreationMode: () => set((state) => ({ 
+      toggleEdgeCreationMode: () => set((state: FlowState) => ({ 
         isEdgeCreationMode: !state.isEdgeCreationMode 
       })),
 
-      toggleInspector: () => set((state) => ({ 
+      toggleInspector: () => set((state: FlowState) => ({ 
         showInspector: !state.showInspector 
       })),
 
-      toggleLibrary: () => set((state) => ({ 
+      toggleLibrary: () => set((state: FlowState) => ({ 
         showLibrary: !state.showLibrary 
       })),
 
-      toggleVideoModal: () => set((state) => ({ 
+      toggleVideoModal: () => set((state: FlowState) => ({ 
         showVideoModal: !state.showVideoModal 
       })),
 
-      toggleValidation: () => set((state) => ({ 
+      toggleValidation: () => set((state: FlowState) => ({ 
         showValidation: !state.showValidation 
       })),
 
       // クリップボード操作
       copy: () => {
         const state = get()
-        const selectedNodes = state.nodes.filter(n => 
+        const selectedNodes = state.nodes.filter((n: FlowNode) => 
           state.selectedNodeIds.includes(n.id)
         )
         const selectedNodeIdSet = new Set(state.selectedNodeIds)
-        const selectedEdges = state.edges.filter(e => 
+        const selectedEdges = state.edges.filter((e: FlowEdge) => 
           selectedNodeIdSet.has(e.source) && selectedNodeIdSet.has(e.target)
         )
         
@@ -259,7 +254,7 @@ export const useFlowStore = create<FlowState & FlowActions>((set, get) => ({
         const timestamp = Date.now()
 
         // ノードをコピー
-        const newNodes = state.clipboard.nodes.map((node, index) => {
+        const newNodes = state.clipboard.nodes.map((node: FlowNode, index: number) => {
           const newId = `${node.id}-${timestamp}-${index}`
           idMapping.set(node.id, newId)
           
@@ -274,7 +269,7 @@ export const useFlowStore = create<FlowState & FlowActions>((set, get) => ({
         })
 
         // エッジをコピー（新しいIDに更新）
-        const newEdges = state.clipboard.edges.map((edge, index) => ({
+        const newEdges = state.clipboard.edges.map((edge: FlowEdge, index: number) => ({
           ...edge,
           id: `${edge.id}-${timestamp}-${index}`,
           source: idMapping.get(edge.source) || edge.source,
@@ -284,13 +279,13 @@ export const useFlowStore = create<FlowState & FlowActions>((set, get) => ({
         set((state) => ({
           nodes: [...state.nodes, ...newNodes],
           edges: [...state.edges, ...newEdges],
-          selectedNodeIds: newNodes.map(n => n.id),
+          selectedNodeIds: newNodes.map((n: FlowNode) => n.id),
           isDirty: true,
         }))
       },
 
       // フィルタ操作
-      setFilter: (filter) => set((state) => ({
+      setFilter: (filter: Partial<FlowFilter>) => set((state) => ({
         filter: { ...state.filter, ...filter }
       })),
 

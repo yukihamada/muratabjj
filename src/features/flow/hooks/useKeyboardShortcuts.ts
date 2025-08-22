@@ -139,7 +139,7 @@ export function useKeyboardShortcuts({
       if (isCmd && key === 'g' && selectedNodes.length > 1) {
         event.preventDefault()
         // TODO: グループ化機能の実装
-        console.log('Group nodes:', selectedNodes.map(n => n.id))
+        // Group nodes: selectedNodes
       }
 
       // フルスクリーン切替（F キー）
@@ -172,7 +172,7 @@ export function useKeyboardShortcuts({
         if (deltaX !== 0 || deltaY !== 0) {
           event.preventDefault()
           // TODO: ノードの移動処理
-          console.log(`Move nodes by (${deltaX}, ${deltaY})`)
+          // Move nodes by deltaX, deltaY
         }
       }
 
@@ -180,7 +180,7 @@ export function useKeyboardShortcuts({
       if (key === 'Escape') {
         event.preventDefault()
         // TODO: 選択解除処理
-        console.log('Deselect all')
+        // Deselect all
       }
 
       // ビデオプレビュー（V キー）
@@ -188,7 +188,7 @@ export function useKeyboardShortcuts({
         event.preventDefault()
         if (selectedNodes.length === 1 && selectedNodes[0].data.video) {
           // TODO: ビデオプレビューの表示
-          console.log('Show video preview for node:', selectedNodes[0].id)
+          // Show video preview for selected node
         }
       }
 

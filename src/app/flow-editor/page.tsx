@@ -152,12 +152,11 @@ export default function FlowEditorPage() {
       },
     }
     
-    console.log('[FlowEditor] Adding new node:', newNode)
-    console.log('[FlowEditor] Current nodes count:', nodes.length)
+    // Adding new node
     
     setNodes((nds) => {
       const updatedNodes = [...nds, newNode]
-      console.log('[FlowEditor] Updated nodes count:', updatedNodes.length)
+      // Updated nodes count
       return updatedNodes
     })
     
@@ -315,7 +314,7 @@ export default function FlowEditorPage() {
                 <button
                   onClick={(e) => {
                     e.preventDefault()
-                    console.log('[FlowEditor] Add node button clicked')
+                    // Add node button clicked
                     addNode()
                   }}
                   className="btn-ghost text-sm flex items-center gap-2"

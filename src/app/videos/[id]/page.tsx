@@ -421,7 +421,7 @@ export default function VideoPage() {
                 currentLevel={progress?.progress_level || 0}
                 onLevelChange={(level) => {
                   // Handle level change - will be implemented
-                  console.log('Progress level changed:', level)
+                  // Progress level changed
                 }}
               />
             )}

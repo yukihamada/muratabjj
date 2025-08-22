@@ -104,7 +104,7 @@ export default function ProgressPage() {
 
   const fetchProgressData = async () => {
     try {
-      console.log('[Progress] Fetching progress data for user:', user?.id)
+      // Fetching progress data for user
       
       let query = supabase
         .from('progress_tracking')
@@ -127,14 +127,14 @@ export default function ProgressPage() {
         console.error('[Progress] Database error:', error)
         // テーブルが存在しない場合はエラーではなく空の状態として扱う
         if (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
-          console.log('[Progress] Table does not exist yet, showing empty state')
+          // Table does not exist yet, showing empty state
           setProgressData([])
           return
         }
         throw error
       }
 
-      console.log('[Progress] Data fetched:', data?.length || 0, 'items')
+      // Progress data fetched
       setProgressData(data || [])
     } catch (error: any) {
       console.error('[Progress] Error fetching progress:', error)
@@ -146,7 +146,7 @@ export default function ProgressPage() {
         toast.error('認証の問題が発生しました。ページをリロードしてください。')
       } else {
         // 一般的なエラーでも空の状態を表示
-        console.log('[Progress] Showing empty state due to error')
+        // Showing empty state due to error
         setProgressData([])
       }
     } finally {

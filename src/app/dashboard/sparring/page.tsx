@@ -310,7 +310,7 @@ export default function SparringPage() {
 
   const createSparringLog = async () => {
     try {
-      console.log('[SparringLog] Creating log with data:', formData)
+      // Creating sparring log
       
       // バリデーション
       if (!formData.partner_name.trim()) {
@@ -355,7 +355,7 @@ export default function SparringPage() {
         .single()
 
       if (error) {
-        console.error('[SparringLog] Supabase error:', error)
+        console.error('Supabase error:', error)
         
         // テーブルが存在しない場合
         if (error.code === '42P01' || error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
@@ -370,7 +370,7 @@ export default function SparringPage() {
         throw error
       }
 
-      console.log('[SparringLog] Log created successfully:', data)
+      // Sparring log created successfully
       
       toast.success(
         language === 'ja' ? 'スパーログを作成しました' :

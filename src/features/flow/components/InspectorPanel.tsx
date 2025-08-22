@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { X, ChevronDown, ChevronUp, Video, Tag, AlertCircle, Clock } from 'lucide-react'
 import { useFlowStore } from '../hooks/useFlowStore'
 import { useLanguage } from '@/contexts/LanguageContext'
-import type { FlowNodeData, FlowEdgeData, NodeKind, EdgeKind, Belt } from '@/types/flow'
+import type { FlowNode, FlowEdge, FlowNodeData, FlowEdgeData, NodeKind, EdgeKind, Belt } from '@/types/flow'
 
 const nodeKindLabels = {
   ja: {
@@ -108,7 +108,7 @@ export function InspectorPanel() {
           {/* ノード情報 */}
           {selectedNodes.length > 0 && (
             <>
-              {selectedNodes.map(node => (
+              {selectedNodes.map((node: FlowNode) => (
                 <NodeInspector
                   key={node.id}
                   node={node}
@@ -124,7 +124,7 @@ export function InspectorPanel() {
           {/* エッジ情報 */}
           {selectedEdges.length > 0 && (
             <>
-              {selectedEdges.map(edge => (
+              {selectedEdges.map((edge: FlowEdge) => (
                 <EdgeInspector
                   key={edge.id}
                   edge={edge}

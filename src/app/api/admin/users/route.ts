@@ -60,16 +60,13 @@ export async function GET(request: NextRequest) {
 
     // ユーザー一覧を取得
     const { data: profiles, error: profilesError } = await supabaseAdmin
-      .from('users_profile')
+      .from('profiles')
       .select(`
-        user_id,
+        id,
         full_name,
         belt,
         stripes,
-        is_coach,
-        is_admin,
-        subscription_plan,
-        subscription_status,
+        role,
         created_at,
         updated_at
       `)
@@ -78,9 +75,9 @@ export async function GET(request: NextRequest) {
     if (profilesError) {
       console.error('Error fetching profiles:', profilesError)
       // テーブルが存在しない場合の詳細なエラーメッセージ
-      if (profilesError.message.includes('users_profile') && profilesError.message.includes('not exist')) {
+      if (profilesError.message.includes('profiles') && profilesError.message.includes('not exist')) {
         return NextResponse.json({ 
-          error: 'Database table not found. Please run the migration: npm run fix:admin-users',
+          error: 'Database table not found',
           details: profilesError.message 
         }, { status: 500 })
       }
@@ -97,17 +94,17 @@ export async function GET(request: NextRequest) {
 
     // プロフィールとemailを結合
     const usersWithEmail = profiles?.map(profile => {
-      const authUser = authUsers.find(u => u.id === profile.user_id)
+      const authUser = authUsers.find(u => u.id === profile.id)
       return {
-        id: profile.user_id,
+        id: profile.id,
         email: authUser?.email || '',
         full_name: profile.full_name,
         belt: profile.belt,
         stripes: profile.stripes,
-        role: profile.is_admin ? 'admin' : 'user',
-        is_coach: profile.is_coach,
-        subscription_plan: profile.subscription_plan,
-        subscription_status: profile.subscription_status,
+        role: profile.role || 'user',
+        is_coach: profile.role === 'coach',
+        subscription_plan: 'free',
+        subscription_status: 'active',
         created_at: profile.created_at,
         last_sign_in_at: authUser?.last_sign_in_at
       }

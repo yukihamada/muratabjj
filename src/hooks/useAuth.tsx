@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) {
         // プロファイルが存在しない場合は作成
         if (error.code === 'PGRST116') {
-          console.log('[useAuth] Profile not found, creating new profile...')
+          // Profile not found, creating new profile
           const { data: newProfile, error: createError } = await supabase
             .from('profiles')
             .insert([
@@ -111,14 +111,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let timeoutId: NodeJS.Timeout
 
     // 初期セッションの取得
-    console.log('[useAuth] Checking initial session...')
+    // Checking initial session
     
     const checkSession = async () => {
       try {
         // より短いタイムアウトで早期解決
         timeoutId = setTimeout(() => {
           if (isSubscribed && loading) {
-            console.warn('[useAuth] Session check timeout - forcing completion')
+            // Session check timeout - forcing completion
             setLoading(false)
           }
         }, 1500) // 1.5秒のタイムアウト
@@ -133,11 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return
         }
         
-        console.log('[useAuth] Initial session check:', {
-          hasSession: !!session,
-          user: session?.user?.email,
-          expiresAt: session?.expires_at,
-        })
+        // Initial session check completed
         
         setSession(session)
         setUser(session?.user ?? null)
@@ -166,7 +162,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event: any, session: any) => {
-      console.log('[useAuth] Auth state changed:', _event, session?.user?.email)
+      // Auth state changed
       
       setSession(session)
       setUser(session?.user ?? null)
@@ -192,19 +188,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('[useAuth] Starting sign in for:', email)
+      // Starting sign in
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
       
-      console.log('[useAuth] Sign in response:', {
-        success: !error,
-        user: data?.user?.email,
-        session: !!data?.session,
-        error: error?.message,
-      })
+      // Sign in response received
       
       if (error) throw error
       
@@ -240,7 +231,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     try {
-      console.log('[useAuth] Starting sign out...')
+      // Starting sign out
       const { error } = await supabase.auth.signOut()
       if (error) throw error
       

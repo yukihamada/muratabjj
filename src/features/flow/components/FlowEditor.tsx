@@ -505,7 +505,7 @@ function FlowEditorContent() {
     onCopy: copy,
     onPaste: paste,
     onSave: saveFlow,
-    selectedNodes: nodes.filter(n => selectedNodeIds.includes(n.id)),
+    selectedNodes: nodes.filter((n: FlowNode) => selectedNodeIds.includes(n.id)),
   })
 
   return (

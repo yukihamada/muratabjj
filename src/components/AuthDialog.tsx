@@ -58,7 +58,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
     setLoading(true)
 
     try {
-      console.log(`[Auth] ${mode} attempt for:`, email)
+      // Auth attempt
       
       if (mode === 'login') {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -66,7 +66,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
           password,
         })
         
-        console.log('[Auth] Login response:', { data: data?.user?.email, error: error?.message })
+        // Login response received
         
         if (error) {
           throw error
@@ -74,7 +74,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
         
         // セッションが確立したか確認
         const { data: { session } } = await supabase.auth.getSession()
-        console.log('[Auth] Session after login:', session?.user?.email)
+        // Session checked after login
         
         if (!session) {
           throw new Error('セッションの確立に失敗しました。Cookie設定を確認してください。')
@@ -93,7 +93,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
           },
         })
         
-        console.log('[Auth] Signup response:', { data: data?.user?.email, error: error?.message })
+        // Signup response received
         
         if (error) {
           throw error
@@ -103,12 +103,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
         handleClose()
       }
     } catch (error: any) {
-      console.error('[Auth] Error details:', {
-        message: error.message,
-        status: error.status,
-        code: error.code,
-        details: error,
-      })
+      console.error('[Auth] Error:', error.message)
       
       // エラーメッセージを表示（フォームはリセットしない）
       let errorMessage = ''
@@ -138,7 +133,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
 
   const signInWithGoogle = async () => {
     try {
-      console.log('[Auth] Google OAuth attempt')
+      // Google OAuth attempt
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -150,7 +145,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
         },
       })
       
-      console.log('[Auth] Google OAuth response:', { data, error: error?.message })
+      // Google OAuth response received
       
       if (error) throw error
     } catch (error: any) {

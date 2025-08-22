@@ -146,7 +146,7 @@ export default function ProfilePage() {
 
   const fetchProfile = async () => {
     try {
-      console.log('[Profile] Fetching profile for user:', user?.id)
+      // Fetching profile for user
       
       const { data, error } = await supabase
         .from('profiles')
@@ -155,11 +155,11 @@ export default function ProfilePage() {
         .single()
 
       if (error) {
-        console.log('[Profile] Error fetching profile:', error)
+        // Error fetching profile
         
         // プロファイルが存在しない場合は作成
         if (error.code === 'PGRST116') {
-          console.log('[Profile] Profile not found, creating new profile...')
+          // Profile not found, creating new profile
           const { data: newProfile, error: createError } = await supabase
             .from('profiles')
             .insert({
@@ -180,7 +180,7 @@ export default function ProfilePage() {
           }
           
           if (newProfile) {
-            console.log('[Profile] New profile created:', newProfile)
+            // New profile created
             setProfile(newProfile)
             setFormData({
               full_name: newProfile.full_name || '',
@@ -194,7 +194,7 @@ export default function ProfilePage() {
       }
 
       if (data) {
-        console.log('[Profile] Profile loaded:', data)
+        // Profile loaded
         setProfile(data)
         setFormData({
           full_name: data.full_name || '',
