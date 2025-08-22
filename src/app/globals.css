@@ -222,8 +222,12 @@ input[type="date"] {
     @apply text-lg leading-tight;
   }
   
-  p, .text-base {
+  p {
     @apply text-base;
+    line-height: 1.75;
+  }
+  
+  .text-base {
     line-height: 1.75;
   }
   
