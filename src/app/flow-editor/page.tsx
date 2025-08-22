@@ -132,14 +132,18 @@ export default function FlowEditorPage() {
   )
 
   const addNode = useCallback(() => {
+    const nodeCount = nodes.length + 1
     const newNode: Node = {
       id: `node-${Date.now()}`, // ユニークIDで重複を防ぐ
       type: 'default',
-      position: { x: 250 + Math.random() * 100, y: 100 + Math.random() * 100 }, // ランダム配置
+      position: { 
+        x: 100 + (nodeCount * 60) % 600, // より予測可能な配置
+        y: 100 + Math.floor(nodeCount / 10) * 80 
+      },
       data: { 
-        label: language === 'ja' ? `新しい技術 ${nodes.length + 1}` : 
-               language === 'en' ? `New Technique ${nodes.length + 1}` : 
-               `Nova Técnica ${nodes.length + 1}` 
+        label: language === 'ja' ? `技術 ${nodeCount}` : 
+               language === 'en' ? `Technique ${nodeCount}` : 
+               `Técnica ${nodeCount}` 
       },
       style: {
         background: '#13131a',
@@ -147,25 +151,36 @@ export default function FlowEditorPage() {
         border: '2px solid #ea384c',
         borderRadius: '14px',
         padding: '10px 20px',
-        width: 150,
+        width: 120,
         textAlign: 'center',
+        fontSize: '13px',
+        // アニメーション効果を追加
+        animation: 'fadeIn 0.3s ease-in-out'
       },
     }
     
-    // Adding new node
+    console.log(`[FlowEditor] Adding node ${nodeCount} at position (${newNode.position.x}, ${newNode.position.y})`)
     
     setNodes((nds) => {
       const updatedNodes = [...nds, newNode]
-      // Updated nodes count
+      console.log(`[FlowEditor] Total nodes: ${updatedNodes.length}`)
       return updatedNodes
     })
     
-    // 成功フィードバック
+    // より目立つ成功フィードバック
     toast.success(
-      language === 'ja' ? `ノードを追加しました (${nodes.length + 1}個目)` :
-      language === 'en' ? `Node added (${nodes.length + 1} total)` :
-      `Nó adicionado (${nodes.length + 1} total)`,
-      { duration: 2000 }
+      language === 'ja' ? `✨ ノード「${newNode.data.label}」を追加しました！` :
+      language === 'en' ? `✨ Added node "${newNode.data.label}"!` :
+      `✨ Nó "${newNode.data.label}" adicionado!`,
+      { 
+        duration: 2000,
+        style: {
+          background: 'linear-gradient(135deg, #1a1a23 0%, #2a2a33 100%)',
+          color: '#fff',
+          border: '1px solid #ea384c',
+        },
+        icon: '🎯'
+      }
     )
   }, [nodes, language, setNodes])
 

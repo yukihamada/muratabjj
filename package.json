@@ -15,6 +15,7 @@
     "setup-stripe": "node scripts/setup-stripe.js",
     "seed": "node scripts/seed-data.js",
     "seed:users": "node scripts/seed-users.js",
+    "seed:videos": "node scripts/seed-sample-videos.js",
     "setup:database": "node scripts/setup-database.js",
     "add:sample-videos": "npx tsx src/scripts/add-sample-videos.ts",
     "run:migration": "node scripts/run-migration.js",
