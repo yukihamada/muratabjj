@@ -37,46 +37,83 @@ export default function Supervisor() {
             <h3 className="text-2xl font-bold mb-4">
               {language === 'ja' ? '村田 良蔵（Ryozo Murata）' : 'Ryozo Murata'}
             </h3>
-            <p className="text-lg text-bjj-muted mb-6">
-              {language === 'ja' && (
-                <>SJJIF Worlds Master 36（= IBJJFのM2相当） 黒帯フェザー級{' '}
-                <strong className="text-bjj-text">2018/2019 優勝</strong>。
-                2016/2017 準優勝。スポーツ柔術日本連盟（SJJJF）会長。
-                YAWARA柔術アカデミー代表、Over Limit札幌 代表取締役。</>
-              )}
-              {language === 'en' && (
-                <>SJJIF Worlds Master 36 (= IBJJF M2 equivalent) Black Belt Featherweight{' '}
-                <strong className="text-bjj-text">Champion 2018/2019</strong>.
-                Runner-up 2016/2017. President of Sports Jiu-Jitsu Japan Federation (SJJJF).
-                Head of YAWARA Jiu-Jitsu Academy, CEO of Over Limit Sapporo.</>
-              )}
-              {language === 'pt' && (
-                <>SJJIF Worlds Master 36 (= IBJJF M2 equivalente) Faixa Preta Peso Pena{' '}
-                <strong className="text-bjj-text">Campeão 2018/2019</strong>.
-                Vice-campeão 2016/2017. Presidente da Federação Japonesa de Jiu-Jitsu Esportivo (SJJJF).
-                Chefe da Academia YAWARA Jiu-Jitsu, CEO da Over Limit Sapporo.</>
-              )}
-            </p>
-            <div className="space-y-3 text-sm text-bjj-muted">
-              <div className="flex items-center gap-3">
-                <span className="text-bjj-accent">🏆</span>
-                <span>SJJIF World Championship Master 36 Black Feather Champion (2018, 2019)</span>
+            <div className="mb-6">
+              <p className="text-sm text-bjj-accent mb-2">
+                {language === 'ja' && 'グレイシー直系 黒帯'}
+                {language === 'en' && 'Gracie Lineage Black Belt'}
+                {language === 'pt' && 'Faixa Preta Linhagem Gracie'}
+                {(language === 'es' || language === 'fr' || language === 'ko' || language === 'ru') && 'Gracie Lineage Black Belt'}
+              </p>
+              <p className="text-lg text-bjj-muted">
+                {language === 'ja' && (
+                  <>SJJIF世界選手権マスター2黒帯フェザー級{' '}
+                  <strong className="text-bjj-text">2018年・2019年 二年連続優勝</strong></>
+                )}
+                {language === 'en' && (
+                  <>SJJIF World Championship Master 2 Black Belt Featherweight{' '}
+                  <strong className="text-bjj-text">Two-time Champion 2018 & 2019</strong></>
+                )}
+                {language === 'pt' && (
+                  <>Campeonato Mundial SJJIF Master 2 Faixa Preta Peso Pena{' '}
+                  <strong className="text-bjj-text">Bicampeão 2018 & 2019</strong></>
+                )}
+                {(language === 'es' || language === 'fr' || language === 'ko' || language === 'ru') && (
+                  <>SJJIF World Championship Master 2 Black Belt Featherweight{' '}
+                  <strong className="text-bjj-text">Two-time Champion 2018 & 2019</strong></>
+                )}
+              </p>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-sm font-bold text-bjj-accent mb-2">
+                  {language === 'ja' && '柔術の肩書'}
+                  {language === 'en' && 'BJJ Titles'}
+                  {language === 'pt' && 'Títulos no BJJ'}
+                  {(language === 'es' || language === 'fr' || language === 'ko' || language === 'ru') && 'BJJ Titles'}
+                </h4>
+                <ul className="space-y-2 text-sm">
+                  <li>• {language === 'ja' ? 'グレイシー直系 黒帯' : 'Gracie Lineage Black Belt'}</li>
+                  <li>• {language === 'ja' ? 'SJJIF世界選手権マスター2フェザー級 2018年・2019年 二年連続優勝' : 'SJJIF World Championship Master 2 Featherweight Champion 2018 & 2019'}</li>
+                  <li>• {language === 'ja' ? 'SJJIF世界選手権マスター2フェザー級 2016年・2017年 準優勝' : 'SJJIF World Championship Master 2 Featherweight Runner-up 2016 & 2017'}</li>
+                </ul>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-bjj-accent">🥈</span>
-                <span>SJJIF World Championship Master 36 Black Feather Runner-up (2016, 2017)</span>
+              
+              <div>
+                <h4 className="text-sm font-bold text-bjj-accent mb-2">
+                  {language === 'ja' && '組織運営者・経営者'}
+                  {language === 'en' && 'Organization Leader & Business Owner'}
+                  {language === 'pt' && 'Líder Organizacional e Empresário'}
+                  {(language === 'es' || language === 'fr' || language === 'ko' || language === 'ru') && 'Organization Leader & Business Owner'}
+                </h4>
+                <ul className="space-y-2 text-sm">
+                  <li>• {language === 'ja' ? 'オーバーリミット札幌道場 運営' : 'Over Limit Sapporo Dojo Manager'}</li>
+                  <li>• {language === 'ja' ? 'ヨガスタジオ 経営' : 'Yoga Studio Owner'}</li>
+                  <li>• {language === 'ja' ? 'YAWARA柔術アカデミー 代表' : 'YAWARA Jiu-Jitsu Academy Representative'}</li>
+                </ul>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-bjj-accent">🥋</span>
-                <span>
-                  {language === 'ja' && 'スポーツ柔術日本連盟（SJJJF）会長'}
-                  {language === 'en' && 'President of Sports Jiu-Jitsu Japan Federation (SJJJF)'}
-                  {language === 'pt' && 'Presidente da Federação Japonesa de Jiu-Jitsu Esportivo (SJJJF)'}
-                </span>
+              
+              <div>
+                <h4 className="text-sm font-bold text-bjj-accent mb-2">
+                  {language === 'ja' && 'NPO代表'}
+                  {language === 'en' && 'NPO Representative'}
+                  {language === 'pt' && 'Representante de ONG'}
+                  {(language === 'es' || language === 'fr' || language === 'ko' || language === 'ru') && 'NPO Representative'}
+                </h4>
+                <ul className="space-y-2 text-sm">
+                  <li>• {language === 'ja' ? 'スポーツ柔術日本連盟（SJJJF）代表理事および会長' : 'Sports Jiu-Jitsu Japan Federation (SJJJF) President & Representative Director'}</li>
+                </ul>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-bjj-accent">🏢</span>
-                <span>YAWARA柔術アカデミー代表 / Over Limit Jiu Jitsu Association</span>
+              
+              <div>
+                <h4 className="text-sm font-bold text-bjj-accent mb-2">
+                  {language === 'ja' && 'ヨガインストラクター'}
+                  {language === 'en' && 'Yoga Instructor'}
+                  {language === 'pt' && 'Instrutor de Yoga'}
+                  {(language === 'es' || language === 'fr' || language === 'ko' || language === 'ru') && 'Yoga Instructor'}
+                </h4>
+                <ul className="space-y-2 text-sm">
+                  <li>• {language === 'ja' ? 'ヨガのマスター／インストラクターとしての活動' : 'Active as Yoga Master/Instructor'}</li>
+                </ul>
               </div>
             </div>
           </div>
