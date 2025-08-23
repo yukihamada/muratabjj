@@ -6,6 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import { SUBSCRIPTION_PLANS, type PlanId } from '@/lib/stripe/config'
 import { getStripe } from '@/lib/stripe/client'
 import { useAuth } from '@/hooks/useAuth'
+import toast from 'react-hot-toast'
 
 export default function PricingWithStripe() {
   const { t, language } = useLanguage()
@@ -19,7 +20,16 @@ export default function PricingWithStripe() {
     
     // Check if user is authenticated
     if (!user) {
-      router.push(`/auth/callback?redirect=/pricing&plan=${planId}`)
+      toast.error(
+        language === 'ja' ? 'サブスクリプションを購入するにはログインが必要です' :
+        language === 'en' ? 'Please log in to subscribe' :
+        'Faça login para assinar'
+      )
+      // Show login dialog
+      const loginButton = document.querySelector('[data-testid="login-button"]') as HTMLButtonElement
+      if (loginButton) {
+        loginButton.click()
+      }
       return
     }
 
