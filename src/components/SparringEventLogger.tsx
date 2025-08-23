@@ -86,18 +86,27 @@ export default function SparringEventLogger({ sparringLogId, onEventAdded }: Spa
 
   const handleSubmit = async () => {
     try {
-      const { error } = await supabase
-        .from('sparring_events')
-        .insert({
+      const response = await fetch('/api/sparring/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           sparring_log_id: sparringLogId,
-          ...formData,
+          timestamp: formData.timestamp,
+          event_type: formData.event_type,
           position_from: formData.position_from || null,
           position_to: formData.position_to || null,
           technique_used: formData.technique_used || null,
+          success: formData.success,
           notes: formData.notes || null,
-        })
-
-      if (error) throw error
+        }),
+      })
+      
+      if (!response.ok) {
+        const result = await response.json()
+        throw new Error(result.message || 'Failed to add event')
+      }
 
       toast.success(
         language === 'ja' ? 'イベントを追加しました' :
@@ -119,12 +128,12 @@ export default function SparringEventLogger({ sparringLogId, onEventAdded }: Spa
       if (onEventAdded) {
         onEventAdded()
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding event:', error)
       toast.error(
-        language === 'ja' ? 'イベントの追加に失敗しました' :
-        language === 'en' ? 'Failed to add event' :
-        'Falha ao adicionar evento'
+        language === 'ja' ? 'イベントの追加に失敗しました: ' + (error.message || '') :
+        language === 'en' ? 'Failed to add event: ' + (error.message || '') :
+        'Falha ao adicionar evento: ' + (error.message || '')
       )
     }
   }

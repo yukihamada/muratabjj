@@ -142,39 +142,33 @@ export default function SparringPage() {
 
   const fetchSparringLogs = async () => {
     try {
-      // Use Supabase client directly for now
-      const { data, error } = await supabase
-        .from('sparring_logs')
-        .select(`
-          *,
-          events:sparring_events(*)
-        `)
-        .eq('user_id', user!.id)
-        .order('date', { ascending: false })
-
-      if (error) {
-        console.error('Supabase error:', error)
-        // Check if it's because the table is empty
-        if (error.code === '42P01' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
+      // Use API endpoint for better error handling
+      const response = await fetch('/api/sparring')
+      const result = await response.json()
+      
+      if (!response.ok) {
+        if (result.needsSetup) {
           setLogs([])
           calculateStats([])
+          toast.error(
+            language === 'ja' ? 'スパーリング機能はまだセットアップされていません。\n\nデータベースの設定が必要です。' :
+            language === 'en' ? 'Sparring feature is not set up yet.\n\nDatabase configuration required.' :
+            'A função de registro de sparring ainda não foi configurada.\n\nÉ necessário configurar o banco de dados.'
+          )
           return
         }
-        throw error
+        throw new Error(result.message || 'Failed to fetch logs')
       }
 
-      setLogs(data || [])
-      calculateStats(data || [])
+      setLogs(result.data || [])
+      calculateStats(result.data || [])
     } catch (error) {
       console.error('Error fetching sparring logs:', error)
-      // Only show error if it's not an empty table issue
-      if (!(error as any).message?.includes('relation') && !(error as any).message?.includes('does not exist')) {
-        toast.error(
-          language === 'ja' ? 'スパーログの取得に失敗しました' :
-          language === 'en' ? 'Failed to fetch sparring logs' :
-          'Falha ao buscar registros de sparring'
-        )
-      }
+      toast.error(
+        language === 'ja' ? 'スパーログの取得に失敗しました' :
+        language === 'en' ? 'Failed to fetch sparring logs' :
+        'Falha ao buscar registros de sparring'
+      )
     } finally {
       setLoading(false)
     }
@@ -232,23 +226,23 @@ export default function SparringPage() {
 
   const startLiveSession = async () => {
     try {
-      const { data, error } = await supabase
-        .from('sparring_logs')
-        .insert({
-          user_id: user!.id,
+      const response = await fetch('/api/sparring/live', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'start',
           partner_name: 'Live Session',
-          duration: 0,
           starting_position: 'standing',
-          date: new Date().toISOString(),
           notes: 'Live recording session',
-        })
-        .select()
-        .single()
-
-      if (error) {
-        console.error('[LiveSession] Error:', error)
-        // テーブルが存在しない場合のエラー
-        if (error.code === '42P01' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
+        }),
+      })
+      
+      const result = await response.json()
+      
+      if (!response.ok) {
+        if (result.needsSetup) {
           toast.error(
             language === 'ja' ? 'スパーリングログ機能はまだセットアップされていません。\n\nデータベースの設定が必要です。' :
             language === 'en' ? 'Sparring log feature is not set up yet.\n\nDatabase configuration required.' :
@@ -256,11 +250,11 @@ export default function SparringPage() {
           )
           return
         }
-        throw error
+        throw new Error(result.message || 'Failed to start session')
       }
 
-      setActiveLogId(data.id)
-      setSelectedLog(data)
+      setActiveLogId(result.data.id)
+      setSelectedLog(result.data)
       startTimer()
       
       toast.success(
@@ -284,10 +278,21 @@ export default function SparringPage() {
     pauseTimer()
     
     try {
-      await supabase
-        .from('sparring_logs')
-        .update({ duration: timerSeconds })
-        .eq('id', activeLogId)
+      const response = await fetch('/api/sparring/live', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'end',
+          sparring_log_id: activeLogId,
+          duration: timerSeconds,
+        }),
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to end session')
+      }
 
       toast.success(
         language === 'ja' ? 'セッションを終了しました' :
@@ -310,8 +315,6 @@ export default function SparringPage() {
 
   const createSparringLog = async () => {
     try {
-      // Creating sparring log
-      
       // バリデーション
       if (!formData.partner_name.trim()) {
         toast.error(
@@ -340,25 +343,25 @@ export default function SparringPage() {
         return
       }
 
-      // Use Supabase client directly
-      const { data, error } = await supabase
-        .from('sparring_logs')
-        .insert({
-          user_id: user!.id,
+      // Use API endpoint
+      const response = await fetch('/api/sparring', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           partner_name: formData.partner_name.trim(),
           duration: formData.duration,
           starting_position: formData.starting_position,
-          date: new Date(formData.date).toISOString(),
+          date: formData.date,
           notes: formData.notes.trim(),
-        })
-        .select()
-        .single()
-
-      if (error) {
-        console.error('Supabase error:', error)
-        
-        // テーブルが存在しない場合
-        if (error.code === '42P01' || error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
+        }),
+      })
+      
+      const result = await response.json()
+      
+      if (!response.ok) {
+        if (result.needsSetup) {
           toast.error(
             language === 'ja' ? 'スパーリングログ機能はまだセットアップされていません。\n\nデータベースの設定が必要です。' :
             language === 'en' ? 'Sparring log feature is not set up yet.\n\nDatabase configuration required.' :
@@ -366,12 +369,9 @@ export default function SparringPage() {
           )
           return
         }
-        
-        throw error
+        throw new Error(result.message || 'Failed to create log')
       }
 
-      // Sparring log created successfully
-      
       toast.success(
         language === 'ja' ? 'スパーログを作成しました' :
         language === 'en' ? 'Sparring log created successfully' :
@@ -404,9 +404,9 @@ export default function SparringPage() {
         )
       } else {
         toast.error(
-          language === 'ja' ? 'スパーログの作成に失敗しました: ' + (error.message || '不明なエラー') :
-          language === 'en' ? 'Failed to create sparring log: ' + (error.message || 'Unknown error') :
-          'Falha ao criar registro de sparring: ' + (error.message || 'Erro desconhecido')
+          language === 'ja' ? 'スパーログの保存に失敗しました: ' + (error.message || '不明なエラー') :
+          language === 'en' ? 'Failed to save sparring log: ' + (error.message || 'Unknown error') :
+          'Falha ao salvar registro de sparring: ' + (error.message || 'Erro desconhecido')
         )
       }
     }
