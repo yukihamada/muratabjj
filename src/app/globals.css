@@ -363,6 +363,15 @@ html.light {
   color-scheme: light;
 }
 
+/* デフォルトでダークモードを適用 */
+html:not(.light) {
+  color-scheme: dark;
+}
+
+html:not(.light) body {
+  background: radial-gradient(1100px 800px at 15% -10%, rgba(234,56,76,.18), transparent 50%), rgb(15 15 18);
+}
+
 /* Print styles for PWA */
 @media print {
   * {

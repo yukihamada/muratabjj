@@ -107,7 +107,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ja">
+    <html lang="ja" className="dark">
       <head>
         <link rel="apple-touch-icon" href="/favicon.ico" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

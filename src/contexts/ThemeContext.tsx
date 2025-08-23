@@ -35,6 +35,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.classList.remove('light', 'dark')
     root.classList.add(theme)
     localStorage.setItem('theme', theme)
+    
+    // bodyにもクラスを適用（確実にダークモードにするため）
+    document.body.classList.remove('light', 'dark')
+    document.body.classList.add(theme)
   }, [theme, mounted])
 
   const toggleTheme = () => {
