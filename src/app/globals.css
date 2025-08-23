@@ -19,9 +19,9 @@
     --bjj-bg: 255 255 255;
     --bjj-bg2: 243 244 246;
     --bjj-text: 15 23 42;
-    --bjj-muted: 100 116 139;
+    --bjj-muted: 71 85 105;
     --bjj-line: 226 232 240;
-    --bjj-accent: 234 56 76;
+    --bjj-accent: 220 38 38;
   }
   
   * {
@@ -35,10 +35,12 @@
   }
   
   body {
-    @apply m-0;
+    @apply m-0 antialiased;
     /* デフォルトでダークモードの背景を設定 */
     background: radial-gradient(1100px 800px at 15% -10%, rgba(234,56,76,.18), transparent 50%), #0f0f12;
     color: rgb(240 240 245);
+    font-feature-settings: "kern" 1;
+    text-rendering: optimizeLegibility;
   }
   
   /* ダークモードの背景グラデーション */

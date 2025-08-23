@@ -71,11 +71,12 @@ export default function Header() {
       <nav className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2 font-extrabold text-lg">
-            <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-              <rect width="32" height="32" rx="4" fill="#1e40af"/>
-              <text x="16" y="20" fontFamily="Arial, sans-serif" fontSize="20" fontWeight="bold" fill="white" textAnchor="middle">柔</text>
+            <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" className="text-bjj-accent">
+              <circle cx="14" cy="14" r="13" fill="currentColor" opacity="0.1"/>
+              <circle cx="14" cy="14" r="13" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+              <text x="14" y="18" fontFamily="system-ui, -apple-system" fontSize="14" fontWeight="600" fill="currentColor" textAnchor="middle">柔</text>
             </svg>
-            <span className="text-gray-900">Murata BJJ</span>
+            <span className="text-bjj-text font-medium">Murata BJJ</span>
           </Link>
           
           <div className="hidden md:flex items-center gap-1">

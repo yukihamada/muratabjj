@@ -36,30 +36,41 @@ export default function Hero() {
     <section ref={heroRef} className="container mx-auto px-4 py-16 md:py-24">
       <div className="grid lg:grid-cols-2 gap-8">
         <div className="card-gradient border border-white/10 rounded-bjj p-6 reveal opacity-0">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="w-2 h-2 rounded-full bg-bjj-accent"></span>
-            <span className="text-sm px-3 py-1 border border-white/20 rounded-full">
+          <div className="inline-flex items-center gap-2 mb-6">
+            <span className="text-xs uppercase tracking-wider text-bjj-accent font-medium">
               {t.hero.badge}
             </span>
           </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
-            {t.hero.title1}
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+            <span className="text-bjj-text/90">{t.hero.title1}</span>
             <br />
-            {t.hero.title2}<span className="text-gradient">{t.hero.titleHighlight}</span>
+            <span className="text-bjj-text">{t.hero.title2}</span>
+            <span className="text-bjj-accent block mt-2">{t.hero.titleHighlight}</span>
           </h1>
           
-          <p className="text-bjj-muted text-lg mb-4">
+          <p className="text-bjj-text/70 text-lg mb-6 leading-relaxed">
             {t.hero.description}
-            <strong className="text-bjj-text">{t.hero.descriptionPoints[0]}</strong>・
-            <strong className="text-bjj-text">{t.hero.descriptionPoints[1]}</strong>・
-            <strong className="text-bjj-text">{t.hero.descriptionPoints[2]}</strong>・
-            <strong className="text-bjj-text">{t.hero.descriptionPoints[3]}</strong>
-            {t.hero.descriptionEnd}
           </p>
+          <div className="flex flex-wrap gap-3 mb-6">
+            <span className="px-3 py-1 bg-bjj-accent/10 text-bjj-accent rounded-full text-sm font-medium">
+              {t.hero.descriptionPoints[0]}
+            </span>
+            <span className="px-3 py-1 bg-bjj-accent/10 text-bjj-accent rounded-full text-sm font-medium">
+              {t.hero.descriptionPoints[1]}
+            </span>
+            <span className="px-3 py-1 bg-bjj-accent/10 text-bjj-accent rounded-full text-sm font-medium">
+              {t.hero.descriptionPoints[2]}
+            </span>
+            <span className="px-3 py-1 bg-bjj-accent/10 text-bjj-accent rounded-full text-sm font-medium">
+              {t.hero.descriptionPoints[3]}
+            </span>
+          </div>
           
-          <p className="text-sm text-green-400 mb-6 flex items-center gap-2">
-            <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+          <p className="text-sm text-bjj-muted mb-8 flex items-center gap-2">
+            <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
             {t.hero.healthNote}
           </p>
           
