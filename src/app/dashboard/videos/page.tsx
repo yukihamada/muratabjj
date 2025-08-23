@@ -125,7 +125,7 @@ export default function VideosPage() {
         setIsCoach(true)
       }
 
-      // Load videos
+      // Load videos - include free videos for all users, premium videos only for pro/dojo subscribers
       const { data: videosData } = await supabase
         .from('videos')
         .select('*')
