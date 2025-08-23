@@ -125,10 +125,11 @@ export default function VideosPage() {
         setIsCoach(true)
       }
 
-      // Load videos - include free videos for all users, premium videos only for pro/dojo subscribers
+      // Load videos - show user's own videos or approved videos
       const { data: videosData } = await supabase
         .from('videos')
         .select('*')
+        .or(`user_id.eq.${user!.id},approval_status.eq.approved`)
         .eq('is_published', true)
         .order('created_at', { ascending: false })
       
@@ -192,7 +193,7 @@ export default function VideosPage() {
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold">{t.videos}</h1>
-            {isCoach && (
+            {user && (
               <div className="flex gap-3">
                 <Link href="/dashboard/videos/batch-upload" className="btn-ghost">
                   <Upload className="w-4 h-4 mr-2" />

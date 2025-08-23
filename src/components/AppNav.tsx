@@ -104,11 +104,9 @@ export default function AppNav() {
   }
 
   const navItems = [
-    { href: '/', label: t.home, icon: Home },
     { href: '/videos', label: t.videos, icon: Video },
     { href: '/progress', label: t.progress, icon: Target },
     { href: '/sparring', label: t.sparring, icon: Swords },
-    { href: '/flows', label: t.flows, icon: PenTool },
   ]
 
   return (
@@ -153,14 +151,14 @@ export default function AppNav() {
               )
             })}
             
-            {/* Upload Video (for coaches) */}
-            {isCoach && (
+            {/* Upload Video (for all logged in users) */}
+            {user && (
               <Link
                 href="/videos/upload"
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                   pathname === '/videos/upload'
-                    ? 'bg-purple-100 text-purple-700'
-                    : 'hover:bg-gray-100 text-gray-700'
+                    ? 'bg-bjj-accent/20 text-bjj-accent'
+                    : 'hover:bg-bjj-bg2 text-bjj-text'
                 }`}
               >
                 <Plus className="w-4 h-4" />
@@ -201,7 +199,7 @@ export default function AppNav() {
 
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center justify-around py-2 border-t">
-          {navItems.slice(0, 4).map((item) => {
+          {navItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
             

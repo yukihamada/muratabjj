@@ -98,6 +98,15 @@ export default function AdminDashboard() {
       stats: `${stats.publishedVideos}/${stats.totalVideos}本公開中`
     },
     {
+      title: '動画承認',
+      description: 'アップロードされた動画の承認管理',
+      href: '/admin/video-approval',
+      icon: Shield,
+      color: 'text-red-400',
+      bgColor: 'bg-red-500/10 border-red-500/20',
+      stats: '承認待ち動画の管理'
+    },
+    {
       title: 'AI解析管理',
       description: '文字起こし、自動分類、解析結果',
       href: '/admin/ai-analysis',
