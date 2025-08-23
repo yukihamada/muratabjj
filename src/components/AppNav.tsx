@@ -112,7 +112,7 @@ export default function AppNav() {
   ]
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <nav className="sticky top-0 z-50 bg-bjj-bg border-b border-bjj-line">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -143,8 +143,8 @@ export default function AppNav() {
                   href={item.href}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                     isActive
-                      ? 'bg-purple-100 text-purple-700'
-                      : 'hover:bg-gray-100 text-gray-700'
+                      ? 'bg-bjj-accent/20 text-bjj-accent'
+                      : 'hover:bg-bjj-bg2 text-bjj-text'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -179,8 +179,8 @@ export default function AppNav() {
                   href="/profile"
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                     pathname === '/profile'
-                      ? 'bg-purple-100 text-purple-700'
-                      : 'hover:bg-gray-100 text-gray-700'
+                      ? 'bg-bjj-accent/20 text-bjj-accent'
+                      : 'hover:bg-bjj-bg2 text-bjj-text'
                   }`}
                 >
                   <User className="w-4 h-4" />
@@ -189,7 +189,7 @@ export default function AppNav() {
                 
                 <button
                   onClick={signOut}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-bjj-bg2 text-bjj-text transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   <span className="text-sm hidden sm:inline">{t.logout}</span>
@@ -211,8 +211,8 @@ export default function AppNav() {
                 href={item.href}
                 className={`flex flex-col items-center gap-1 p-2 rounded-lg ${
                   isActive
-                    ? 'text-purple-700'
-                    : 'text-gray-600'
+                    ? 'text-bjj-accent'
+                    : 'text-bjj-muted'
                 }`}
               >
                 <Icon className="w-5 h-5" />

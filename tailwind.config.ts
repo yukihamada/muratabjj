@@ -9,13 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'bjj-bg': '#0f0f12',
-        'bjj-bg2': '#1a1a23',  // より明るく調整
-        'bjj-text': '#f0f0f5',  // コントラストを向上
-        'bjj-muted': '#a8b2c1',  // コントラストを改善したグレー
-        'bjj-line': '#2d2d38',   // 少し明るく
-        'bjj-accent': '#ea384c',
-        'bjj-accent-hover': '#dc2626', // ホバー時の色
+        'bjj-bg': 'rgb(var(--bjj-bg) / <alpha-value>)',
+        'bjj-bg2': 'rgb(var(--bjj-bg2) / <alpha-value>)',
+        'bjj-text': 'rgb(var(--bjj-text) / <alpha-value>)',
+        'bjj-muted': 'rgb(var(--bjj-muted) / <alpha-value>)',
+        'bjj-line': 'rgb(var(--bjj-line) / <alpha-value>)',
+        'bjj-accent': 'rgb(var(--bjj-accent) / <alpha-value>)',
       },
       borderRadius: {
         'bjj': '14px',

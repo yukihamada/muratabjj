@@ -17,7 +17,7 @@ export default function Home() {
     <>
       <AuthRedirect />
       <StructuredData />
-      <main className="min-h-screen bg-gray-50">
+      <main className="min-h-screen bg-bjj-bg">
         <Header />
         <Hero />
         <Features />
