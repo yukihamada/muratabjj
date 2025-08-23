@@ -105,6 +105,7 @@ export default function AppNav() {
 
   const navItems = [
     { href: '/videos', label: t.videos, icon: Video },
+    { href: '/flow-editor', label: t.flows, icon: PenTool },
     { href: '/progress', label: t.progress, icon: Target },
     { href: '/sparring', label: t.sparring, icon: Swords },
   ]

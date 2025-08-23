@@ -20,46 +20,67 @@ import { useEffect } from 'react'
 import { Save, Plus, Trash2, Download, Upload } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { supabase } from '@/lib/supabase/client'
 
-const initialNodes: Node[] = [
-  {
-    id: '1',
-    type: 'default',
-    position: { x: 250, y: 100 },
-    data: { label: 'クローズドガード' },
-    style: {
-      background: '#13131a',
-      color: '#e9e9ee',
-      border: '2px solid #ea384c',
-      borderRadius: '14px',
-      padding: '10px 20px',
+const getInitialNodes = (language: string): Node[] => {
+  const labels = {
+    ja: ['クローズドガード', 'アームドラッグ', 'スイープ'],
+    en: ['Closed Guard', 'Arm Drag', 'Sweep'],
+    pt: ['Guarda Fechada', 'Arm Drag', 'Raspagem'],
+    es: ['Guardia Cerrada', 'Arm Drag', 'Barrida'],
+    fr: ['Garde Fermée', 'Arm Drag', 'Balayage'],
+    ko: ['클로즈드 가드', '암 드래그', '스윕'],
+    ru: ['Закрытая гвардия', 'Арм драг', 'Свип'],
+  }
+  
+  const nodeLabels = labels[language as keyof typeof labels] || labels.en
+  
+  return [
+    {
+      id: '1',
+      type: 'default',
+      position: { x: 250, y: 100 },
+      data: { label: nodeLabels[0] },
+      style: {
+        background: '#13131a',
+        color: '#e9e9ee',
+        border: '2px solid #ea384c',
+        borderRadius: '14px',
+        padding: '10px 20px',
+        width: 150,
+        textAlign: 'center',
+      },
     },
-  },
-  {
-    id: '2',
-    position: { x: 100, y: 250 },
-    data: { label: 'アームドラッグ' },
-    style: {
-      background: '#13131a',
-      color: '#e9e9ee',
-      border: '1px solid rgba(255,255,255,0.1)',
-      borderRadius: '14px',
-      padding: '10px 20px',
+    {
+      id: '2',
+      position: { x: 100, y: 250 },
+      data: { label: nodeLabels[1] },
+      style: {
+        background: '#13131a',
+        color: '#e9e9ee',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: '14px',
+        padding: '10px 20px',
+        width: 150,
+        textAlign: 'center',
+      },
     },
-  },
-  {
-    id: '3',
-    position: { x: 400, y: 250 },
-    data: { label: 'スイープ' },
-    style: {
-      background: '#13131a',
-      color: '#e9e9ee',
-      border: '1px solid rgba(255,255,255,0.1)',
-      borderRadius: '14px',
-      padding: '10px 20px',
+    {
+      id: '3',
+      position: { x: 400, y: 250 },
+      data: { label: nodeLabels[2] },
+      style: {
+        background: '#13131a',
+        color: '#e9e9ee',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: '14px',
+        padding: '10px 20px',
+        width: 150,
+        textAlign: 'center',
+      },
     },
-  },
-]
+  ]
+}
 
 const initialEdges: Edge[] = [
   {
@@ -79,13 +100,14 @@ const initialEdges: Edge[] = [
 ]
 
 export default function FlowEditorPage() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
-  const [flowName, setFlowName] = useState('')
-  const [isMobileView, setIsMobileView] = useState(false)
   const { user, loading } = useAuth()
   const router = useRouter()
   const { language } = useLanguage()
+  
+  const [nodes, setNodes, onNodesChange] = useNodesState(getInitialNodes(language))
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
+  const [flowName, setFlowName] = useState('')
+  const [isMobileView, setIsMobileView] = useState(false)
   
   const [hasInitialized, setHasInitialized] = useState(false)
   
@@ -203,32 +225,82 @@ export default function FlowEditorPage() {
       return
     }
 
-    const flowData = {
-      name: flowName,
-      nodes,
-      edges,
-      createdAt: new Date().toISOString(),
+    if (!user) {
+      toast.error(
+        language === 'ja' ? 'ログインが必要です' :
+        language === 'en' ? 'Login required' :
+        'Login necessário'
+      )
+      return
     }
-    
-    // LocalStorageに保存（Supabaseのflows tableが準備できるまでの暫定対応）
-    const savedFlows = JSON.parse(localStorage.getItem('bjj-flows') || '[]')
-    savedFlows.push(flowData)
-    localStorage.setItem('bjj-flows', JSON.stringify(savedFlows))
-    
-    const successMsg = {
-      ja: 'フローをローカルに保存しました',
-      en: 'Flow saved locally',
-      pt: 'Fluxo salvo com sucesso'
+
+    try {
+      // Supabaseに保存を試みる
+      const { data, error } = await supabase
+        .from('flows')
+        .insert({
+          user_id: user.id,
+          name: flowName,
+          nodes: nodes,
+          edges: edges,
+          is_public: false,
+        })
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error saving flow:', error)
+        
+        // テーブルが存在しない場合はLocalStorageに保存
+        if (error.code === '42P01' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
+          const flowData = {
+            name: flowName,
+            nodes,
+            edges,
+            createdAt: new Date().toISOString(),
+          }
+          
+          const savedFlows = JSON.parse(localStorage.getItem('bjj-flows') || '[]')
+          savedFlows.push(flowData)
+          localStorage.setItem('bjj-flows', JSON.stringify(savedFlows))
+          
+          toast.success(
+            language === 'ja' ? 'フローをローカルに保存しました（データベース準備中）' :
+            language === 'en' ? 'Flow saved locally (Database setup pending)' :
+            'Fluxo salvo localmente (Banco de dados pendente)',
+            {
+              icon: '💾',
+              duration: 4000,
+            }
+          )
+          return
+        }
+        
+        throw error
+      }
+
+      toast.success(
+        language === 'ja' ? 'フローを保存しました' :
+        language === 'en' ? 'Flow saved successfully' :
+        'Fluxo salvo com sucesso',
+        {
+          icon: '✓',
+          style: {
+            background: 'linear-gradient(135deg, #1a1a23 0%, #2a2a33 100%)',
+            color: '#fff',
+            border: '1px solid #4ade80',
+          },
+          duration: 3000,
+        }
+      )
+    } catch (error: any) {
+      console.error('Save error:', error)
+      toast.error(
+        language === 'ja' ? `保存エラー: ${error.message}` :
+        language === 'en' ? `Save error: ${error.message}` :
+        `Erro ao salvar: ${error.message}`
+      )
     }
-    toast.success(successMsg[language as keyof typeof successMsg], {
-      icon: '✓',
-      style: {
-        background: 'linear-gradient(135deg, #1a1a23 0%, #2a2a33 100%)',
-        color: '#fff',
-        border: '1px solid #ea384c',
-      },
-      duration: 3000,
-    })
   }
 
   const exportFlow = () => {
