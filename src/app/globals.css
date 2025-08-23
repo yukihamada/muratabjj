@@ -30,15 +30,21 @@
   
   html {
     @apply scroll-smooth;
+    /* デフォルトでダークモードの背景色 */
+    background-color: #0f0f12;
   }
   
   body {
-    @apply m-0 text-bjj-text bg-bjj-bg;
+    @apply m-0;
+    /* デフォルトでダークモードの背景を設定 */
+    background: radial-gradient(1100px 800px at 15% -10%, rgba(234,56,76,.18), transparent 50%), #0f0f12;
+    color: rgb(240 240 245);
   }
   
   /* ダークモードの背景グラデーション */
   :root body, .dark body {
     background: radial-gradient(1100px 800px at 15% -10%, rgba(234,56,76,.18), transparent 50%), rgb(var(--bjj-bg));
+    color: rgb(var(--bjj-text));
   }
   
   /* ライトモードの背景 */

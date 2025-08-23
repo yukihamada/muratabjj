@@ -116,6 +116,19 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#ea384c" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // ダークモードを即座に適用して白いフラッシュを防ぐ
+              (function() {
+                const savedTheme = localStorage.getItem('theme');
+                const theme = savedTheme || 'dark';
+                document.documentElement.classList.add(theme);
+                document.documentElement.style.backgroundColor = '#0f0f12';
+              })();
+            `,
+          }}
+        />
       </head>
       <body className={inter.className}>
         <ErrorBoundary>

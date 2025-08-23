@@ -12,7 +12,8 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark') // ダークモードをデフォルトに
+  // SSRでもダークモードをデフォルトに
+  const [theme, setTheme] = useState<Theme>('dark')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -45,9 +46,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
   }
 
-  // SSRとのhydrationエラーを防ぐため、マウント前は何も表示しない
+  // SSRとのhydrationエラーを防ぐため、マウント前もダークモードで表示
   if (!mounted) {
-    return null
+    return (
+      <div className="dark">
+        {children}
+      </div>
+    )
   }
 
   return (
