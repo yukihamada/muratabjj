@@ -9,13 +9,14 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-lg bg-bjj-bg2 hover:bg-bjj-line border border-white/10 transition-all"
+      className="p-2 rounded-lg bg-bjj-bg2 hover:bg-bjj-bg2/80 border border-bjj-line transition-all hover:border-bjj-accent/50"
       aria-label={`${theme === 'dark' ? 'ライト' : 'ダーク'}モードに切り替え`}
+      title={`${theme === 'dark' ? 'ライト' : 'ダーク'}モードに切り替え`}
     >
       {theme === 'dark' ? (
-        <Sun className="w-5 h-5 text-bjj-text" />
+        <Sun className="w-5 h-5 text-bjj-text hover:text-bjj-accent transition-colors" />
       ) : (
-        <Moon className="w-5 h-5 text-bjj-text" />
+        <Moon className="w-5 h-5 text-bjj-text hover:text-bjj-accent transition-colors" />
       )}
     </button>
   )

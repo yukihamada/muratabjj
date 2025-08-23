@@ -46,17 +46,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
   }
 
-  // SSRとのhydrationエラーを防ぐため、マウント前もダークモードで表示
-  if (!mounted) {
-    return (
-      <div className="dark">
-        {children}
-      </div>
-    )
+  // SSRとのhydrationエラーを防ぐため、マウント前もコンテキストを提供
+  // ただし、toggleThemeはマウント後のみ動作
+  const value = {
+    theme,
+    toggleTheme: mounted ? toggleTheme : () => {}
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   )
