@@ -4,7 +4,7 @@ import Features from '@/components/Features'
 import BJJFlowChart from '@/components/BJJFlowChart'
 import HowToUse from '@/components/HowToUse'
 import SafetyAndWellness from '@/components/SafetyAndWellness'
-import Pricing from '@/components/Pricing'
+import PricingWithStripe from '@/components/PricingWithStripe'
 import Supervisor from '@/components/Supervisor'
 import FAQ from '@/components/FAQ'
 import Signup from '@/components/Signup'
@@ -24,7 +24,7 @@ export default function Home() {
         <BJJFlowChart />
         <HowToUse />
         <SafetyAndWellness />
-        <Pricing />
+        <PricingWithStripe />
         <Supervisor />
         <FAQ />
         <Signup />
