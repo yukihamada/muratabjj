@@ -125,13 +125,19 @@ export default function ProgressPage() {
 
       if (error) {
         console.error('[Progress] Database error:', error)
-        // テーブルが存在しない場合はエラーではなく空の状態として扱う
-        if (error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
-          // Table does not exist yet, showing empty state
+        // テーブルが存在しない場合やデータが無い場合はエラーではなく空の状態として扱う
+        if (error.code === 'PGRST116' || 
+            error.message?.includes('relation') || 
+            error.message?.includes('does not exist') ||
+            error.message?.includes('permission denied')) {
+          // Table does not exist or permission issues - show empty state without error
           setProgressData([])
           return
         }
-        throw error
+        // その他のエラーも空の状態として扱い、ユーザーにはエラーを表示しない
+        console.warn('[Progress] Treating error as empty state:', error.message)
+        setProgressData([])
+        return
       }
 
       // Progress data fetched
@@ -139,16 +145,18 @@ export default function ProgressPage() {
     } catch (error: any) {
       console.error('[Progress] Error fetching progress:', error)
       
-      // ネットワークエラーや設定問題の場合
+      // 重要なエラーのみユーザーに通知、その他は空の状態として扱う
       if (error.message?.includes('Failed to fetch') || error.message?.includes('Network')) {
-        toast.error('ネットワークエラーが発生しました。接続を確認してください。')
+        toast.error(language === 'ja' ? 'ネットワークエラーが発生しました。接続を確認してください。' :
+                   language === 'en' ? 'Network error occurred. Please check your connection.' :
+                   'Erro de rede ocorreu. Verifique sua conexão.')
       } else if (error.message?.includes('JWT') || error.message?.includes('auth')) {
-        toast.error('認証の問題が発生しました。ページをリロードしてください。')
-      } else {
-        // 一般的なエラーでも空の状態を表示
-        // Showing empty state due to error
-        setProgressData([])
+        toast.error(language === 'ja' ? '認証の問題が発生しました。ページをリロードしてください。' :
+                   language === 'en' ? 'Authentication issue occurred. Please reload the page.' :
+                   'Problema de autenticação ocorreu. Recarregue a página.')
       }
+      // すべてのエラーで空の状態を表示（エラートーストは重要な場合のみ）
+      setProgressData([])
     } finally {
       setLoading(false)
     }

@@ -254,7 +254,32 @@ export default function VideosPage() {
           {/* Video Grid */}
           {filteredVideos.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-bjj-muted">{t.noVideos}</p>
+              <div className="max-w-md mx-auto">
+                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Play className="w-8 h-8 text-bjj-muted" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">
+                  {language === 'ja' ? '動画がありません' :
+                   language === 'en' ? 'No Videos Available' :
+                   'Nenhum Vídeo Disponível'}
+                </h3>
+                <p className="text-bjj-muted mb-4">
+                  {videos.length === 0 ?
+                    (language === 'ja' ? 'まだ動画がアップロードされていません。コーチが動画を追加するまでお待ちください。' :
+                     language === 'en' ? 'No videos have been uploaded yet. Please wait for coaches to add videos.' :
+                     'Ainda não foram carregados vídeos. Aguarde os instrutores adicionarem vídeos.') :
+                    (language === 'ja' ? '検索条件に一致する動画が見つかりません。フィルターを変更してみてください。' :
+                     language === 'en' ? 'No videos match your search criteria. Try changing the filters.' :
+                     'Nenhum vídeo corresponde aos seus critérios de busca. Tente alterar os filtros.')
+                  }
+                </p>
+                {videos.length === 0 && isCoach && (
+                  <Link href="/dashboard/videos/upload" className="btn-primary inline-flex items-center gap-2">
+                    <Plus className="w-4 h-4" />
+                    {t.uploadVideo}
+                  </Link>
+                )}
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
