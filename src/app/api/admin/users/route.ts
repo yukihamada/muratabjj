@@ -27,9 +27,15 @@ function getSupabaseAdmin() {
 }
 
 // 管理者チェック
-function isAdmin(email: string | undefined): boolean {
-  const adminEmails = ['shu.shu.4029@gmail.com', 'yuki@hamada.tokyo']
-  return adminEmails.includes(email || '')
+async function isAdmin(userId: string): Promise<boolean> {
+  const supabaseAdmin = getSupabaseAdmin()
+  const { data, error } = await supabaseAdmin
+    .from('user_profiles')
+    .select('is_admin')
+    .or(`id.eq.${userId},user_id.eq.${userId}`)
+    .single()
+  
+  return data?.is_admin || false
 }
 
 export async function GET(request: NextRequest) {
@@ -54,7 +60,12 @@ export async function GET(request: NextRequest) {
     const supabaseAdmin = getSupabaseAdmin()
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
     
-    if (authError || !user || !isAdmin(user.email)) {
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
+    }
+    
+    const isUserAdmin = await isAdmin(user.id)
+    if (!isUserAdmin) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 

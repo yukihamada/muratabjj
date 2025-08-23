@@ -85,6 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
           setProfile(newProfile)
           setIsCoach(newProfile?.is_coach || false)
+          setIsAdmin(newProfile?.is_admin || false)
         } else {
           console.error('[useAuth] Error fetching profile:', error)
           // プロファイル取得に失敗してもログインは成功させる
@@ -93,6 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setProfile(data)
         setIsCoach(data?.is_coach || false)
+        setIsAdmin(data?.is_admin || false)
       }
     } catch (error) {
       console.error('[useAuth] Error in fetchProfile:', error)
@@ -137,8 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         setSession(session)
         setUser(session?.user ?? null)
-        const adminEmails = ['shu.shu.4029@gmail.com', 'yuki@hamada.tokyo']
-        setIsAdmin(adminEmails.includes(session?.user?.email || ''))
+        // isAdmin is set from profile data in fetchProfile
         
         if (session?.user) {
           // プロファイル取得は非同期で実行（ブロックしない）
@@ -166,8 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       setSession(session)
       setUser(session?.user ?? null)
-      const adminEmails = ['shu.shu.4029@gmail.com', 'yuki@hamada.tokyo']
-      setIsAdmin(adminEmails.includes(session?.user?.email || ''))
+      // isAdmin is set from profile data in fetchProfile
       
       if (session?.user) {
         await fetchProfile(session.user.id, session.user.email)

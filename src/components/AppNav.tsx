@@ -152,19 +152,21 @@ export default function AppNav() {
               )
             })}
             
-            {/* Upload Video (for everyone) */}
-            <Link
-              href="/dashboard/videos/upload"
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                pathname === '/dashboard/videos/upload'
-                  ? 'bg-bjj-accent/20 text-bjj-accent'
-                  : 'hover:bg-bjj-bg2 text-bjj-text'
-              }`}
-              title={t.uploadVideo}
-            >
-              <Plus className="w-4 h-4" />
-              <span className="text-sm font-medium hidden lg:inline">{t.uploadVideo}</span>
-            </Link>
+            {/* Upload Video (only for logged-in users) */}
+            {user && (
+              <Link
+                href="/dashboard/videos/upload"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  pathname === '/dashboard/videos/upload'
+                    ? 'bg-bjj-accent/20 text-bjj-accent'
+                    : 'hover:bg-bjj-bg2 text-bjj-text'
+                }`}
+                title={t.uploadVideo}
+              >
+                <Plus className="w-4 h-4" />
+                <span className="text-sm font-medium hidden lg:inline">{t.uploadVideo}</span>
+              </Link>
+            )}
           </div>
 
           {/* Right side */}

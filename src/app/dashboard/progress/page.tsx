@@ -107,7 +107,7 @@ export default function ProgressPage() {
       // Fetching progress data for user
       
       let query = supabase
-        .from('progress_tracking')
+        .from('user_progress')
         .select(`
           *,
           video:videos!video_id(title, category, thumbnail_url),
@@ -165,7 +165,7 @@ export default function ProgressPage() {
   const updateProgress = async (id: string, newLevel: number) => {
     try {
       const { error } = await supabase
-        .from('progress_tracking')
+        .from('user_progress')
         .update({ 
           progress_level: newLevel,
           last_practiced: new Date().toISOString()

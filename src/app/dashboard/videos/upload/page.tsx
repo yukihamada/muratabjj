@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase/client'
 import { uploadVideo, uploadThumbnail, generateVideoThumbnail, getVideoDuration } from '@/lib/supabase/storage'
 import { transcribeVideoServerSide, saveTranscription } from '@/lib/whisper/api'
 import { Upload, AlertCircle, Info, Video, Loader2, Plus, Mic, Brain } from 'lucide-react'
+import Link from 'next/link'
 import { useLanguage } from '@/contexts/LanguageContext'
 import DashboardNav from '@/components/DashboardNav'
 import toast from 'react-hot-toast'
@@ -194,16 +195,10 @@ export default function VideoUploadPage() {
     e.preventDefault()
     if (!videoFile) return
 
-    // ユーザーがログインしていない場合は警告を表示
+    // ユーザーがログインしていない場合はエラー
     if (!user) {
-      const proceed = window.confirm(
-        language === 'ja' ? 
-          'ログインせずに投稿すると、後で編集や削除ができません。続行しますか？' :
-        language === 'en' ? 
-          'If you upload without logging in, you won\'t be able to edit or delete later. Continue?' :
-          'Se você enviar sem fazer login, não poderá editar ou excluir depois. Continuar?'
-      )
-      if (!proceed) return
+      toast.error(t.loginRequired)
+      return
     }
 
     setLoading(true)
@@ -211,8 +206,7 @@ export default function VideoUploadPage() {
 
     try {
       // 1. Upload video with progress tracking
-      // ログインしていない場合は anonymous ユーザーとして扱う
-      const uploaderId = user?.id || 'anonymous'
+      const uploaderId = user.id
       const { path: videoPath, url: videoUrl } = await uploadVideo(
         videoFile,
         uploaderId,
@@ -241,7 +235,7 @@ export default function VideoUploadPage() {
           thumbnail_url: thumbnailUrl,
           duration,
           technique_id: formData.technique_id || null,
-          instructor_id: user?.id || null,
+          instructor_id: user.id,
           belt_requirement: formData.belt_requirement || null,
           is_premium: formData.is_premium,
           is_published: true,
@@ -269,7 +263,7 @@ export default function VideoUploadPage() {
           const transcription = await transcribeVideoServerSide(videoUrl, language)
           
           // Save transcription to database
-          await saveTranscription(videoData.id, transcription, user?.id || 'anonymous')
+          await saveTranscription(videoData.id, transcription, user.id)
           
           // Update transcription status
           await supabase
@@ -397,7 +391,33 @@ export default function VideoUploadPage() {
     }
   }
 
-  // Remove login requirement - anyone can upload
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-bjj-bg">
+        <DashboardNav />
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="card-gradient rounded-bjj p-8 border border-white/10">
+              <h1 className="text-2xl font-bold mb-4">{t.loginRequired}</h1>
+              <p className="text-bjj-muted mb-6">
+                {language === 'ja' ? '動画を投稿するにはログインが必要です' :
+                 language === 'en' ? 'Please login to upload videos' :
+                 'Faça login para enviar vídeos'}
+              </p>
+              <Link 
+                href="/login" 
+                className="btn-primary inline-block"
+              >
+                {language === 'ja' ? 'ログインする' :
+                 language === 'en' ? 'Login' :
+                 'Fazer login'}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-bjj-bg">

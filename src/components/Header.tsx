@@ -124,13 +124,6 @@ export default function Header() {
               </div>
             ) : (
               <>
-                <Link
-                  href="/dashboard/videos/upload"
-                  className="px-4 py-2 rounded-lg bg-bjj-accent/10 text-bjj-accent hover:bg-bjj-accent/20 transition-colors flex items-center gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span className="hidden sm:inline">{translations.nav.upload || (language === 'ja' ? '動画投稿' : language === 'en' ? 'Upload' : 'Enviar')}</span>
-                </Link>
                 <button
                   onClick={() => {
                     setAuthDialogMode('login')

@@ -239,7 +239,7 @@ export default function SparringPage() {
           partner_name: 'Live Session',
           duration: 0,
           starting_position: 'standing',
-          date: new Date().toISOString(),
+          // date is set automatically by database default
           notes: 'Live recording session',
         })
         .select()
@@ -348,7 +348,7 @@ export default function SparringPage() {
           partner_name: formData.partner_name.trim(),
           duration: formData.duration,
           starting_position: formData.starting_position,
-          date: new Date(formData.date).toISOString(),
+          date: formData.date,
           notes: formData.notes.trim(),
         })
         .select()
