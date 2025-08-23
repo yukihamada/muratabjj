@@ -105,7 +105,8 @@ export default function AdminUsers() {
       
       if (response.ok) {
         const data = await response.json()
-        setUsers(data.users)
+        console.log('Users data:', data)
+        setUsers(data.users || [])
       } else {
         const error = await response.json()
         console.error('API Error:', error)

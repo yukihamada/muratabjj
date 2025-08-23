@@ -110,6 +110,7 @@ export async function GET(request: NextRequest) {
       }
     }) || []
 
+    console.log(`Returning ${usersWithEmail.length} users`)
     return NextResponse.json({ users: usersWithEmail })
 
   } catch (error) {

@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useLanguage } from '@/contexts/LanguageContext'
 import LanguageSwitcher from './LanguageSwitcher'
-import { Home, Video, Target, Swords, Brain, PenTool, User, LogOut, Shield } from 'lucide-react'
+import { Home, Video, Target, Swords, Brain, PenTool, User, LogOut, Shield, Upload } from 'lucide-react'
 
 const translations = {
   ja: {
@@ -18,6 +18,7 @@ const translations = {
     admin: '管理者',
     profile: 'プロフィール',
     logout: 'ログアウト',
+    upload: 'アップロード',
   },
   en: {
     dashboard: 'Dashboard',
@@ -29,6 +30,7 @@ const translations = {
     admin: 'Admin',
     profile: 'Profile',
     logout: 'Logout',
+    upload: 'Upload',
   },
   pt: {
     dashboard: 'Painel',
@@ -40,6 +42,7 @@ const translations = {
     admin: 'Admin',
     profile: 'Perfil',
     logout: 'Sair',
+    upload: 'Enviar',
   },
   es: {
     dashboard: 'Panel',
@@ -51,6 +54,7 @@ const translations = {
     admin: 'Admin',
     profile: 'Perfil',
     logout: 'Salir',
+    upload: 'Subir',
   },
   fr: {
     dashboard: 'Tableau de bord',
@@ -62,6 +66,7 @@ const translations = {
     admin: 'Admin',
     profile: 'Profil',
     logout: 'Déconnexion',
+    upload: 'Télécharger',
   },
   ko: {
     dashboard: '대시보드',
@@ -73,6 +78,7 @@ const translations = {
     admin: '관리자',
     profile: '프로필',
     logout: '로그아웃',
+    upload: '업로드',
   },
   ru: {
     dashboard: 'Панель',
@@ -84,6 +90,7 @@ const translations = {
     admin: 'Админ',
     profile: 'Профиль',
     logout: 'Выйти',
+    upload: 'Загрузить',
   },
 }
 
@@ -96,6 +103,7 @@ export default function DashboardNav() {
   const navItems = [
     { href: '/dashboard', label: t.dashboard, icon: Home },
     { href: '/dashboard/videos', label: t.videos, icon: Video },
+    { href: '/dashboard/videos/upload', label: t.upload, icon: Upload },
     { href: '/dashboard/progress', label: t.progress, icon: Target },
     { href: '/dashboard/sparring', label: t.sparring, icon: Swords },
     { href: '/dashboard/review', label: t.review, icon: Brain },

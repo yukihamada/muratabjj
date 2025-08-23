@@ -149,12 +149,8 @@ export default function VideoUploadPage() {
   })
 
   useEffect(() => {
-    if (!user) {
-      router.push('/')
-      return
-    }
     loadData()
-  }, [user])
+  }, [])
 
   async function loadData() {
     // Load techniques
@@ -167,15 +163,17 @@ export default function VideoUploadPage() {
       setTechniques(techData)
     }
 
-    // Load user's flows
-    const { data: flowData } = await supabase
-      .from('flows')
-      .select('*')
-      .eq('created_by', user!.id)
-      .order('created_at', { ascending: false })
+    // Load user's flows (if logged in)
+    if (user) {
+      const { data: flowData } = await supabase
+        .from('flows')
+        .select('*')
+        .eq('created_by', user.id)
+        .order('created_at', { ascending: false })
 
-    if (flowData) {
-      setFlows(flowData)
+      if (flowData) {
+        setFlows(flowData)
+      }
     }
   }
 
@@ -194,16 +192,30 @@ export default function VideoUploadPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user || !videoFile) return
+    if (!videoFile) return
+
+    // ユーザーがログインしていない場合は警告を表示
+    if (!user) {
+      const proceed = window.confirm(
+        language === 'ja' ? 
+          'ログインせずに投稿すると、後で編集や削除ができません。続行しますか？' :
+        language === 'en' ? 
+          'If you upload without logging in, you won\'t be able to edit or delete later. Continue?' :
+          'Se você enviar sem fazer login, não poderá editar ou excluir depois. Continuar?'
+      )
+      if (!proceed) return
+    }
 
     setLoading(true)
     setUploadProgress(0)
 
     try {
       // 1. Upload video with progress tracking
+      // ログインしていない場合は anonymous ユーザーとして扱う
+      const uploaderId = user?.id || 'anonymous'
       const { path: videoPath, url: videoUrl } = await uploadVideo(
         videoFile,
-        user.id,
+        uploaderId,
         (progress) => setUploadProgress(progress)
       )
 
@@ -229,7 +241,7 @@ export default function VideoUploadPage() {
           thumbnail_url: thumbnailUrl,
           duration,
           technique_id: formData.technique_id || null,
-          instructor_id: user.id,
+          instructor_id: user?.id || null,
           belt_requirement: formData.belt_requirement || null,
           is_premium: formData.is_premium,
           is_published: true,
@@ -257,7 +269,7 @@ export default function VideoUploadPage() {
           const transcription = await transcribeVideoServerSide(videoUrl, language)
           
           // Save transcription to database
-          await saveTranscription(videoData.id, transcription, user.id)
+          await saveTranscription(videoData.id, transcription, user?.id || 'anonymous')
           
           // Update transcription status
           await supabase
@@ -385,18 +397,7 @@ export default function VideoUploadPage() {
     }
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-bjj-bg">
-        <DashboardNav />
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-2xl mx-auto text-center">
-            <p className="text-bjj-muted">{t.loginRequired}</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  // Remove login requirement - anyone can upload
 
   return (
     <div className="min-h-screen bg-bjj-bg">

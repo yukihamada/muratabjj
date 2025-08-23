@@ -7,7 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import AuthDialog from './AuthDialog'
 import LanguageSwitcher from './LanguageSwitcher'
 import ThemeToggle from './ThemeToggle'
-import { User, LogOut, Menu, X } from 'lucide-react'
+import { User, LogOut, Menu, X, Plus } from 'lucide-react'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -25,7 +25,7 @@ export default function Header() {
   }, [])
   
   const { user, signOut, loading } = useAuth()
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   
   // 初期化中の表示（翻訳orAuth読み込み中）
   if ((!t || !t.nav || (loading && !isInitialized)) && !isInitialized) {
@@ -57,7 +57,8 @@ export default function Header() {
       faq: 'FAQ',
       login: 'Login',
       freeStart: 'Start Free',
-      logout: 'Logout'
+      logout: 'Logout',
+      upload: 'Upload'
     },
     common: {
       loading: 'Loading...'
@@ -97,6 +98,13 @@ export default function Header() {
               </div>
             ) : user ? (
               <div className="flex items-center gap-4">
+                <Link
+                  href="/dashboard/videos/upload"
+                  className="px-4 py-2 rounded-lg bg-bjj-accent/10 text-bjj-accent hover:bg-bjj-accent/20 transition-colors flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span className="hidden sm:inline">{translations.nav.upload || (language === 'ja' ? '動画投稿' : language === 'en' ? 'Upload' : 'Enviar')}</span>
+                </Link>
                 <Link href="/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-bjj-bg2 text-bjj-text transition-colors">
                   <User className="w-4 h-4" />
                   <span className="hidden sm:inline text-sm">{user.email?.split('@')[0]}</span>
@@ -116,6 +124,13 @@ export default function Header() {
               </div>
             ) : (
               <>
+                <Link
+                  href="/dashboard/videos/upload"
+                  className="px-4 py-2 rounded-lg bg-bjj-accent/10 text-bjj-accent hover:bg-bjj-accent/20 transition-colors flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span className="hidden sm:inline">{translations.nav.upload || (language === 'ja' ? '動画投稿' : language === 'en' ? 'Upload' : 'Enviar')}</span>
+                </Link>
                 <button
                   onClick={() => {
                     setAuthDialogMode('login')

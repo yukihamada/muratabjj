@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     // Get user's subscription info
     const { data: profile } = await supabase
-      .from('profiles')
+      .from('user_profiles')
       .select('stripe_subscription_id, stripe_customer_id')
       .eq('id', user.id)
       .single();
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
         // Update database
         await supabase
-          .from('profiles')
+          .from('user_profiles')
           .update({
             subscription_status: 'canceling',
           })
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
 
         // Update database
         await supabase
-          .from('profiles')
+          .from('user_profiles')
           .update({
             subscription_status: 'active',
           })

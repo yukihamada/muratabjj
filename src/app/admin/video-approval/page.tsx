@@ -86,7 +86,7 @@ export default function VideoApprovalPage() {
 
       const videosWithEmail = data?.map(video => ({
         ...video,
-        user_email: video.profiles?.email
+        user_email: video.user_profiles?.email
       })) || []
 
       setVideos(videosWithEmail)

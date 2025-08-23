@@ -10,6 +10,7 @@ export const es = {
     logout: 'Cerrar Sesión',
     dashboard: 'Panel',
     freeStart: 'Empezar Gratis',
+    upload: 'Subir Video',
   },
 
   // Sección Hero
