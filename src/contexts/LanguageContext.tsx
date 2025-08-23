@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { locales, Locale, defaultLocale, TranslationKeys } from '@/locales'
-import { useRouter, usePathname } from 'next/navigation'
 
 interface LanguageContextType {
   locale: Locale
@@ -20,60 +19,44 @@ export function LanguageProvider({
   children: ReactNode
   initialLocale?: Locale 
 }) {
-  const router = useRouter()
-  const pathname = usePathname()
-  
-  // URLから言語を取得（/en/... or /pt/...）
-  const getLocaleFromPath = (): Locale => {
-    if (initialLocale) return initialLocale
-    
-    // LocalStorageから保存された言語を取得
-    if (typeof window !== 'undefined') {
-      const savedLocale = localStorage.getItem('locale') as Locale
-      if (savedLocale && savedLocale in locales) {
-        return savedLocale
-      }
+  // サーバーサイドレンダリング時はデフォルト言語を使用
+  const getInitialLocale = (): Locale => {
+    // サーバーサイドまたは初期ロケールが指定されている場合
+    if (typeof window === 'undefined' || initialLocale) {
+      return initialLocale || defaultLocale
     }
     
-    const segments = pathname.split('/')
-    const possibleLocale = segments[1] as Locale
-    
-    if (possibleLocale && possibleLocale in locales) {
-      return possibleLocale
+    // クライアントサイドでLocalStorageから保存された言語を取得
+    const savedLocale = localStorage.getItem('murata-bjj-locale') as Locale
+    if (savedLocale && savedLocale in locales) {
+      return savedLocale
     }
     
     return defaultLocale
   }
 
-  const [locale, setLocaleState] = useState<Locale>(getLocaleFromPath())
+  const [locale, setLocaleState] = useState<Locale>(getInitialLocale())
 
+  // クライアントサイドで初回ロード時にlocalStorageから言語を復元
   useEffect(() => {
-    // LocalStorageに保存（クライアントサイドのみ）
+    if (typeof window !== 'undefined' && !initialLocale) {
+      const savedLocale = localStorage.getItem('murata-bjj-locale') as Locale
+      if (savedLocale && savedLocale in locales && savedLocale !== locale) {
+        setLocaleState(savedLocale)
+      }
+    }
+  }, [])
+
+  // 言語変更時にlocalStorageに保存
+  useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('locale', locale)
+      localStorage.setItem('murata-bjj-locale', locale)
     }
   }, [locale])
 
+  // 言語変更（URL操作なし）
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale)
-    
-    // URLを更新
-    const segments = pathname.split('/')
-    const currentLocale = segments[1] as Locale
-    
-    if (currentLocale in locales) {
-      // 既存の言語パスを置換
-      segments[1] = newLocale
-      const newPath = segments.join('/')
-      router.push(newPath)
-    } else if (newLocale !== defaultLocale) {
-      // 言語パスを追加
-      const newPath = `/${newLocale}${pathname}`
-      router.push(newPath)
-    } else {
-      // デフォルト言語の場合はパスから削除
-      router.push(pathname)
-    }
   }
 
   const t = locales[locale]
