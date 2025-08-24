@@ -9,7 +9,7 @@ export const STORAGE_BUCKETS = {
 
 // Maximum file sizes in bytes
 export const MAX_FILE_SIZES = {
-  VIDEO: 5 * 1024 * 1024 * 1024, // 5GB = 5,368,709,120 bytes
+  VIDEO: 500 * 1024 * 1024, // 500MB (ブラウザアップロードに現実的なサイズ)
   THUMBNAIL: 5 * 1024 * 1024, // 5MB
   AVATAR: 2 * 1024 * 1024, // 2MB
 } as const
@@ -46,7 +46,7 @@ export async function uploadVideo(
   }
   
   if (file.size > MAX_FILE_SIZES.VIDEO) {
-    throw new Error(`File size exceeds ${MAX_FILE_SIZES.VIDEO / 1024 / 1024 / 1024}GB limit. Your file is ${Math.round(file.size / 1024 / 1024)}MB.`)
+    throw new Error(`File size exceeds ${MAX_FILE_SIZES.VIDEO / 1024 / 1024}MB limit. Your file is ${Math.round(file.size / 1024 / 1024)}MB.`)
   }
   
   // Generate unique filename
@@ -62,6 +62,7 @@ export async function uploadVideo(
     .upload(fileName, file, {
       cacheControl: '3600',
       upsert: false,
+      duplex: 'half', // 大きなファイル用の設定
       onUploadProgress: (progress: any) => {
         if (onProgress) {
           const percentage = (progress.loaded / progress.total) * 100
@@ -79,7 +80,7 @@ export async function uploadVideo(
     if (error.message.includes('row-level security') || error.message.includes('policy') || error.message.includes('permission')) {
       friendlyError = 'アクセス権限の問題です。ページを再読み込みしてから再度お試しください。'
     } else if (error.message.includes('exceeded') || error.message.includes('size')) {
-      friendlyError = 'ファイルサイズが大きすぎます。5GB以下のファイルをアップロードしてください。'
+      friendlyError = 'ファイルサイズが大きすぎます。500MB以下のファイルをアップロードしてください。'
     } else if (error.message.includes('mime') || error.message.includes('type')) {
       friendlyError = 'サポートされていないファイル形式です。MP4、MOV、AVI形式のファイルをアップロードしてください。'
     } else if (error.message.includes('bucket') || error.message.includes('not found')) {
