@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 stripes: 0,
                 is_admin: false,
                 is_coach: false,
-                subscription_plan: 'free',
+                subscription_tier: 'free',
                 subscription_status: 'inactive'
               }
             ])

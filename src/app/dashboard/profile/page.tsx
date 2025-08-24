@@ -149,7 +149,7 @@ export default function ProfilePage() {
       // Fetching profile for user
       
       const { data, error } = await supabase
-        .from('users_profile')
+        .from('user_profiles')
         .select('*')
         .eq('user_id', user!.id)
         .single()
@@ -161,7 +161,7 @@ export default function ProfilePage() {
         if (error.code === 'PGRST116') {
           // Profile not found, creating new profile
           const { data: newProfile, error: createError } = await supabase
-            .from('users_profile')
+            .from('user_profiles')
             .insert({
               user_id: user!.id,
               full_name: '',
@@ -169,7 +169,7 @@ export default function ProfilePage() {
               stripes: 0,
               is_admin: false,
               is_coach: false,
-              subscription_plan: 'free',
+              subscription_tier: 'free',
               subscription_status: 'inactive',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
@@ -255,7 +255,7 @@ export default function ProfilePage() {
 
     try {
       const { error } = await supabase
-        .from('users_profile')
+        .from('user_profiles')
         .update({
           full_name: formData.full_name,
           belt: formData.belt,
