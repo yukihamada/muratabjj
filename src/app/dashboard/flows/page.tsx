@@ -55,6 +55,7 @@ const translations = {
     preview: 'プレビュー',
     edit: '編集',
     flowSaved: 'フローを保存しました',
+    flowNameRequired: 'フロー名を入力してください',
     allFlows: 'すべてのフロー',
     popular: '人気',
     recent: '最近',

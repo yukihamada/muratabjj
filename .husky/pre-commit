@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-commit hook to check lint and types
+echo "🔍 Running pre-commit checks..."
+
+# Run type check
+echo "📝 Checking TypeScript types..."
+npm run typecheck
+
+if [ $? -ne 0 ]; then
+    echo "❌ TypeScript errors found! Please fix before committing."
+    exit 1
+fi
+
+echo "✅ TypeScript check passed!"
+
+# Run lint for staged files only
+echo "🔍 Running ESLint on staged files..."
+npx eslint --max-warnings 0 $(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|jsx|ts|tsx)$' | tr '\n' ' ')
+
+if [ $? -ne 0 ]; then
+    echo "❌ Lint errors found! Please fix before committing."
+    echo "💡 Tip: Run 'npm run lint' to see all issues."
+    exit 1
+fi
+
+echo "✅ All pre-commit checks passed!"

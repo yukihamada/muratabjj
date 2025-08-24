@@ -1,0 +1,47 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-push hook to check build before pushing to remote
+echo "🔍 Running pre-push checks..."
+
+# Check if we're pushing to main branch
+protected_branch='main'
+current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+
+if [ "$current_branch" = "$protected_branch" ]; then
+    echo "📦 Building project to check for errors..."
+    
+    # Run build
+    npm run build
+    
+    if [ $? -ne 0 ]; then
+        echo "❌ Build failed! Please fix errors before pushing."
+        exit 1
+    fi
+    
+    echo "✅ Build successful!"
+    
+    # Run type check
+    echo "🔍 Checking TypeScript types..."
+    npm run typecheck
+    
+    if [ $? -ne 0 ]; then
+        echo "❌ TypeScript errors found! Please fix before pushing."
+        exit 1
+    fi
+    
+    echo "✅ TypeScript check passed!"
+    
+    # Run lint
+    echo "🔍 Running ESLint..."
+    npm run lint
+    
+    if [ $? -ne 0 ]; then
+        echo "❌ Lint errors found! Please fix before pushing."
+        exit 1
+    fi
+    
+    echo "✅ All checks passed! Pushing to remote..."
+else
+    echo "📝 Not on main branch, skipping build checks."
+fi
