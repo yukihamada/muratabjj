@@ -84,22 +84,18 @@ export function getClientIdentifier(request: NextRequest): string {
 }
 
 // Helper to create rate limit response
-export function rateLimitResponse(result: RateLimitResult) {
+export function rateLimitResponse(result: RateLimitResult): Response {
   const headers = {
     'X-RateLimit-Limit': result.limit.toString(),
     'X-RateLimit-Remaining': result.remaining.toString(),
     'X-RateLimit-Reset': result.reset.toISOString(),
   }
 
-  if (!result.success) {
-    return new Response('Too Many Requests', {
-      status: 429,
-      headers: {
-        ...headers,
-        'Retry-After': Math.ceil((result.reset.getTime() - Date.now()) / 1000).toString(),
-      },
-    })
-  }
-
-  return { headers }
+  return new Response('Too Many Requests', {
+    status: 429,
+    headers: {
+      ...headers,
+      'Retry-After': Math.ceil((result.reset.getTime() - Date.now()) / 1000).toString(),
+    },
+  })
 }

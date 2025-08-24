@@ -113,9 +113,11 @@ export class MetricsCollector {
       lines.push(`${name}${labelsStr} ${value}`)
     })
     
-    // Add system metrics
-    lines.push(`# TYPE nodejs_memory_usage_bytes gauge`)
-    lines.push(`nodejs_memory_usage_bytes ${process.memoryUsage().heapUsed}`)
+    // Add system metrics (only in Node.js runtime)
+    if (typeof process !== 'undefined' && process.memoryUsage) {
+      lines.push(`# TYPE nodejs_memory_usage_bytes gauge`)
+      lines.push(`nodejs_memory_usage_bytes ${process.memoryUsage().heapUsed}`)
+    }
     
     return lines.join('\n')
   }
