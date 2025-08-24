@@ -50,15 +50,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchProfile = async (userId: string, userEmail?: string) => {
     try {
+      console.log('[useAuth] Fetching profile for userId:', userId)
       const { data, error } = await supabase
-        .from('users_profile')
+        .from('user_profiles')
         .select('*')
-        .eq('user_id', userId)
+        .or(`id.eq.${userId},user_id.eq.${userId}`)
+        .limit(1)
         .single()
       
       if (error) {
+        console.log('[useAuth] Profile fetch error:', error)
         // プロファイルが存在しない場合は作成
         if (error.code === 'PGRST116') {
+          console.log('[useAuth] Creating new profile')
           // Profile not found, creating new profile
           const { data: newProfile, error: createError } = await supabase
             .from('user_profiles')
@@ -66,13 +70,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               {
                 id: userId,
                 user_id: userId,
+                email: userEmail || '',
                 full_name: '',
-                belt_rank: 'white',
+                belt: 'white',
                 stripes: 0,
-                years_training: 0,
                 is_coach: false,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
+                is_admin: false
               }
             ])
             .select()
@@ -82,6 +85,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             console.error('[useAuth] Error creating profile:', createError)
             // プロファイル作成に失敗してもログインは成功させる
             return
+          } else {
+            console.log('[useAuth] Profile created successfully')
           }
           setProfile(newProfile)
           setIsCoach(newProfile?.is_coach || false)
@@ -92,6 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return
         }
       } else {
+        console.log('[useAuth] Profile found:', data)
         setProfile(data)
         setIsCoach(data?.is_coach || false)
         setIsAdmin(data?.is_admin || false)
@@ -117,15 +123,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     const checkSession = async () => {
       try {
+        console.log('[useAuth] Starting session check...')
+        
         // より短いタイムアウトで早期解決
         timeoutId = setTimeout(() => {
           if (isSubscribed && loading) {
-            // Session check timeout - forcing completion
+            console.log('[useAuth] Session check timeout - forcing completion')
             setLoading(false)
           }
-        }, 1500) // 1.5秒のタイムアウト
+        }, 3000) // 3秒のタイムアウト
 
         const { data: { session }, error } = await supabase.auth.getSession()
+        console.log('[useAuth] Session result:', session ? 'Found session' : 'No session', error || '')
         
         if (!isSubscribed) return
         
@@ -142,12 +151,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // isAdmin is set from profile data in fetchProfile
         
         if (session?.user) {
+          console.log('[useAuth] Fetching profile for user:', session.user.id)
           // プロファイル取得は非同期で実行（ブロックしない）
           fetchProfile(session.user.id, session.user.email).catch(err => {
             console.warn('[useAuth] Profile fetch failed:', err)
           })
         }
         
+        console.log('[useAuth] Session check completed, setting loading to false')
         setLoading(false)
       } catch (error: any) {
         console.error('[useAuth] Error in checkSession:', error)

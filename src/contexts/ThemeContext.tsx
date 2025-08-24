@@ -33,17 +33,31 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (!mounted) return
 
     const root = window.document.documentElement
-    root.classList.remove('light', 'dark')
-    root.classList.add(theme)
-    localStorage.setItem('theme', theme)
     
-    // bodyにもクラスを適用（確実にダークモードにするため）
-    document.body.classList.remove('light', 'dark')
-    document.body.classList.add(theme)
+    // クラス名を直接置き換える（より確実）
+    root.className = theme
+    
+    // localStorageに保存
+    try {
+      localStorage.setItem('theme', theme)
+    } catch (e) {
+      console.warn('Could not save theme to localStorage:', e)
+    }
+    
+    // 背景色も変更
+    if (theme === 'dark') {
+      root.style.backgroundColor = '#0f0f12'
+    } else {
+      root.style.backgroundColor = '#ffffff'
+    }
+    
+    console.log('[ThemeProvider] Theme changed to:', theme)
   }, [theme, mounted])
 
   const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
+    const newTheme = theme === 'light' ? 'dark' : 'light'
+    console.log('[ThemeProvider] Toggling theme from', theme, 'to', newTheme)
+    setTheme(newTheme)
   }
 
   // SSRとのhydrationエラーを防ぐため、マウント前もコンテキストを提供

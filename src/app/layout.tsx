@@ -107,7 +107,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ja" className="dark">
+    <html lang="ja">
       <head>
         <link rel="apple-touch-icon" href="/favicon.ico" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -121,10 +121,20 @@ export default function RootLayout({
             __html: `
               // ダークモードを即座に適用して白いフラッシュを防ぐ
               (function() {
-                const savedTheme = localStorage.getItem('theme');
-                const theme = savedTheme || 'dark';
-                document.documentElement.classList.add(theme);
-                document.documentElement.style.backgroundColor = '#0f0f12';
+                try {
+                  const savedTheme = localStorage.getItem('theme');
+                  const theme = savedTheme || 'dark';
+                  document.documentElement.className = theme;
+                  if (theme === 'dark') {
+                    document.documentElement.style.backgroundColor = '#0f0f12';
+                  } else {
+                    document.documentElement.style.backgroundColor = '#ffffff';
+                  }
+                } catch (e) {
+                  // localStorage might not be available
+                  document.documentElement.className = 'dark';
+                  document.documentElement.style.backgroundColor = '#0f0f12';
+                }
               })();
             `,
           }}
