@@ -369,7 +369,7 @@ export default function VideoUploadPage() {
             .eq('id', videoData.id)
 
           // Call transcription API
-          const transcription = await transcribeVideoServerSide(videoUrl, language)
+          const transcription = await transcribeVideoServerSide(uploadedVideoData.videoUrl, language)
           
           // Save transcription to database
           await saveTranscription(videoData.id, transcription, user.id)
