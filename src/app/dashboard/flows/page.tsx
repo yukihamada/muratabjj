@@ -366,16 +366,18 @@ export default function FlowsPage() {
       }
 
       // 自分のフローを取得
-      const { data: myData, error: myError } = await supabase
-        .from('flows')
-        .select('*')
-        .eq('user_id', user?.id || '')
-        .order('created_at', { ascending: false })
+      if (user) {
+        const { data: myData, error: myError } = await supabase
+          .from('flows')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
 
-      if (myError) {
-        console.error('Error loading my flows:', myError)
-      } else {
-        setMyFlows(myData || [])
+        if (myError) {
+          console.error('Error loading my flows:', myError)
+        } else {
+          setMyFlows(myData || [])
+        }
       }
     } catch (error) {
       console.error('Error loading flows:', error)
