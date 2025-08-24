@@ -153,6 +153,12 @@ export default function VideoUploadPage() {
 
   useEffect(() => {
     loadData()
+    
+    // Check for debug mode in URL
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('debug') === 'true') {
+      setDebugMode(true)
+    }
   }, [])
 
   async function loadData() {
@@ -799,6 +805,28 @@ export default function VideoUploadPage() {
               </button>
             </div>
           </form>
+          
+          {/* Debug Mode Information */}
+          {debugMode && (
+            <div className="mt-8 card-gradient rounded-bjj p-6 border border-yellow-500/30">
+              <h3 className="text-lg font-bold text-yellow-400 mb-4">Debug Information</h3>
+              <div className="space-y-2 text-sm font-mono text-yellow-200">
+                <p>User ID: {user?.id || 'Not logged in'}</p>
+                <p>User Email: {user?.email || 'Not logged in'}</p>
+                <p>File Selected: {videoFile ? `${videoFile.name} (${(videoFile.size / 1024 / 1024).toFixed(2)} MB)` : 'No file'}</p>
+                <p>File Type: {videoFile?.type || 'N/A'}</p>
+                <p>Supabase URL: {process.env.NEXT_PUBLIC_SUPABASE_URL || 'Not set'}</p>
+                <p>Storage Buckets Check: Click upload to test</p>
+                <div className="mt-4 p-3 bg-black/50 rounded overflow-x-auto">
+                  <p className="text-xs">Troubleshooting:</p>
+                  <p className="text-xs">1. Check browser console for detailed errors</p>
+                  <p className="text-xs">2. Verify storage buckets exist in Supabase dashboard</p>
+                  <p className="text-xs">3. Check RLS policies on storage.objects table</p>
+                  <p className="text-xs">4. Run migration: /supabase/migrations/017_create_storage_buckets.sql</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
