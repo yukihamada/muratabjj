@@ -129,6 +129,7 @@ export default function FlowEditorPage() {
   const [flowName, setFlowName] = useState('')
   const [showFlowList, setShowFlowList] = useState(false)
   const [publicFlows, setPublicFlows] = useState<any[]>([])
+  const [currentFlowId, setCurrentFlowId] = useState<string | null>(null)
   
   const [hasInitialized, setHasInitialized] = useState(false)
   
@@ -165,13 +166,21 @@ export default function FlowEditorPage() {
         .eq('is_public', true)
         .order('created_at', { ascending: false })
       
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
         setPublicFlows(data)
+        
+        // 初回アクセス時は最初のサンプルフローを自動的に読み込む
+        if (flowName === '' && nodes.length === 3 && data[0]) {
+          setFlowName(data[0].name)
+          if (data[0].nodes) setNodes(data[0].nodes)
+          if (data[0].edges) setEdges(data[0].edges)
+          setCurrentFlowId(data[0].id)
+        }
       }
     }
     
     fetchPublicFlows()
-  }, [])
+  }, [flowName, nodes.length, setNodes, setEdges])
 
   useEffect(() => {
     if (!loading && !user) {
@@ -196,6 +205,19 @@ export default function FlowEditorPage() {
     },
     [setEdges]
   )
+
+  const loadFlow = useCallback((flow: any) => {
+    setFlowName(flow.name)
+    if (flow.nodes) setNodes(flow.nodes)
+    if (flow.edges) setEdges(flow.edges)
+    setCurrentFlowId(flow.id)
+    setShowFlowList(false)
+    toast.success(
+      language === 'ja' ? `「${flow.name}」を読み込みました` :
+      language === 'en' ? `Loaded "${flow.name}"` :
+      `Carregado "${flow.name}"`
+    )
+  }, [language, setNodes, setEdges])
 
   const addNode = useCallback(() => {
     const nodeCount = nodes.length + 1
@@ -378,32 +400,6 @@ export default function FlowEditorPage() {
       <main className="min-h-screen bg-bjj-bg">
         <DashboardNav />
       
-      {/* Beta Banner */}
-      <div className="p-2 sm:p-4 bg-yellow-500/10 border-b border-yellow-500/20">
-        <div className="container mx-auto">
-          <div className="flex items-center gap-2">
-            <span className="text-yellow-400 font-semibold">
-              {language === 'ja' ? '🚧 ベータ版機能' : language === 'en' ? '🚧 Beta Feature' : '🚧 Recurso Beta'}
-            </span>
-          </div>
-          <p className="text-sm text-yellow-200 mt-1">
-            {language === 'ja' 
-              ? 'フローエディタは現在開発中です。保存機能は一部制限されており、予期しない動作が発生する可能性があります。' 
-              : language === 'en'
-              ? 'The Flow Editor is currently under development. Save functionality is limited and unexpected behavior may occur.'
-              : 'O Editor de Fluxo está atualmente em desenvolvimento. A funcionalidade de salvamento é limitada e comportamentos inesperados podem ocorrer.'}
-          </p>
-          {isMobileView && (
-            <p className="text-xs text-yellow-200 mt-2">
-              {language === 'ja' 
-                ? '📱 モバイルでは一部機能が制限されています。' 
-                : language === 'en'
-                ? '📱 Some features are limited on mobile.'
-                : '📱 Alguns recursos são limitados no celular.'}
-            </p>
-          )}
-        </div>
-      </div>
       
       <div className={`${isMobileView ? 'flow-editor-mobile-container' : 'h-[calc(100vh-120px)]'} relative`}>
         <ReactFlow
@@ -427,18 +423,42 @@ export default function FlowEditorPage() {
           />
           
           <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-lg sm:rounded-bjj p-2 sm:p-4 max-w-[90%] sm:max-w-none">
-            <div className="flex items-center gap-2 sm:gap-4 mb-2 sm:mb-4">
-              <input
-                type="text"
-                value={flowName}
-                onChange={(e) => setFlowName(e.target.value)}
-                autoComplete="off"
-                autoCapitalize="off"
-                autoCorrect="off"
-                spellCheck="false"
-                className="px-2 py-1 sm:px-3 sm:py-2 bg-bjj-bg border border-white/10 rounded-lg text-sm sm:text-base text-bjj-text focus:border-bjj-accent focus:outline-none w-full max-w-[150px] sm:max-w-none"
-                placeholder={language === 'ja' ? 'フロー名' : language === 'en' ? 'Flow Name' : 'Nome do Fluxo'}
-              />
+            <div className="mb-2 sm:mb-4">
+              <div className="flex items-center gap-2 sm:gap-4">
+                <input
+                  type="text"
+                  value={flowName}
+                  onChange={(e) => {
+                    setFlowName(e.target.value)
+                    setCurrentFlowId(null) // 名前を変更したらカスタムフローとして扱う
+                  }}
+                  autoComplete="off"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck="false"
+                  className="px-2 py-1 sm:px-3 sm:py-2 bg-bjj-bg border border-white/10 rounded-lg text-sm sm:text-base text-bjj-text focus:border-bjj-accent focus:outline-none w-full max-w-[150px] sm:max-w-none"
+                  placeholder={language === 'ja' ? 'フロー名' : language === 'en' ? 'Flow Name' : 'Nome do Fluxo'}
+                />
+                {currentFlowId && (
+                  <button
+                    onClick={() => {
+                      setFlowName('')
+                      setNodes(getInitialNodes(language, isMobileView))
+                      setEdges(initialEdges)
+                      setCurrentFlowId(null)
+                      toast.success(
+                        language === 'ja' ? '新規フローを開始' :
+                        language === 'en' ? 'Started new flow' :
+                        'Novo fluxo iniciado'
+                      )
+                    }}
+                    className="text-xs text-bjj-muted hover:text-bjj-accent"
+                    title={language === 'ja' ? '新規作成' : 'New'}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
             
             <div className="flex gap-1 sm:gap-2 flex-wrap">
@@ -491,20 +511,17 @@ export default function FlowEditorPage() {
                     {publicFlows.map((flow) => (
                       <button
                         key={flow.id}
-                        onClick={() => {
-                          setFlowName(flow.name)
-                          if (flow.nodes) setNodes(flow.nodes)
-                          if (flow.edges) setEdges(flow.edges)
-                          setShowFlowList(false)
-                          toast.success(
-                            language === 'ja' ? 'フローを読み込みました' :
-                            language === 'en' ? 'Flow loaded' :
-                            'Fluxo carregado'
-                          )
-                        }}
-                        className="block w-full text-left text-xs sm:text-sm p-2 hover:bg-bjj-bg2 rounded transition-colors"
+                        onClick={() => loadFlow(flow)}
+                        className={`block w-full text-left text-xs sm:text-sm p-2 rounded transition-colors ${
+                          currentFlowId === flow.id 
+                            ? 'bg-bjj-accent/20 border-l-2 border-bjj-accent' 
+                            : 'hover:bg-bjj-bg2'
+                        }`}
                       >
                         {flow.name}
+                        {currentFlowId === flow.id && (
+                          <span className="ml-2 text-bjj-accent">✓</span>
+                        )}
                       </button>
                     ))}
                   </div>
@@ -524,19 +541,19 @@ export default function FlowEditorPage() {
                   {publicFlows.map((flow) => (
                     <button
                       key={flow.id}
-                      onClick={() => {
-                        setFlowName(flow.name)
-                        if (flow.nodes) setNodes(flow.nodes)
-                        if (flow.edges) setEdges(flow.edges)
-                        toast.success(
-                          language === 'ja' ? 'フローを読み込みました' :
-                          language === 'en' ? 'Flow loaded' :
-                          'Fluxo carregado'
-                        )
-                      }}
-                      className="w-full text-left p-3 bg-bjj-bg rounded-lg hover:bg-bjj-bg/80 border border-white/5 hover:border-bjj-accent/30 transition-all"
+                      onClick={() => loadFlow(flow)}
+                      className={`w-full text-left p-3 rounded-lg border transition-all ${
+                        currentFlowId === flow.id
+                          ? 'bg-bjj-accent/10 border-bjj-accent/50 ring-1 ring-bjj-accent/30'
+                          : 'bg-bjj-bg hover:bg-bjj-bg/80 border-white/5 hover:border-bjj-accent/30'
+                      }`}
                     >
-                      <h4 className="text-sm font-semibold text-bjj-text">{flow.name}</h4>
+                      <div className="flex items-start justify-between">
+                        <h4 className="text-sm font-semibold text-bjj-text">{flow.name}</h4>
+                        {currentFlowId === flow.id && (
+                          <span className="text-bjj-accent text-xs">●</span>
+                        )}
+                      </div>
                       {flow.description && (
                         <p className="text-xs text-bjj-muted mt-1 line-clamp-2">{flow.description}</p>
                       )}

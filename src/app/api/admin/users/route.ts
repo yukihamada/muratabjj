@@ -29,13 +29,30 @@ function getSupabaseAdmin() {
 // 管理者チェック
 async function isAdmin(userId: string): Promise<boolean> {
   const supabaseAdmin = getSupabaseAdmin()
-  const { data, error } = await supabaseAdmin
+  
+  // First check profiles table
+  const { data: profile, error: profileError } = await supabaseAdmin
+    .from('profiles')
+    .select('role')
+    .eq('id', userId)
+    .single()
+  
+  if (!profileError && profile?.role === 'admin') {
+    return true
+  }
+  
+  // Then check user_profiles table if it exists
+  const { data: userProfile, error: userProfileError } = await supabaseAdmin
     .from('user_profiles')
     .select('is_admin')
     .or(`id.eq.${userId},user_id.eq.${userId}`)
     .single()
   
-  return data?.is_admin || false
+  if (!userProfileError && userProfile?.is_admin) {
+    return true
+  }
+  
+  return false
 }
 
 export async function GET(request: NextRequest) {
