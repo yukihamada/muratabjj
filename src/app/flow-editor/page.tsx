@@ -497,15 +497,10 @@ export default function FlowEditorPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      const errorMsg = {
-        ja: 'フローエディタを使用するにはログインが必要です',
-        en: 'Login required to use the flow editor',
-        pt: 'Login necessário para usar o editor de fluxo'
-      }
-      toast.error(errorMsg[language as keyof typeof errorMsg])
+      toast.error(t.loginRequired)
       router.push('/')
     }
-  }, [user, loading, router, language])
+  }, [user, loading, router, t])
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -533,11 +528,7 @@ export default function FlowEditorPage() {
       setIsReadOnly(false)
     }
     
-    toast.success(
-      language === 'ja' ? `「${flow.name}」を読み込みました` :
-      language === 'en' ? `Loaded "${flow.name}"` :
-      `Carregado "${flow.name}"`
-    )
+    toast.success(`${t.loadedFlow} "${flow.name}"`)
   }, [language, setNodes, setEdges, user])
   
   const loadFlowById = async (flowId: string) => {
