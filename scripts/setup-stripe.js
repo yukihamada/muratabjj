@@ -18,85 +18,111 @@ const stripe = new Stripe(STRIPE_SECRET_KEY, {
 
 async function createProducts() {
   try {
-    console.log('Creating Stripe products...\n');
+    console.log('Creating Stripe products for new pricing structure...\n');
+
+    const plans = [];
+    const prices = [];
+
+    // Create Basic Plan Product
+    const basicPlan = await stripe.products.create({
+      name: 'Murata BJJ Basic',
+      description: 'Basic plan with video access and progress tracking',
+      metadata: {
+        plan_type: 'basic'
+      }
+    });
+    console.log('✅ Created Basic Plan product:', basicPlan.id);
+    plans.push({ name: 'basic', product: basicPlan });
 
     // Create Pro Plan Product
     const proPlan = await stripe.products.create({
       name: 'Murata BJJ Pro',
-      description: 'Pro plan with full access to all features',
+      description: 'Pro plan with unlimited access and AI features',
       metadata: {
         plan_type: 'pro'
       }
     });
     console.log('✅ Created Pro Plan product:', proPlan.id);
+    plans.push({ name: 'pro', product: proPlan });
 
-    // Create Pro Plan Prices
-    const proMonthly = await stripe.prices.create({
-      product: proPlan.id,
-      unit_amount: 1200,
-      currency: 'jpy',
-      recurring: {
-        interval: 'month',
-      },
+    // Create Master Plan Product
+    const masterPlan = await stripe.products.create({
+      name: 'Murata BJJ Master',
+      description: 'Master plan with personal coaching and premium features',
       metadata: {
-        plan_type: 'pro',
-        billing_period: 'monthly'
+        plan_type: 'master'
       }
     });
-    console.log('✅ Created Pro Monthly price:', proMonthly.id);
+    console.log('✅ Created Master Plan product:', masterPlan.id);
+    plans.push({ name: 'master', product: masterPlan });
 
-    const proYearly = await stripe.prices.create({
-      product: proPlan.id,
-      unit_amount: 12000,
-      currency: 'jpy',
-      recurring: {
-        interval: 'year',
-      },
+    // Create Dojo Basic Plan Product
+    const dojoBasicPlan = await stripe.products.create({
+      name: 'Murata BJJ Dojo Basic',
+      description: 'Dojo basic plan for up to 10 students',
       metadata: {
-        plan_type: 'pro',
-        billing_period: 'yearly'
+        plan_type: 'dojo_basic'
       }
     });
-    console.log('✅ Created Pro Yearly price:', proYearly.id);
+    console.log('✅ Created Dojo Basic Plan product:', dojoBasicPlan.id);
+    plans.push({ name: 'dojo_basic', product: dojoBasicPlan });
 
-    // Create Dojo Plan Product
-    const dojoPlan = await stripe.products.create({
-      name: 'Murata BJJ Dojo',
-      description: 'Dojo plan for coaches and gym owners',
+    // Create Dojo Pro Plan Product
+    const dojoProfPlan = await stripe.products.create({
+      name: 'Murata BJJ Dojo Pro',
+      description: 'Dojo pro plan for up to 50 students with advanced features',
       metadata: {
-        plan_type: 'dojo'
+        plan_type: 'dojo_pro'
       }
     });
-    console.log('✅ Created Dojo Plan product:', dojoPlan.id);
+    console.log('✅ Created Dojo Pro Plan product:', dojoProfPlan.id);
+    plans.push({ name: 'dojo_pro', product: dojoProfPlan });
 
-    // Create Dojo Plan Prices
-    const dojoMonthly = await stripe.prices.create({
-      product: dojoPlan.id,
-      unit_amount: 6000,
-      currency: 'jpy',
-      recurring: {
-        interval: 'month',
-      },
-      metadata: {
-        plan_type: 'dojo',
-        billing_period: 'monthly'
-      }
-    });
-    console.log('✅ Created Dojo Monthly price:', dojoMonthly.id);
+    // Plan pricing
+    const planPrices = {
+      basic: { monthly: 980, yearly: 9800 },
+      pro: { monthly: 2480, yearly: 24800 },
+      master: { monthly: 3980, yearly: 39800 },
+      dojo_basic: { monthly: 9800, yearly: 98000 },
+      dojo_pro: { monthly: 19800, yearly: 198000 }
+    };
 
-    const dojoYearly = await stripe.prices.create({
-      product: dojoPlan.id,
-      unit_amount: 60000,
-      currency: 'jpy',
-      recurring: {
-        interval: 'year',
-      },
-      metadata: {
-        plan_type: 'dojo',
-        billing_period: 'yearly'
-      }
-    });
-    console.log('✅ Created Dojo Yearly price:', dojoYearly.id);
+    // Create prices for each plan
+    for (const plan of plans) {
+      const pricing = planPrices[plan.name];
+      
+      // Create monthly price
+      const monthlyPrice = await stripe.prices.create({
+        product: plan.product.id,
+        unit_amount: pricing.monthly,
+        currency: 'jpy',
+        recurring: {
+          interval: 'month',
+        },
+        metadata: {
+          plan_type: plan.name,
+          billing_period: 'monthly'
+        }
+      });
+      console.log(`✅ Created ${plan.name} Monthly price:`, monthlyPrice.id);
+      prices.push({ plan: plan.name, period: 'monthly', price: monthlyPrice });
+
+      // Create yearly price (15% discount)
+      const yearlyPrice = await stripe.prices.create({
+        product: plan.product.id,
+        unit_amount: pricing.yearly,
+        currency: 'jpy',
+        recurring: {
+          interval: 'year',
+        },
+        metadata: {
+          plan_type: plan.name,
+          billing_period: 'yearly'
+        }
+      });
+      console.log(`✅ Created ${plan.name} Yearly price:`, yearlyPrice.id);
+      prices.push({ plan: plan.name, period: 'yearly', price: yearlyPrice });
+    }
 
     // Create customer portal configuration
     const portalConfig = await stripe.billingPortal.configurations.create({
@@ -131,11 +157,32 @@ async function createProducts() {
     console.log('✅ Created Customer Portal configuration:', portalConfig.id);
 
     console.log('\n🎉 Setup complete! Add these to your .env.local:\n');
-    console.log(`STRIPE_PRO_PRICE_ID_MONTHLY=${proMonthly.id}`);
-    console.log(`STRIPE_PRO_PRICE_ID_YEARLY=${proYearly.id}`);
-    console.log(`STRIPE_DOJO_PRICE_ID_MONTHLY=${dojoMonthly.id}`);
-    console.log(`STRIPE_DOJO_PRICE_ID_YEARLY=${dojoYearly.id}`);
+    
+    // Generate environment variables for all plans
+    const envVars = {};
+    for (const { plan, period, price } of prices) {
+      const envKey = `STRIPE_${plan.toUpperCase()}_PRICE_ID_${period.toUpperCase()}`;
+      envVars[envKey] = price.id;
+      console.log(`${envKey}=${price.id}`);
+    }
+    
     console.log(`STRIPE_PORTAL_CONFIG_ID=${portalConfig.id}`);
+    
+    console.log('\n📋 Price Summary:');
+    console.log('Personal Plans:');
+    console.log('  Basic: ¥980/month (¥9,800/year)');
+    console.log('  Pro: ¥2,480/month (¥24,800/year)');
+    console.log('  Master: ¥3,980/month (¥39,800/year)');
+    console.log('\nDojo Plans:');
+    console.log('  Dojo Basic: ¥9,800/month (¥98,000/year)');
+    console.log('  Dojo Pro: ¥19,800/month (¥198,000/year)');
+    console.log('  Dojo Enterprise: Custom pricing (contact sales)');
+    
+    console.log('\n💡 Next steps:');
+    console.log('1. Add the environment variables to your .env.local file');
+    console.log('2. Update your Vercel environment variables');
+    console.log('3. Test the checkout flow');
+    console.log('4. Set up webhooks for production');
 
   } catch (error) {
     console.error('Error creating products:', error.message);
