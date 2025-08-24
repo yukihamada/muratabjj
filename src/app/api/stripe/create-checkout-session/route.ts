@@ -4,27 +4,35 @@ import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the authorization header
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      console.error('No authorization header provided');
-      return NextResponse.json(
-        { error: 'Authorization required' },
-        { status: 401 }
-      );
-    }
-
     // Use the server-side supabase client
     const supabase = createClient();
     
-    // Check if user is authenticated using the token from the header
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    // Try to get user from session (cookie-based auth)
+    let user;
+    const { data: authData, error: authError } = await supabase.auth.getUser();
     
-    if (authError || !user) {
+    if (authError) {
       console.error('Auth error:', authError);
+    } else {
+      user = authData?.user;
+    }
+    
+    // If no user from cookie, try authorization header
+    if (!user) {
+      const authHeader = request.headers.get('authorization');
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.replace('Bearer ', '');
+        const { data: tokenData, error: tokenError } = await supabase.auth.getUser(token);
+        if (!tokenError && tokenData?.user) {
+          user = tokenData.user;
+        }
+      }
+    }
+    
+    if (!user) {
+      console.error('No authenticated user found');
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized - Please login to continue' },
         { status: 401 }
       );
     }

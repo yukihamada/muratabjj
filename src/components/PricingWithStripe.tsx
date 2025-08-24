@@ -53,17 +53,19 @@ export default function PricingWithStripe() {
       // Get the current session token
       const { data: { session } } = await supabase.auth.getSession()
       
-      if (!session) {
-        throw new Error('No active session')
-      }
-
       // Create checkout session
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      }
+      
+      // Add authorization header if session exists
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`
+      }
+      
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
+        headers,
         body: JSON.stringify({
           planId,
           locale: language,

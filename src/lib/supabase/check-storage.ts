@@ -20,7 +20,7 @@ export async function checkAndCreateBuckets() {
         
         const { error: createError } = await supabase.storage.createBucket(bucketName, {
           public: true,
-          fileSizeLimit: bucketName === 'videos' ? 524288000 : 5242880, // 500MB for videos, 5MB for others
+          fileSizeLimit: bucketName === 'videos' ? 5368709120 : 5242880, // 5GB for videos, 5MB for others
           allowedMimeTypes: bucketName === 'videos' 
             ? ['video/mp4', 'video/quicktime', 'video/x-msvideo']
             : ['image/jpeg', 'image/png', 'image/webp']

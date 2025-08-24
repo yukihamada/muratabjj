@@ -10,12 +10,12 @@ VALUES (
   'videos',
   'videos',
   true,
-  524288000, -- 500MB
+  5368709120, -- 5GB
   ARRAY['video/mp4', 'video/quicktime', 'video/x-msvideo']::text[]
 )
 ON CONFLICT (id) DO UPDATE SET
   public = true,
-  file_size_limit = 524288000,
+  file_size_limit = 5368709120,
   allowed_mime_types = ARRAY['video/mp4', 'video/quicktime', 'video/x-msvideo']::text[];
 
 -- Create thumbnails bucket

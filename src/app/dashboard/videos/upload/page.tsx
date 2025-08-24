@@ -413,9 +413,9 @@ export default function VideoUploadPage() {
       
       if (error.message) {
         if (error.message.includes('File size exceeds')) {
-          errorMessage = language === 'ja' ? 'ファイルサイズが大きすぎます（最大500MB）' : 
-                        language === 'en' ? 'File size too large (max 500MB)' : 
-                        'Arquivo muito grande (máx 500MB)'
+          errorMessage = language === 'ja' ? 'ファイルサイズが大きすぎます（最大5GB）' : 
+                        language === 'en' ? 'File size too large (max 5GB)' : 
+                        'Arquivo muito grande (máx 5GB)'
         } else if (error.message.includes('Invalid file type')) {
           errorMessage = language === 'ja' ? 'サポートされていないファイル形式です（MP4、MOV、AVIのみ）' : 
                         language === 'en' ? 'Unsupported file type (MP4, MOV, AVI only)' : 

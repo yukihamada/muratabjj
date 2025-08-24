@@ -9,7 +9,7 @@ export const STORAGE_BUCKETS = {
 
 // Maximum file sizes in bytes
 export const MAX_FILE_SIZES = {
-  VIDEO: 500 * 1024 * 1024, // 500MB
+  VIDEO: 5 * 1024 * 1024 * 1024, // 5GB
   THUMBNAIL: 5 * 1024 * 1024, // 5MB
   AVATAR: 2 * 1024 * 1024, // 2MB
 } as const
@@ -30,7 +30,7 @@ export async function uploadVideo(
   }
   
   if (file.size > MAX_FILE_SIZES.VIDEO) {
-    throw new Error('File size exceeds 500MB limit.')
+    throw new Error('File size exceeds 5GB limit.')
   }
   
   // Generate unique filename
