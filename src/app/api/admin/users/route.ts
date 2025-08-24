@@ -30,25 +30,14 @@ function getSupabaseAdmin() {
 async function isAdmin(userId: string): Promise<boolean> {
   const supabaseAdmin = getSupabaseAdmin()
   
-  // First check profiles table
+  // Check users_profile table for admin status
   const { data: profile, error: profileError } = await supabaseAdmin
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .single()
-  
-  if (!profileError && profile?.role === 'admin') {
-    return true
-  }
-  
-  // Then check user_profiles table if it exists
-  const { data: userProfile, error: userProfileError } = await supabaseAdmin
-    .from('user_profiles')
+    .from('users_profile')
     .select('is_admin')
-    .or(`id.eq.${userId},user_id.eq.${userId}`)
+    .eq('user_id', userId)
     .single()
   
-  if (!userProfileError && userProfile?.is_admin) {
+  if (!profileError && profile?.is_admin) {
     return true
   }
   
@@ -88,13 +77,15 @@ export async function GET(request: NextRequest) {
 
     // ユーザー一覧を取得
     const { data: profiles, error: profilesError } = await supabaseAdmin
-      .from('profiles')
+      .from('users_profile')
       .select(`
         id,
+        user_id,
         full_name,
         belt,
         stripes,
-        role,
+        is_admin,
+        is_coach,
         created_at,
         updated_at
       `)
@@ -103,7 +94,7 @@ export async function GET(request: NextRequest) {
     if (profilesError) {
       console.error('Error fetching profiles:', profilesError)
       // テーブルが存在しない場合の詳細なエラーメッセージ
-      if (profilesError.message.includes('profiles') && profilesError.message.includes('not exist')) {
+      if (profilesError.message.includes('users_profile') && profilesError.message.includes('not exist')) {
         return NextResponse.json({ 
           error: 'Database table not found',
           details: profilesError.message 
@@ -122,15 +113,15 @@ export async function GET(request: NextRequest) {
 
     // プロフィールとemailを結合
     const usersWithEmail = profiles?.map(profile => {
-      const authUser = authUsers.find(u => u.id === profile.id)
+      const authUser = authUsers.find(u => u.id === profile.user_id)
       return {
-        id: profile.id,
+        id: profile.user_id,
         email: authUser?.email || '',
         full_name: profile.full_name,
         belt: profile.belt,
         stripes: profile.stripes,
-        role: profile.role || 'user',
-        is_coach: profile.role === 'coach',
+        role: profile.is_admin ? 'admin' : (profile.is_coach ? 'coach' : 'user'),
+        is_coach: profile.is_coach,
         subscription_plan: 'free',
         subscription_status: 'active',
         created_at: profile.created_at,

@@ -7,25 +7,20 @@ import toast from 'react-hot-toast'
 
 interface Profile {
   id: string
-  user_id?: string
+  user_id: string
   full_name?: string
   belt?: string
-  belt_rank?: string
   stripes?: number
-  role?: 'user' | 'admin' | 'coach'
-  is_coach?: boolean
-  is_admin?: boolean
-  weight_class?: string
   preferred_position?: string
-  years_training?: number
-  dojo_id?: string
+  height?: number
+  weight?: number
+  is_coach: boolean
+  is_admin: boolean
+  subscription_plan?: 'free' | 'pro' | 'dojo'
+  subscription_status?: 'active' | 'inactive' | 'cancelled' | 'past_due'
+  stripe_customer_id?: string
   created_at: string
   updated_at: string
-  // Stripe fields
-  stripe_customer_id?: string
-  subscription_plan?: 'free' | 'pro' | 'dojo'
-  subscription_status?: 'active' | 'canceled' | 'past_due' | 'incomplete'
-  subscription_period_end?: string
 }
 
 interface AuthContextType {
@@ -55,9 +50,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       console.log('[useAuth] Fetching profile for userId:', userId)
       const { data, error } = await supabase
-        .from('profiles')
+        .from('users_profile')
         .select('*')
-        .eq('id', userId)
+        .eq('user_id', userId)
         .single()
       
       if (error) {
@@ -67,14 +62,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log('[useAuth] Creating new profile')
           // Profile not found, creating new profile
           const { data: newProfile, error: createError } = await supabase
-            .from('profiles')
+            .from('users_profile')
             .insert([
               {
-                id: userId,
+                user_id: userId,
                 full_name: userEmail?.split('@')[0] || '',
                 belt: 'white',
                 stripes: 0,
-                role: 'user'
+                is_admin: false,
+                is_coach: false
               }
             ])
             .select()
@@ -88,8 +84,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             console.log('[useAuth] Profile created successfully')
           }
           setProfile(newProfile)
-          setIsCoach(newProfile?.role === 'coach')
-          setIsAdmin(newProfile?.role === 'admin')
+          setIsCoach(newProfile?.is_coach || false)
+          setIsAdmin(newProfile?.is_admin || false)
         } else {
           console.error('[useAuth] Error fetching profile:', error)
           // プロファイル取得に失敗してもログインは成功させる
@@ -98,8 +94,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         console.log('[useAuth] Profile found:', data)
         setProfile(data)
-        setIsCoach(data?.role === 'coach' || data?.is_coach || false)
-        setIsAdmin(data?.role === 'admin' || data?.is_admin || false)
+        setIsCoach(data?.is_coach || false)
+        setIsAdmin(data?.is_admin || false)
       }
     } catch (error) {
       console.error('[useAuth] Error in fetchProfile:', error)
