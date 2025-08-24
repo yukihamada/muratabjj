@@ -18,6 +18,7 @@ interface Profile {
   is_admin: boolean
   subscription_plan?: 'free' | 'basic' | 'pro' | 'master' | 'dojo_basic' | 'dojo_pro' | 'dojo_enterprise'
   subscription_status?: 'active' | 'inactive' | 'cancelled' | 'past_due'
+  subscription_period_end?: string
   stripe_customer_id?: string
   created_at: string
   updated_at: string

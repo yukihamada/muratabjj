@@ -9,7 +9,7 @@ export async function checkSubscriptionAccess(
   
   try {
     const { data: profile, error } = await supabase
-      .from('users_profile')
+      .from('user_profiles')
       .select('subscription_plan, subscription_status, subscription_period_end')
       .eq('user_id', userId)
       .single()
@@ -42,8 +42,12 @@ export async function checkSubscriptionAccess(
     // Check specific plan access
     const planHierarchy: Record<PlanId, number> = {
       free: 0,
-      pro: 1,
-      dojo: 2,
+      basic: 1,
+      pro: 2,
+      master: 3,
+      dojo_basic: 4,
+      dojo_pro: 5,
+      dojo_enterprise: 6,
     }
 
     const userPlanLevel = planHierarchy[userPlan]

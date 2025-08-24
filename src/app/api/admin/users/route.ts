@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
 
     // ユーザー一覧を取得
     const { data: profiles, error: profilesError } = await supabaseAdmin
-      .from('users_profile')
+      .from('user_profiles')
       .select(`
         id,
         user_id,
@@ -86,6 +86,8 @@ export async function GET(request: NextRequest) {
         stripes,
         is_admin,
         is_coach,
+        subscription_plan,
+        subscription_status,
         created_at,
         updated_at
       `)
@@ -116,15 +118,17 @@ export async function GET(request: NextRequest) {
       const authUser = authUsers.find(u => u.id === profile.user_id)
       return {
         id: profile.user_id,
+        user_id: profile.user_id,
         email: authUser?.email || '',
         full_name: profile.full_name,
         belt: profile.belt,
         stripes: profile.stripes,
-        role: profile.is_admin ? 'admin' : (profile.is_coach ? 'coach' : 'user'),
+        is_admin: profile.is_admin,
         is_coach: profile.is_coach,
-        subscription_plan: 'free',
-        subscription_status: 'active',
+        subscription_plan: profile.subscription_plan || 'free',
+        subscription_status: profile.subscription_status || 'active',
         created_at: profile.created_at,
+        updated_at: profile.updated_at,
         last_sign_in_at: authUser?.last_sign_in_at
       }
     }) || []

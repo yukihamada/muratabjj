@@ -12,6 +12,7 @@ export const SUBSCRIPTION_PLANS = {
     id: 'free',
     name: 'Free Plan',
     price: 0,
+    currency: 'jpy',
     priceId: null,
     features: {
       ja: [

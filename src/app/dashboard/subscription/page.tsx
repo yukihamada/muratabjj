@@ -233,10 +233,18 @@ export default function SubscriptionPage() {
 
   const getPlanDetails = () => {
     switch (currentPlan) {
+      case 'basic':
+        return { name: 'Basic Plan', price: '¥980/月', features: ['Basic features'] }
       case 'pro':
         return t.proPlan
-      case 'dojo':
-        return t.dojoPlan
+      case 'master':
+        return { name: 'Master Plan', price: '¥3,980/月', features: ['Premium features'] }
+      case 'dojo_basic':
+        return { name: 'Dojo Basic', price: '¥9,800/月', features: ['Basic dojo features'] }
+      case 'dojo_pro':
+        return { name: 'Dojo Pro', price: '¥19,800/月', features: ['Advanced dojo features'] }
+      case 'dojo_enterprise':
+        return { name: 'Dojo Enterprise', price: 'カスタム価格', features: ['Enterprise features'] }
       default:
         return t.freePlan
     }
@@ -276,7 +284,7 @@ export default function SubscriptionPage() {
                       <span className="text-green-500">{t.active}</span>
                     </>
                   )}
-                  {status === 'canceled' && (
+                  {status === 'cancelled' && (
                     <>
                       <X className="w-4 h-4 text-red-500" />
                       <span className="text-red-500">{t.canceled}</span>
