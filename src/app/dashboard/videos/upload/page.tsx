@@ -325,23 +325,20 @@ export default function VideoUploadPage() {
 
     try {
 
-      // Save to database using uploaded video data
+      // Save to database using uploaded video data (mapped to current table structure)
       const { data: videoData, error: dbError } = await supabase
         .from('videos')
         .insert({
-          title_ja: formData.title_ja || formData.title_en,
-          title_en: formData.title_en || formData.title_ja,
-          title_pt: formData.title_pt || formData.title_en || formData.title_ja,
-          description_ja: formData.description_ja,
-          description_en: formData.description_en,
-          description_pt: formData.description_pt,
-          url: uploadedVideoData.videoUrl,
+          // 現在のテーブル構造に合わせたマッピング
+          title: formData.title_ja || formData.title_en || formData.title_pt || uploadedVideoData.fileName,
+          description: formData.description_ja || formData.description_en || formData.description_pt,
+          video_url: uploadedVideoData.videoUrl,
           thumbnail_url: uploadedVideoData.thumbnailUrl,
           duration: uploadedVideoData.duration,
-          technique_id: formData.technique_id || null,
-          instructor_id: user.id,
-          belt_requirement: formData.belt_requirement || null,
-          is_premium: formData.is_premium,
+          user_id: user.id,
+          category: formData.technique_id ? 'technique' : 'general',
+          difficulty_level: formData.belt_requirement || 'beginner',
+          is_free: !formData.is_premium,
           is_published: true,
         })
         .select()
@@ -357,24 +354,16 @@ export default function VideoUploadPage() {
                        language === 'en' ? 'Analyzing audio...' : 
                        'Analisando áudio...')
           
-          // Update transcription status
-          await supabase
-            .from('videos')
-            .update({ transcription_status: 'processing' })
-            .eq('id', videoData.id)
-
           // Call transcription API
           const transcription = await transcribeVideoServerSide(uploadedVideoData.videoUrl, language)
           
-          // Save transcription to database
-          await saveTranscription(videoData.id, transcription, user.id)
-          
-          // Update transcription status
+          // Save transcription to current table structure
           await supabase
             .from('videos')
             .update({ 
-              transcription_status: 'completed',
-              transcription_completed_at: new Date().toISOString()
+              transcription: transcription,
+              analysis_status: 'transcribed',
+              analyzed_at: new Date().toISOString()
             })
             .eq('id', videoData.id)
             
