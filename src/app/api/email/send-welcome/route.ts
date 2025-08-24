@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       .eq('user_id', userId)
       .single()
 
-    const { data: { user } } = await supabase.auth.admin.getUser(userId)
+    const { data: { user } } = await supabase.auth.admin.getUserById(userId)
 
     if (!user) {
       return NextResponse.json(

@@ -3,6 +3,7 @@
 
 import { MetricsCollector } from '@/lib/monitoring/grafana'
 import { createClient } from '@/lib/supabase/client'
+import React from 'react'
 
 // Experiment configuration
 export interface Experiment {

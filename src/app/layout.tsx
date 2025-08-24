@@ -131,23 +131,28 @@ export default function RootLayout({
                 try {
                   const savedTheme = localStorage.getItem('theme');
                   const theme = savedTheme || 'dark';
-                  document.documentElement.className = theme;
+                  // クラスを追加（置き換えない）
                   if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
                     document.documentElement.style.backgroundColor = '#0f0f12';
+                    document.body.style.backgroundColor = '#0f0f12';
                   } else {
+                    document.documentElement.classList.add('light');
                     document.documentElement.style.backgroundColor = '#ffffff';
+                    document.body.style.backgroundColor = '#ffffff';
                   }
                 } catch (e) {
                   // localStorage might not be available
-                  document.documentElement.className = 'dark';
+                  document.documentElement.classList.add('dark');
                   document.documentElement.style.backgroundColor = '#0f0f12';
+                  document.body.style.backgroundColor = '#0f0f12';
                 }
               })();
             `,
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className={inter.className} style={{ backgroundColor: '#0f0f12' }}>
         <ErrorBoundary>
           <AppInitializer>
             <ThemeProvider>

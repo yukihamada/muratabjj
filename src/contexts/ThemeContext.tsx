@@ -34,8 +34,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const root = window.document.documentElement
     
-    // クラス名を直接置き換える（より確実）
-    root.className = theme
+    // テーマクラスを追加/削除（他のクラスを保持）
+    if (theme === 'dark') {
+      root.classList.add('dark')
+      root.classList.remove('light')
+    } else {
+      root.classList.add('light')
+      root.classList.remove('dark')
+    }
     
     // localStorageに保存
     try {

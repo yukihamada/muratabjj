@@ -32,7 +32,7 @@ export default function ExperimentsPage() {
   const { user } = useAuth()
   const [experiments, setExperiments] = useState<Experiment[]>([])
   const [selectedExperiment, setSelectedExperiment] = useState<string | null>(null)
-  const [results, setResults] = useState<ExperimentResult[]>([]))
+  const [results, setResults] = useState<ExperimentResult[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingResults, setLoadingResults] = useState(false)
   

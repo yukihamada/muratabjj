@@ -17,6 +17,16 @@
     --radius: 14px;
   }
   
+  /* ダークモード明示的指定 */
+  .dark {
+    --bjj-bg: 15 15 18;
+    --bjj-bg2: 26 26 35;
+    --bjj-text: 240 240 245;
+    --bjj-muted: 168 178 193;
+    --bjj-line: 45 45 56;
+    --bjj-accent: 234 56 76;
+  }
+  
   /* ライトモード */
   .light {
     --bjj-bg: 255 255 255;
@@ -47,7 +57,12 @@
   }
   
   /* ダークモードの背景グラデーション */
-  :root body, .dark body {
+  body {
+    background: radial-gradient(1100px 800px at 15% -10%, rgba(234,56,76,.18), transparent 50%), rgb(var(--bjj-bg));
+    color: rgb(var(--bjj-text));
+  }
+  
+  .dark body {
     background: radial-gradient(1100px 800px at 15% -10%, rgba(234,56,76,.18), transparent 50%), rgb(var(--bjj-bg));
     color: rgb(var(--bjj-text));
   }
@@ -55,6 +70,7 @@
   /* ライトモードの背景 */
   .light body {
     background: radial-gradient(1100px 800px at 15% -10%, rgba(234,56,76,.08), transparent 50%), rgb(var(--bjj-bg));
+    color: rgb(var(--bjj-text));
   }
 }
 

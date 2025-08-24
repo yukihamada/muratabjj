@@ -15,7 +15,7 @@ interface RateLimitResult {
 const ratelimitCache = new Map<string, { count: number; resetTime: number }>()
 
 export function rateLimit(config: RateLimitConfig) {
-  return async function rateLimitMiddleware(
+  return async function (
     request: NextRequest,
     identifier: string
   ): Promise<RateLimitResult> {
@@ -56,6 +56,9 @@ export const apiRateLimit = rateLimit({
   interval: 60 * 1000, // 1 minute
   uniqueTokenPerInterval: 30, // 30 requests per minute
 })
+
+// Export middleware function for compatibility
+export const rateLimitMiddleware = apiRateLimit
 
 export const authRateLimit = rateLimit({
   interval: 15 * 60 * 1000, // 15 minutes
