@@ -74,7 +74,9 @@ export default function PricingWithStripe() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create checkout session')
+        const errorData = await response.json();
+        console.error('Checkout session error:', errorData);
+        throw new Error(errorData.error || 'Failed to create checkout session')
       }
 
       const { sessionId } = await response.json()

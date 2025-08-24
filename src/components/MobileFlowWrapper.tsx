@@ -16,10 +16,10 @@ export default function MobileFlowWrapper({ children }: MobileFlowWrapperProps) 
       const mobile = window.innerWidth < 768
       setIsMobile(mobile)
       
-      // モバイルの場合、専用ページへリダイレクト
-      if (mobile && window.location.pathname === '/flow-editor') {
-        router.push('/flow-editor/mobile')
-      }
+      // モバイルの場合でもリダイレクトしない（同じページで表示）
+      // if (mobile && window.location.pathname === '/flow-editor') {
+      //   router.push('/flow-editor/mobile')
+      // }
     }
 
     checkMobile()
