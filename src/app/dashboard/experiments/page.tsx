@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import DashboardNav from '@/components/DashboardNav'
 import { Loader2, BarChart3, Users, TrendingUp, Calendar } from 'lucide-react'
@@ -50,7 +50,6 @@ export default function ExperimentsPage() {
   
   const loadExperiments = async () => {
     try {
-      const supabase = createClient()
       const { data, error } = await supabase
         .from('experiments')
         .select('*')
@@ -69,7 +68,6 @@ export default function ExperimentsPage() {
   const loadResults = async (experimentId: string) => {
     setLoadingResults(true)
     try {
-      const supabase = createClient()
       const { data, error } = await supabase
         .rpc('get_experiment_results', { p_experiment_id: experimentId })
       
@@ -86,7 +84,6 @@ export default function ExperimentsPage() {
   
   const toggleExperiment = async (experiment: Experiment) => {
     try {
-      const supabase = createClient()
       const { error } = await supabase
         .from('experiments')
         .update({ enabled: !experiment.enabled })

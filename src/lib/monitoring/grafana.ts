@@ -12,8 +12,8 @@ export interface GrafanaConfig {
 
 // Get Grafana configuration from environment variables
 export function getGrafanaConfig(): GrafanaConfig | null {
-  const instanceId = process.env.GRAFANA_INSTANCE_ID
-  const apiKey = process.env.GRAFANA_API_KEY
+  const instanceId = typeof process !== 'undefined' ? process.env.GRAFANA_INSTANCE_ID : undefined
+  const apiKey = typeof process !== 'undefined' ? process.env.GRAFANA_API_KEY : undefined
   
   if (!instanceId || !apiKey) {
     return null
@@ -242,7 +242,7 @@ export async function logToGrafana(
   const timestamp = Date.now() * 1000000 // nanoseconds
   const labels = {
     app: 'murata-bjj',
-    environment: process.env.NODE_ENV || 'development',
+    environment: typeof process !== 'undefined' ? (process.env.NODE_ENV || 'development') : 'development',
     level,
   }
   
@@ -309,7 +309,7 @@ export class TraceSpan {
       process: {
         serviceName: 'murata-bjj',
         tags: [
-          { key: 'environment', vStr: process.env.NODE_ENV || 'development' },
+          { key: 'environment', vStr: typeof process !== 'undefined' ? (process.env.NODE_ENV || 'development') : 'development' },
         ],
       },
     }
