@@ -9,7 +9,7 @@ export async function adminFetch(url: string, options: RequestInit = {}) {
 
   const headers = {
     ...options.headers,
-    'Authorization': `Bearer ${session.access_token}`,
+    Authorization: `Bearer ${session.access_token}`,
   }
 
   return fetch(url, {

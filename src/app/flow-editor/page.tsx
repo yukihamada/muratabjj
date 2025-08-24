@@ -307,8 +307,8 @@ export default function FlowEditorPage() {
         .insert({
           user_id: user.id,
           name: flowName,
-          nodes: nodes,
-          edges: edges,
+          nodes,
+          edges,
           is_public: false,
         })
         .select()

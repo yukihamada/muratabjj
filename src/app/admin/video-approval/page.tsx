@@ -103,7 +103,7 @@ export default function VideoApprovalPage() {
       const { data, error } = await supabase
         .rpc('approve_video', {
           video_id: videoId,
-          status: status,
+          status,
           reason: reason || null
         })
 

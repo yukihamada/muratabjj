@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
     languages: {
-      'ja': '/ja',
-      'en': '/en',
-      'pt': '/pt',
+      ja: '/ja',
+      en: '/en',
+      pt: '/pt',
     },
   },
   icons: {

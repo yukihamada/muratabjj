@@ -35,7 +35,7 @@ export async function transcribeVideo(videoFile: File, language: string = 'ja'):
     const response = await fetch(WHISPER_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
       },
       body: formData,
     })

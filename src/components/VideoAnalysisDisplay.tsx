@@ -64,7 +64,7 @@ export default function VideoAnalysisDisplay({
         body: JSON.stringify({
           video_id: videoId,
           trigger_analysis: true,
-          background: background
+          background
         })
       })
 

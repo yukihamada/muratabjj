@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         message: 'Background analysis started',
-        video_id: video_id,
+        video_id,
         status: 'processing'
       })
     }
@@ -188,14 +188,14 @@ export async function POST(request: NextRequest) {
     if (result.success) {
       return NextResponse.json({
         success: true,
-        video_id: video_id,
+        video_id,
         analysis_id: result.analysis_id,
         analysis_result: result.analysis_result
       })
     } else {
       return NextResponse.json({
         error: result.error,
-        video_id: video_id
+        video_id
       }, { status: 500 })
     }
 
@@ -238,7 +238,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       video_id,
       analysis_status: analysis.analysis_status,
-      analysis: analysis
+      analysis
     })
 
   } catch (error: any) {

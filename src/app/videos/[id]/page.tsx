@@ -110,21 +110,21 @@ const translations = {
 const safetyWarningLabels = {
   ja: {
     'neck-spine': '首・脊椎への負荷が高い技術',
-    'knee': '膝への負荷が高い技術',
+    knee: '膝への負荷が高い技術',
     'beginner-unsafe': '初心者には推奨しない',
     'sparring-caution': 'スパーリングでの使用注意',
     'supervision-required': '指導者の監督下で練習推奨',
   },
   en: {
     'neck-spine': 'High stress on neck/spine',
-    'knee': 'High stress on knees',
+    knee: 'High stress on knees',
     'beginner-unsafe': 'Not recommended for beginners',
     'sparring-caution': 'Use caution in sparring',
     'supervision-required': 'Practice under supervision',
   },
   pt: {
     'neck-spine': 'Alto estresse no pescoço/coluna',
-    'knee': 'Alto estresse nos joelhos',
+    knee: 'Alto estresse nos joelhos',
     'beginner-unsafe': 'Não recomendado para iniciantes',
     'sparring-caution': 'Cuidado ao usar no sparring',
     'supervision-required': 'Praticar sob supervisão',

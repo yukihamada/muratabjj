@@ -99,7 +99,7 @@ export default function AdminUsers() {
 
       const response = await fetch('/api/admin/users', {
         headers: {
-          'Authorization': `Bearer ${session.access_token}`
+          Authorization: `Bearer ${session.access_token}`
         }
       })
       
