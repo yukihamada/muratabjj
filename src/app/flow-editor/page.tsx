@@ -451,9 +451,7 @@ export default function FlowEditorPage() {
       setHasInitialized(true)
     } else if (!hasInitialized && flowName === '') {
       // 初回のみフロー名を設定（言語変更時に上書きしない）
-      if (language === 'ja') setFlowName('新しいフロー')
-      else if (language === 'en') setFlowName('New Flow')
-      else if (language === 'pt') setFlowName('Novo Fluxo')
+      setFlowName(t.newFlow)
       setHasInitialized(true)
     }
     
