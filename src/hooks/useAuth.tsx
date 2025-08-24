@@ -49,7 +49,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchProfile = async (userId: string, userEmail?: string) => {
     try {
-      console.log('[useAuth] Fetching profile for userId:', userId)
       const { data, error } = await supabase
         .from('user_profiles')
         .select('*')
@@ -57,10 +56,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .single()
       
       if (error) {
-        console.log('[useAuth] Profile fetch error:', error)
         // プロファイルが存在しない場合は作成
         if (error.code === 'PGRST116') {
-          console.log('[useAuth] Creating new profile')
           // Profile not found, creating new profile
           const { data: newProfile, error: createError } = await supabase
             .from('user_profiles')
@@ -80,28 +77,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .single()
           
           if (createError) {
-            console.error('[useAuth] Error creating profile:', createError)
             // プロファイル作成に失敗してもログインは成功させる
             return
-          } else {
-            console.log('[useAuth] Profile created successfully')
           }
           setProfile(newProfile)
           setIsCoach(newProfile?.is_coach || false)
           setIsAdmin(newProfile?.is_admin || false)
         } else {
-          console.error('[useAuth] Error fetching profile:', error)
           // プロファイル取得に失敗してもログインは成功させる
           return
         }
       } else {
-        console.log('[useAuth] Profile found:', data)
         setProfile(data)
         setIsCoach(data?.is_coach || false)
         setIsAdmin(data?.is_admin || false)
       }
     } catch (error) {
-      console.error('[useAuth] Error in fetchProfile:', error)
       // エラーが発生してもログインは成功させる
     }
   }
@@ -121,23 +112,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     const checkSession = async () => {
       try {
-        console.log('[useAuth] Starting session check...')
-        
         // より短いタイムアウトで早期解決
         timeoutId = setTimeout(() => {
           if (isSubscribed && loading) {
-            console.log('[useAuth] Session check timeout - forcing completion')
             setLoading(false)
           }
         }, 3000) // 3秒のタイムアウト
 
         const { data: { session }, error } = await supabase.auth.getSession()
-        console.log('[useAuth] Session result:', session ? 'Found session' : 'No session', error || '')
         
         if (!isSubscribed) return
         
         if (error) {
-          console.error('[useAuth] Error getting session:', error)
           setLoading(false)
           return
         }
@@ -149,17 +135,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // isAdmin is set from profile data in fetchProfile
         
         if (session?.user) {
-          console.log('[useAuth] Fetching profile for user:', session.user.id)
           // プロファイル取得は非同期で実行（ブロックしない）
-          fetchProfile(session.user.id, session.user.email).catch(err => {
-            console.warn('[useAuth] Profile fetch failed:', err)
+          fetchProfile(session.user.id, session.user.email).catch(() => {
+            // Profile fetch failed silently
           })
         }
         
-        console.log('[useAuth] Session check completed, setting loading to false')
         setLoading(false)
       } catch (error: any) {
-        console.error('[useAuth] Error in checkSession:', error)
         if (isSubscribed) {
           setLoading(false)
         }
@@ -210,13 +193,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // セッションが確立したか確認
       if (!data?.session) {
-        console.error('[useAuth] No session returned after sign in')
         throw new Error('セッションの確立に失敗しました')
       }
       
       return data
     } catch (error: any) {
-      console.error('[useAuth] Sign in error:', error)
       throw error
     }
   }
@@ -258,7 +239,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         window.location.href = '/'
       }
     } catch (error: any) {
-      console.error('[useAuth] Sign out error:', error)
       toast.error(error.message || 'ログアウトに失敗しました')
       throw error
     }

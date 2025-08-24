@@ -32,7 +32,6 @@ async function performVideoAnalysis(videoId: string) {
   const supabaseAdmin = getSupabaseAdmin()
   
   try {
-    console.log('[AI Auto-Analysis] Starting analysis for video:', videoId)
 
     // 動画情報を取得
     const { data: video, error: videoError } = await supabaseAdmin
@@ -42,7 +41,6 @@ async function performVideoAnalysis(videoId: string) {
       .single()
 
     if (videoError || !video) {
-      console.error('[AI Auto-Analysis] Video not found:', videoError)
       return { success: false, error: 'Video not found' }
     }
 
@@ -54,7 +52,6 @@ async function performVideoAnalysis(videoId: string) {
       .single()
 
     if (existingAnalysis?.analysis_status === 'completed') {
-      console.log('[AI Auto-Analysis] Analysis already completed')
       return { success: true, message: 'Analysis already completed' }
     }
 
@@ -72,7 +69,6 @@ async function performVideoAnalysis(videoId: string) {
         .single()
 
       if (insertError) {
-        console.error('[AI Auto-Analysis] Error creating analysis record:', insertError)
         return { success: false, error: 'Failed to create analysis record' }
       }
 
@@ -130,15 +126,12 @@ async function performVideoAnalysis(videoId: string) {
       .eq('id', analysisId)
 
     if (updateError) {
-      console.error('[AI Auto-Analysis] Error saving results:', updateError)
       await supabaseAdmin
         .from('video_analyses')
         .update({ analysis_status: 'failed' })
         .eq('id', analysisId)
       return { success: false, error: 'Failed to save analysis results' }
     }
-
-    console.log('[AI Auto-Analysis] Analysis completed successfully')
     return { 
       success: true, 
       analysis_id: analysisId,
@@ -146,14 +139,12 @@ async function performVideoAnalysis(videoId: string) {
     }
 
   } catch (error: any) {
-    console.error('[AI Auto-Analysis] Analysis failed:', error)
     return { success: false, error: error.message }
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('[AI Auto-Analysis] POST request received')
     
     const { video_id, trigger_analysis = true, background = false } = await request.json()
 
@@ -200,7 +191,6 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error: any) {
-    console.error('[AI Auto-Analysis] Request error:', error)
     return NextResponse.json({ 
       error: 'Internal server error', 
       details: error.message 
@@ -242,7 +232,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error: any) {
-    console.error('[AI Auto-Analysis] GET error:', error)
     return NextResponse.json({ 
       error: 'Internal server error', 
       details: error.message 

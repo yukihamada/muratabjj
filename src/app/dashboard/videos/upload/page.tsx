@@ -219,7 +219,6 @@ export default function VideoUploadPage() {
     
     try {
       // ストレージチェックをスキップし、直接アップロードを試行
-      console.log('[Upload] Starting direct upload (skipping storage checks)...')
       
       // 動画のアップロード
       const { path: videoPath, url: videoUrl } = await uploadVideo(
@@ -267,7 +266,6 @@ export default function VideoUploadPage() {
       }))
       
     } catch (error: any) {
-      console.error('Upload error:', error)
       
       let errorMessage = t.uploadError
       
@@ -385,7 +383,6 @@ export default function VideoUploadPage() {
                        language === 'en' ? 'Audio analysis completed' : 
                        'Análise de áudio concluída')
         } catch (transcriptionError) {
-          console.error('Transcription error:', transcriptionError)
           toast.dismiss()
           toast.error(language === 'ja' ? '音声解析に失敗しました' : 
                      language === 'en' ? 'Audio analysis failed' : 
@@ -425,7 +422,6 @@ export default function VideoUploadPage() {
                        language === 'en' ? 'AI analysis scheduled' : 
                        'Análise de IA agendada')
         } catch (aiError) {
-          console.error('AI analysis scheduling error:', aiError)
           toast.dismiss()
         }
       }
@@ -493,7 +489,6 @@ export default function VideoUploadPage() {
       toast.success(t.uploadSuccess)
       router.push('/dashboard/videos')
     } catch (error: any) {
-      console.error('Upload error:', error)
       
       // More specific error messages
       let errorMessage = t.uploadError
