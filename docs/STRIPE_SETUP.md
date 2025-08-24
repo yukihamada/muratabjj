@@ -1,159 +1,299 @@
-# Stripe Integration Setup Guide
+# Stripe決済セットアップガイド - Murata BJJ
 
-This guide explains how to set up Stripe integration for the Murata BJJ platform.
+このガイドでは、Murata BJJプロジェクトでStripe決済を設定する手順を説明します。
 
-## Overview
+## 📋 概要
 
-The Murata BJJ platform uses Stripe for handling subscription payments with three tiers:
-- **Free Plan**: Basic features (¥0)
-- **Pro Plan**: Full features including Flow Editor (¥1,200/month)
-- **Dojo Plan**: All Pro features plus multi-user management (¥6,000/month)
+### 自動設定可能な項目（コマンドで実行）
+- ✅ Stripe商品の作成（Proプラン、道場プラン）
+- ✅ 価格設定の作成（月額・年額）
+- ✅ カスタマーポータルの設定
+- ✅ テスト環境でのWebhook転送（Stripe CLI使用）
 
-## Setup Steps
+### 手動設定が必要な項目
+- ❌ Stripeアカウントの作成
+- ❌ APIキーの取得（公開可能キー、シークレットキー）
+- ❌ 本番環境のWebhookエンドポイント設定
+- ❌ 環境変数の設定（.env.local）
+- ❌ ビジネス情報の入力・本人確認
 
-### 1. Stripe Account Setup
+## 🎯 料金プラン
 
-1. Create a Stripe account at [stripe.com](https://stripe.com)
-2. Complete your business verification
-3. Set your account to live mode when ready (use test mode for development)
+Murata BJJでは3つのプランを提供：
+- **無料プラン**: 基本機能（¥0）
+- **Proプラン**: フローエディタを含む全機能（¥1,200/月）
+- **道場プラン**: Pro機能＋複数ユーザー管理（¥6,000/月）
 
-### 2. Create Products and Prices
+## 🚀 セットアップ手順
 
-In your Stripe Dashboard:
+### 1. 手動設定：Stripeアカウントの作成
 
-1. Navigate to **Products** → **Add product**
-2. Create the following products:
+1. [Stripe](https://stripe.com/jp)にアクセス
+2. 「今すぐ始める」をクリックしてアカウント作成
+3. メールアドレス、パスワードを設定
+4. ビジネス情報を入力（後で変更可能）
+5. **テストモード**で開始（本番環境は後で設定）
 
-#### Pro Plan
-- **Name**: Murata BJJ Pro Plan
-- **Description**: Full access to all BJJ training features including Flow Editor
-- **Price**: ¥1,200 per month
-- **Billing period**: Monthly
-- **Currency**: JPY
+### 2. 手動設定：APIキーの取得
 
-#### Dojo Plan  
-- **Name**: Murata BJJ Dojo Plan
-- **Description**: Complete dojo management with all Pro features
-- **Price**: ¥6,000 per month
-- **Billing period**: Monthly
-- **Currency**: JPY
-
-3. Note down the Price IDs for each plan (format: `price_xxxxx`)
-
-### 3. Configure Webhook Endpoint
-
-1. In Stripe Dashboard, go to **Developers** → **Webhooks**
-2. Click **Add endpoint**
-3. Set the endpoint URL: `https://your-domain.com/api/stripe/webhook`
-4. Select the following events:
-   - `checkout.session.completed`
-   - `customer.subscription.created`
-   - `customer.subscription.updated`
-   - `customer.subscription.deleted`
-   - `invoice.payment_succeeded`
-   - `invoice.payment_failed`
-5. Copy the webhook signing secret
-
-### 4. Environment Variables
-
-Add the following to your `.env.local` file:
+1. [Stripeダッシュボード](https://dashboard.stripe.com)にログイン
+2. 右上の「テストモード」がONになっていることを確認
+3. 「開発者」→「APIキー」にアクセス
+4. 以下のキーをメモ：
 
 ```bash
-# Stripe Configuration
-STRIPE_SECRET_KEY=sk_test_xxxxx  # Your Stripe secret key
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxxxx  # Your Stripe publishable key
-STRIPE_WEBHOOK_SECRET=whsec_xxxxx  # Your webhook signing secret
-
-# Stripe Price IDs
-STRIPE_PRO_PRICE_ID=price_xxxxx  # Pro plan price ID
-STRIPE_DOJO_PRICE_ID=price_xxxxx  # Dojo plan price ID
+# これらのキーを.env.localに設定します
+公開可能キー: pk_test_xxxxxxxxxx
+シークレットキー: sk_test_xxxxxxxxxx
 ```
 
-### 5. Database Migration
+### 3. 手動設定：環境変数の設定
 
-Run the Stripe integration migration to add subscription fields to the profiles table:
+`.env.local`ファイルを作成または編集：
 
 ```bash
-# Using Supabase CLI
-supabase db push
+# Stripe基本設定（手動でコピー＆ペースト）
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxxxxxxxxx
+STRIPE_SECRET_KEY=sk_test_xxxxxxxxxx
 
-# Or manually run the migration
-psql -h your-db-host -U your-db-user -d your-db-name -f supabase/migrations/002_stripe_integration.sql
+# 以下は自動設定スクリプト実行後に追加される
+STRIPE_PRO_PRICE_ID_MONTHLY=
+STRIPE_PRO_PRICE_ID_YEARLY=
+STRIPE_DOJO_PRICE_ID_MONTHLY=
+STRIPE_DOJO_PRICE_ID_YEARLY=
+STRIPE_WEBHOOK_SECRET=
 ```
 
-### 6. Configure Customer Portal
+### 4. 自動設定：商品と価格の作成
 
-1. In Stripe Dashboard, go to **Settings** → **Billing** → **Customer portal**
-2. Enable the customer portal
-3. Configure allowed actions:
-   - Cancel subscriptions
-   - Update payment methods
-   - View invoices
-4. Customize branding to match your site
-
-## Testing
-
-### Test Cards
-
-Use these test card numbers in test mode:
-- **Success**: 4242 4242 4242 4242
-- **Decline**: 4000 0000 0000 0002
-- **Requires authentication**: 4000 0025 0000 3155
-
-### Test Webhooks
-
-Use Stripe CLI for local webhook testing:
+環境変数設定後、以下のコマンドを実行：
 
 ```bash
-# Install Stripe CLI
+# 1. 依存関係の確認
+npm install
+
+# 2. Stripeセットアップスクリプトの実行
+npm run setup-stripe
+```
+
+このスクリプトは自動的に以下を作成します：
+- ✅ Proプラン商品（月額¥1,200、年額¥12,000）
+- ✅ 道場プラン商品（月額¥6,000、年額¥60,000）
+- ✅ カスタマーポータル設定
+
+実行後、表示される価格IDを`.env.local`にコピー：
+
+```bash
+# スクリプトの出力例：
+STRIPE_PRO_PRICE_ID_MONTHLY=price_1234567890abcdef
+STRIPE_PRO_PRICE_ID_YEARLY=price_0987654321fedcba
+STRIPE_DOJO_PRICE_ID_MONTHLY=price_abcdef1234567890
+STRIPE_DOJO_PRICE_ID_YEARLY=price_fedcba0987654321
+STRIPE_PORTAL_CONFIG_ID=bpc_1234567890abcdef
+```
+
+### 5. 自動設定：ローカル開発用Webhook
+
+開発環境では、Stripe CLIで自動的にWebhookを転送できます：
+
+```bash
+# 1. Stripe CLIのインストール（macOS）
 brew install stripe/stripe-cli/stripe
 
-# Login to your Stripe account
+# Windows/Linuxの場合は公式ドキュメント参照
+# https://stripe.com/docs/stripe-cli#install
+
+# 2. Stripe CLIでログイン
 stripe login
 
-# Forward webhooks to local server
+# 3. Webhookイベントを転送（別ターミナルで実行）
 stripe listen --forward-to localhost:3000/api/stripe/webhook
 ```
 
-## Integration Features
+表示される署名シークレットを`.env.local`に追加：
 
-### Checkout Flow
-1. User clicks subscribe on pricing page
-2. System creates Stripe checkout session
-3. User redirected to Stripe Checkout
-4. After payment, user redirected back to success page
-5. Webhook updates user's subscription in database
+```bash
+STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxx
+```
 
-### Subscription Management
-- Users can manage subscriptions from their profile
-- Cancel subscription (continues until period end)
-- Reactivate canceled subscription
-- Access Stripe Customer Portal for billing
+### 6. 手動設定：本番環境のWebhook
 
-### Access Control
-- `SubscriptionGuard` component protects premium features
-- Server-side validation in API routes
-- Database functions for subscription checks
+本番環境では手動でWebhookを設定する必要があります：
 
-## Security Considerations
+1. Stripeダッシュボード → 「開発者」→「Webhook」
+2. 「エンドポイントを追加」をクリック
+3. 設定内容：
 
-1. **Webhook Validation**: Always verify webhook signatures
-2. **Server-side Checks**: Don't trust client-side subscription status
-3. **Rate Limiting**: Implement rate limiting on checkout creation
-4. **Error Handling**: Log errors but don't expose sensitive details
+```
+エンドポイントURL: https://your-domain.com/api/stripe/webhook
+リッスンするイベント:
+✅ checkout.session.completed
+✅ customer.subscription.created
+✅ customer.subscription.updated
+✅ customer.subscription.deleted
+✅ invoice.payment_succeeded
+✅ invoice.payment_failed
+```
 
-## Monitoring
+4. 作成後、「署名シークレット」を表示して環境変数に設定
 
-Monitor the following in production:
-- Failed payments
-- Subscription churn rate
-- Webhook failures
-- Checkout abandonment rate
+## 🧪 テスト手順
 
-## Support
+### テストカード番号
 
-For issues:
-1. Check Stripe Dashboard logs
-2. Verify webhook delivery
-3. Check application logs
-4. Test with Stripe CLI in development
+Stripeテストモードでは以下のカード番号を使用：
+
+| カード番号 | 結果 | 使用例 |
+|-----------|------|--------|
+| 4242 4242 4242 4242 | 成功 | 通常のテスト |
+| 4000 0000 0000 9995 | 失敗（資金不足） | エラー処理のテスト |
+| 4000 0000 0000 0002 | 失敗（カード拒否） | エラー処理のテスト |
+| 4000 0025 0000 3155 | 3Dセキュア認証が必要 | 認証フローのテスト |
+
+**その他の入力項目：**
+- 有効期限: 任意の将来の日付（例: 12/34）
+- CVC: 任意の3桁の数字（例: 123）
+- 郵便番号: 任意の5桁の数字（例: 10001）
+
+### 自動テスト：Webhookイベントのシミュレーション
+
+```bash
+# 特定のイベントを手動でトリガー
+stripe trigger checkout.session.completed
+
+# 複数のイベントをテスト
+stripe trigger customer.subscription.created
+stripe trigger customer.subscription.updated
+stripe trigger invoice.payment_succeeded
+```
+
+### 統合テストフロー
+
+1. **開発環境の準備**
+```bash
+# ターミナル1: Next.jsサーバー起動
+npm run dev
+
+# ターミナル2: Webhook転送
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
+
+2. **テスト手順**
+- ブラウザで`http://localhost:3000`にアクセス
+- テストアカウントでログイン
+- 料金ページから「Proプランに登録」をクリック
+- テストカード（4242...）で決済
+- 成功ページへのリダイレクトを確認
+- プロフィールページでプラン状態を確認
+
+## 🔧 トラブルシューティング
+
+### よくある問題と解決方法
+
+#### 1. 「npm run setup-stripe」でエラーが出る
+
+**原因**: 環境変数が正しく設定されていない
+
+**解決方法**:
+```bash
+# .env.localファイルを確認
+cat .env.local
+
+# STRIPE_SECRET_KEYが設定されているか確認
+# sk_test_で始まる値が必要
+```
+
+#### 2. Webhookが401エラーを返す
+
+**原因**: Webhook署名シークレットが間違っている
+
+**解決方法**:
+```bash
+# Stripe CLIの出力を再確認
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+
+# 表示される whsec_xxxxx を正確にコピー
+```
+
+#### 3. 決済後にエラーページが表示される
+
+**原因**: 環境変数`NEXT_PUBLIC_APP_URL`が未設定
+
+**解決方法**:
+```bash
+# .env.localに追加
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+#### 4. 商品が作成されない
+
+**原因**: Stripeアカウントがアクティベートされていない
+
+**解決方法**:
+- Stripeダッシュボードでアカウント状態を確認
+- 必要な本人確認を完了する
+
+### デバッグモード
+
+開発時の詳細ログ確認：
+
+```javascript
+// src/lib/stripe/debug.ts を作成
+export const debugStripe = {
+  logWebhookEvent: (event: any) => {
+    console.log('Webhook Event:', {
+      type: event.type,
+      data: event.data,
+      timestamp: new Date().toISOString()
+    })
+  },
+  logCheckoutSession: (session: any) => {
+    console.log('Checkout Session:', {
+      id: session.id,
+      customer: session.customer,
+      subscription: session.subscription,
+      status: session.status
+    })
+  }
+}
+```
+
+## 📊 本番環境への移行
+
+### チェックリスト
+
+- [ ] 本番用のStripeアカウントをアクティベート
+- [ ] 本番APIキーを取得して環境変数に設定
+- [ ] 本番環境でWebhookエンドポイントを作成
+- [ ] 本番用の商品と価格を作成（スクリプト再実行）
+- [ ] SSL証明書が有効（HTTPSが必須）
+- [ ] エラー監視ツール（Sentry等）を設定
+- [ ] 決済フローを本番環境でテスト
+
+### Vercelへのデプロイ時の設定
+
+```bash
+# Vercel環境変数（本番用）
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxxxx
+STRIPE_SECRET_KEY=sk_live_xxxxx
+STRIPE_WEBHOOK_SECRET=whsec_xxxxx
+STRIPE_PRO_PRICE_ID_MONTHLY=price_xxxxx
+STRIPE_PRO_PRICE_ID_YEARLY=price_xxxxx
+STRIPE_DOJO_PRICE_ID_MONTHLY=price_xxxxx
+STRIPE_DOJO_PRICE_ID_YEARLY=price_xxxxx
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+```
+
+## 📚 参考リンク
+
+- [Stripe公式ドキュメント（日本語）](https://stripe.com/docs/ja)
+- [Stripe APIリファレンス](https://stripe.com/docs/api)
+- [Next.js + Stripeサンプル](https://github.com/vercel/nextjs-subscription-payments)
+- [Stripe CLI ドキュメント](https://stripe.com/docs/stripe-cli)
+
+## 🆘 サポート
+
+問題が解決しない場合：
+1. [Stripeサポート](https://support.stripe.com/contact)に問い合わせ
+2. プロジェクトのGitHub Issuesに詳細を記載
+3. 開発者（admin@muratabjj.com）に連絡

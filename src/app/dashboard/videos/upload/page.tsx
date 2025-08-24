@@ -128,6 +128,8 @@ export default function VideoUploadPage() {
   const [loading, setLoading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [uploadedVideoData, setUploadedVideoData] = useState<any>(null)
+  const [isUploading, setIsUploading] = useState(false)
   const [techniques, setTechniques] = useState<any[]>([])
   const [flows, setFlows] = useState<any[]>([])
   const [transcribing, setTranscribing] = useState(false)
@@ -186,22 +188,137 @@ export default function VideoUploadPage() {
     }
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
-      if (file.type.startsWith('video/')) {
-        setVideoFile(file)
-      } else {
+      if (!file.type.startsWith('video/')) {
         toast.error(language === 'ja' ? '動画ファイルを選択してください' : 
                    language === 'en' ? 'Please select a video file' : 
                    'Por favor, selecione um arquivo de vídeo')
+        return
       }
+      
+      setVideoFile(file)
+      
+      // ユーザーがログインしていない場合はエラー
+      if (!user) {
+        toast.error(t.loginRequired)
+        return
+      }
+      
+      // 即座にアップロードを開始
+      await uploadVideoFile(file)
+    }
+  }
+
+  // 動画ファイルのアップロードのみを行う関数
+  const uploadVideoFile = async (file: File) => {
+    if (!user) return
+    
+    setIsUploading(true)
+    setUploadProgress(0)
+    
+    try {
+      // ストレージのチェックと準備
+      const bucketsReady = await checkAndCreateBuckets()
+      if (!bucketsReady) {
+        throw new Error(language === 'ja' ? 'ストレージの準備中です。もう一度お試しください。' : 
+                       language === 'en' ? 'Storage is being prepared. Please try again.' : 
+                       'O armazenamento está sendo preparado. Tente novamente.')
+      }
+      
+      // アップロード権限のチェック
+      const hasPermission = await checkUploadPermission(user.id)
+      if (!hasPermission) {
+        throw new Error(language === 'ja' ? 'アップロード権限がありません。管理者にお問い合わせください。' : 
+                       language === 'en' ? 'Upload permission denied. Please contact administrator.' : 
+                       'Permissão de upload negada. Entre em contato com o administrador.')
+      }
+      
+      // 動画のアップロード
+      const { path: videoPath, url: videoUrl } = await uploadVideo(
+        file,
+        user.id,
+        (progress) => setUploadProgress(progress)
+      )
+      
+      // サムネイルの生成とアップロード
+      toast.loading(language === 'ja' ? 'サムネイルを生成中...' : 
+                   language === 'en' ? 'Generating thumbnail...' : 
+                   'Gerando miniatura...')
+      
+      const thumbnailBlob = await generateVideoThumbnail(file)
+      const thumbnailFile = new File([thumbnailBlob], 'thumbnail.jpg', { type: 'image/jpeg' })
+      const { url: thumbnailUrl } = await uploadThumbnail(thumbnailFile, videoPath)
+      
+      // 動画の長さを取得
+      const duration = await getVideoDuration(file)
+      
+      toast.dismiss()
+      
+      // アップロード成功時の処理
+      setUploadedVideoData({
+        videoPath,
+        videoUrl,
+        thumbnailUrl,
+        duration,
+        fileName: file.name
+      })
+      
+      toast.success(
+        language === 'ja' ? '動画のアップロードが完了しました。詳細情報を入力してください。' :
+        language === 'en' ? 'Video uploaded successfully. Please enter the details.' :
+        'Vídeo enviado com sucesso. Por favor, insira os detalhes.'
+      )
+      
+      // タイトルに動画ファイル名をセット（拡張子を除く）
+      const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, '')
+      setFormData(prev => ({
+        ...prev,
+        title_ja: prev.title_ja || fileNameWithoutExt,
+        title_en: prev.title_en || fileNameWithoutExt,
+        title_pt: prev.title_pt || fileNameWithoutExt
+      }))
+      
+    } catch (error: any) {
+      console.error('Upload error:', error)
+      
+      let errorMessage = t.uploadError
+      
+      if (error.message) {
+        if (error.message.includes('File size exceeds')) {
+          errorMessage = language === 'ja' ? 'ファイルサイズが大きすぎます（最大5GB）' : 
+                        language === 'en' ? 'File size too large (max 5GB)' : 
+                        'Arquivo muito grande (máx 5GB)'
+        } else if (error.message.includes('Invalid file type')) {
+          errorMessage = language === 'ja' ? 'サポートされていないファイル形式です（MP4、MOV、AVIのみ）' : 
+                        language === 'en' ? 'Unsupported file type (MP4, MOV, AVI only)' : 
+                        'Tipo de arquivo não suportado (apenas MP4, MOV, AVI)'
+        } else {
+          errorMessage = error.message
+        }
+      }
+      
+      toast.error(errorMessage)
+      setVideoFile(null)
+    } finally {
+      setIsUploading(false)
+      setUploadProgress(0)
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!videoFile) return
+    
+    // アップロード済みのデータがない場合はエラー
+    if (!uploadedVideoData) {
+      toast.error(
+        language === 'ja' ? '動画をアップロードしてください' :
+        language === 'en' ? 'Please upload a video' :
+        'Por favor, envie um vídeo'
+      )
+      return
+    }
 
     // ユーザーがログインしていない場合はエラー
     if (!user) {
@@ -210,41 +327,10 @@ export default function VideoUploadPage() {
     }
 
     setLoading(true)
-    setUploadProgress(0)
 
     try {
-      // Check and create storage buckets if needed
-      const bucketsReady = await checkAndCreateBuckets()
-      if (!bucketsReady) {
-        throw new Error(language === 'ja' ? 'ストレージの準備中です。もう一度お試しください。' : 
-                       language === 'en' ? 'Storage is being prepared. Please try again.' : 
-                       'O armazenamento está sendo preparado. Tente novamente.')
-      }
-      
-      // Check upload permission
-      const hasPermission = await checkUploadPermission(user.id)
-      if (!hasPermission) {
-        throw new Error(language === 'ja' ? 'アップロード権限がありません。管理者にお問い合わせください。' : 
-                       language === 'en' ? 'Upload permission denied. Please contact administrator.' : 
-                       'Permissão de upload negada. Entre em contato com o administrador.')
-      }
-      // 1. Upload video with progress tracking
-      const uploaderId = user.id
-      const { path: videoPath, url: videoUrl } = await uploadVideo(
-        videoFile,
-        uploaderId,
-        (progress) => setUploadProgress(progress)
-      )
 
-      // 2. Generate and upload thumbnail
-      const thumbnailBlob = await generateVideoThumbnail(videoFile)
-      const thumbnailFile = new File([thumbnailBlob], 'thumbnail.jpg', { type: 'image/jpeg' })
-      const { url: thumbnailUrl } = await uploadThumbnail(thumbnailFile, videoPath)
-
-      // 3. Get video duration
-      const duration = await getVideoDuration(videoFile)
-
-      // 4. Save to database
+      // Save to database using uploaded video data
       const { data: videoData, error: dbError } = await supabase
         .from('videos')
         .insert({
@@ -254,9 +340,9 @@ export default function VideoUploadPage() {
           description_ja: formData.description_ja,
           description_en: formData.description_en,
           description_pt: formData.description_pt,
-          url: videoUrl,
-          thumbnail_url: thumbnailUrl,
-          duration,
+          url: uploadedVideoData.videoUrl,
+          thumbnail_url: uploadedVideoData.thumbnailUrl,
+          duration: uploadedVideoData.duration,
           technique_id: formData.technique_id || null,
           instructor_id: user.id,
           belt_requirement: formData.belt_requirement || null,

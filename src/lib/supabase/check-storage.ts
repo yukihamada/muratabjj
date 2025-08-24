@@ -10,7 +10,7 @@ export async function checkAndCreateBuckets() {
       return false
     }
     
-    const existingBuckets = buckets?.map(b => b.name) || []
+    const existingBuckets = buckets?.map((b: any) => b.name) || []
     const requiredBuckets = ['videos', 'thumbnails', 'avatars']
     
     // Create missing buckets
