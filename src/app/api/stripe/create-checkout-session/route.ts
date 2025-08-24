@@ -3,6 +3,13 @@ import { stripe, SUBSCRIPTION_PLANS } from '@/lib/stripe/config';
 import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
+  console.log('[Stripe API] Create checkout session request received');
+  console.log('[Stripe API] Environment check:', {
+    hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    hasSupabaseAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    hasStripeSecretKey: !!process.env.STRIPE_SECRET_KEY,
+  });
+  
   try {
     // Use the server-side supabase client
     const supabase = createClient();
@@ -12,30 +19,38 @@ export async function POST(request: NextRequest) {
     const { data: authData, error: authError } = await supabase.auth.getUser();
     
     if (authError) {
-      console.error('Auth error:', authError);
+      console.error('[Stripe API] Cookie auth error:', authError);
     } else {
       user = authData?.user;
+      console.log('[Stripe API] User from cookie:', user?.id);
     }
     
     // If no user from cookie, try authorization header
     if (!user) {
       const authHeader = request.headers.get('authorization');
+      console.log('[Stripe API] Authorization header:', authHeader ? 'present' : 'missing');
+      
       if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.replace('Bearer ', '');
         const { data: tokenData, error: tokenError } = await supabase.auth.getUser(token);
         if (!tokenError && tokenData?.user) {
           user = tokenData.user;
+          console.log('[Stripe API] User from token:', user.id);
+        } else {
+          console.error('[Stripe API] Token auth error:', tokenError);
         }
       }
     }
     
     if (!user) {
-      console.error('No authenticated user found');
+      console.error('[Stripe API] No authenticated user found');
       return NextResponse.json(
         { error: 'Unauthorized - Please login to continue' },
         { status: 401 }
       );
     }
+    
+    console.log('[Stripe API] Authenticated user:', user.id, user.email);
 
     const { planId, locale = 'ja', billingPeriod = 'monthly' } = await request.json();
 

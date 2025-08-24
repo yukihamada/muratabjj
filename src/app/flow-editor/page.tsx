@@ -474,17 +474,21 @@ export default function FlowEditorPage() {
               </div>
             )}
             
-            {/* モバイルでサンプルフローを表示 */}
-            {isMobileView && publicFlows.length > 0 && (
+            {/* サンプルフローを表示（PC・モバイル共通） */}
+            {publicFlows.length > 0 && (
               <div className="mt-2">
                 <button
                   onClick={() => setShowFlowList(!showFlowList)}
-                  className="text-xs text-bjj-accent"
+                  className="text-xs sm:text-sm text-bjj-accent hover:text-bjj-accent/80 transition-colors"
                 >
-                  {showFlowList ? '閉じる' : 'サンプルフローを見る'}
+                  {showFlowList ? (
+                    language === 'ja' ? '閉じる' : language === 'en' ? 'Close' : 'Fechar'
+                  ) : (
+                    language === 'ja' ? 'サンプルフローを見る' : language === 'en' ? 'View Sample Flows' : 'Ver Fluxos de Exemplo'
+                  )}
                 </button>
                 {showFlowList && (
-                  <div className="mt-2 space-y-1 max-h-32 overflow-y-auto">
+                  <div className="mt-2 space-y-1 max-h-48 overflow-y-auto bg-bjj-bg/50 rounded-lg p-2">
                     {publicFlows.map((flow) => (
                       <button
                         key={flow.id}
@@ -493,9 +497,13 @@ export default function FlowEditorPage() {
                           if (flow.nodes) setNodes(flow.nodes)
                           if (flow.edges) setEdges(flow.edges)
                           setShowFlowList(false)
-                          toast.success('フローを読み込みました')
+                          toast.success(
+                            language === 'ja' ? 'フローを読み込みました' :
+                            language === 'en' ? 'Flow loaded' :
+                            'Fluxo carregado'
+                          )
                         }}
-                        className="block w-full text-left text-xs p-1 hover:bg-bjj-bg2 rounded"
+                        className="block w-full text-left text-xs sm:text-sm p-2 hover:bg-bjj-bg2 rounded transition-colors"
                       >
                         {flow.name}
                       </button>
@@ -506,11 +514,50 @@ export default function FlowEditorPage() {
             )}
           </div>
           
-          <div className="hidden sm:block absolute top-4 right-4 bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-bjj p-4">
-            <div className="text-sm space-y-2">
-              <p className="text-bjj-muted">
-                {language === 'ja' ? '操作方法：' : language === 'en' ? 'Controls:' : 'Controles:'}
-              </p>
+          {/* フローリストパネル（デスクトップ） */}
+          <div className="hidden lg:block absolute top-4 right-4 w-64 max-h-[calc(100vh-200px)] bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-bjj overflow-hidden">
+            <div className="p-4">
+              <h3 className="text-sm font-bold text-bjj-text mb-3">
+                {language === 'ja' ? 'フローライブラリ' : language === 'en' ? 'Flow Library' : 'Biblioteca de Fluxos'}
+              </h3>
+              {publicFlows.length > 0 ? (
+                <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                  {publicFlows.map((flow) => (
+                    <button
+                      key={flow.id}
+                      onClick={() => {
+                        setFlowName(flow.name)
+                        if (flow.nodes) setNodes(flow.nodes)
+                        if (flow.edges) setEdges(flow.edges)
+                        toast.success(
+                          language === 'ja' ? 'フローを読み込みました' :
+                          language === 'en' ? 'Flow loaded' :
+                          'Fluxo carregado'
+                        )
+                      }}
+                      className="w-full text-left p-3 bg-bjj-bg rounded-lg hover:bg-bjj-bg/80 border border-white/5 hover:border-bjj-accent/30 transition-all"
+                    >
+                      <h4 className="text-sm font-semibold text-bjj-text">{flow.name}</h4>
+                      {flow.description && (
+                        <p className="text-xs text-bjj-muted mt-1 line-clamp-2">{flow.description}</p>
+                      )}
+                      <div className="text-xs text-bjj-muted mt-2">
+                        {flow.nodes?.length || 0} {language === 'ja' ? 'ノード' : 'nodes'}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-bjj-muted">
+                  {language === 'ja' ? 'フローがありません' : language === 'en' ? 'No flows available' : 'Nenhum fluxo disponível'}
+                </p>
+              )}
+            </div>
+            
+            <div className="border-t border-white/10 p-4 mt-4">
+              <h4 className="text-xs font-bold text-bjj-muted mb-2">
+                {language === 'ja' ? '操作方法' : language === 'en' ? 'Controls' : 'Controles'}
+              </h4>
               <ul className="space-y-1 text-xs text-bjj-muted">
                 {language === 'ja' && (
                   <>
