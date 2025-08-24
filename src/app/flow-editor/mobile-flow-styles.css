@@ -57,8 +57,9 @@
   /* Panel improvements */
   .react-flow__panel {
     position: absolute !important;
-    z-index: 5 !important;
+    z-index: 20 !important;
     margin: 0 !important;
+    pointer-events: auto !important;
   }
 
   /* Top-left panel (flow name and controls) */
@@ -105,4 +106,19 @@
   right: 0;
   bottom: 60px;
   overflow: hidden;
+}
+
+/* Ensure interactive elements are clickable */
+.react-flow__panel button,
+.react-flow__panel input,
+.react-flow__panel a {
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 30 !important;
+}
+
+/* Fix for control panel buttons */
+.react-flow__controls button {
+  pointer-events: auto !important;
+  cursor: pointer !important;
 }

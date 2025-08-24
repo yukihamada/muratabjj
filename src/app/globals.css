@@ -410,3 +410,67 @@ html:not(.light) body {
     page-break-after: always;
   }
 }
+
+/* Flow Editor Z-index and interaction fixes */
+.react-flow__attribution {
+  display: none !important;
+}
+
+.react-flow__container {
+  position: relative;
+  z-index: 0;
+}
+
+.react-flow__renderer {
+  z-index: 1;
+}
+
+.react-flow__zoompane {
+  z-index: 1;
+}
+
+/* Ensure UI panels are above the flow */
+.react-flow__panel {
+  z-index: 10 !important;
+  pointer-events: auto !important;
+}
+
+/* Fix for buttons in panels */
+.react-flow__panel button,
+.react-flow__panel input,
+.react-flow__panel a,
+.react-flow__panel select {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  position: relative;
+  z-index: 11;
+}
+
+/* Controls specific fix */
+.react-flow__controls {
+  z-index: 15 !important;
+  pointer-events: auto !important;
+}
+
+.react-flow__controls button {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* Fix for custom panels in flow editor */
+.flow-editor-panel {
+  position: relative;
+  z-index: 20 !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure nodes and edges are interactive */
+.react-flow__node {
+  z-index: 2;
+  pointer-events: auto !important;
+}
+
+.react-flow__edge {
+  z-index: 1;
+  pointer-events: auto !important;
+}

@@ -448,7 +448,7 @@ export default function FlowEditorPage() {
         <DashboardNav />
       
       
-      <div className={`${isMobileView ? 'flow-editor-mobile-container' : 'h-[calc(100vh-120px)]'} relative`}>
+      <div className={`${isMobileView ? 'flow-editor-mobile-container' : 'h-[calc(100vh-120px)]'} relative`} style={{ zIndex: 1 }}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -469,7 +469,7 @@ export default function FlowEditorPage() {
             className="bg-bjj-bg2 border-white/10"
           />
           
-          <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-lg sm:rounded-bjj p-2 sm:p-4 max-w-[90%] sm:max-w-none">
+          <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-lg sm:rounded-bjj p-2 sm:p-4 max-w-[90%] sm:max-w-none z-10">
             <div className="mb-2 sm:mb-4">
               <div className="flex items-center gap-2 sm:gap-4">
                 <input
@@ -512,13 +512,13 @@ export default function FlowEditorPage() {
               {!isReadOnly && (
                 <>
                   <button
-                    onClick={(e) => {
-                      e.preventDefault()
-                      // Add node button clicked
+                    onClick={() => {
+                      console.log('Add node button clicked')
                       addNode()
                     }}
                     className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
                     type="button"
+                    style={{ position: 'relative', zIndex: 100 }}
                   >
                     <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span className="hidden sm:inline">{language === 'ja' ? 'ノード追加' : language === 'en' ? 'Add Node' : 'Adicionar Nó'}</span>
@@ -574,6 +574,7 @@ export default function FlowEditorPage() {
                             ? 'bg-bjj-accent/20 border-l-2 border-bjj-accent' 
                             : 'hover:bg-bjj-bg2'
                         }`}
+                        style={{ position: 'relative', zIndex: 100 }}
                       >
                         {flow.name}
                         {currentFlowId === flow.id && (
@@ -588,7 +589,7 @@ export default function FlowEditorPage() {
           </div>
           
           {/* フローリストパネル（デスクトップ） */}
-          <div className="hidden lg:block absolute top-4 right-4 w-64 max-h-[calc(100vh-200px)] bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-bjj overflow-hidden">
+          <div className="hidden lg:block absolute top-4 right-4 w-64 max-h-[calc(100vh-200px)] bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-bjj overflow-hidden z-10">
             <div className="p-4">
               <h3 className="text-sm font-bold text-bjj-text mb-3">
                 {language === 'ja' ? 'フローライブラリ' : language === 'en' ? 'Flow Library' : 'Biblioteca de Fluxos'}
@@ -604,6 +605,7 @@ export default function FlowEditorPage() {
                           ? 'bg-bjj-accent/10 border-bjj-accent/50 ring-1 ring-bjj-accent/30'
                           : 'bg-bjj-bg hover:bg-bjj-bg/80 border-white/5 hover:border-bjj-accent/30'
                       }`}
+                      style={{ position: 'relative', zIndex: 100 }}
                     >
                       <div className="flex items-start justify-between">
                         <h4 className="text-sm font-semibold text-bjj-text">{flow.name}</h4>
