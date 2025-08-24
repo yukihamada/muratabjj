@@ -155,7 +155,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
   }
 
   const dialogContent = (
-    <div className="fixed inset-0 z-[9999] flex items-start justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-[9999] flex items-start sm:items-center justify-center sm:p-4 overflow-y-auto h-real-screen">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm"
@@ -163,12 +163,12 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
       />
 
       {/* Dialog */}
-      <div className="relative w-full max-w-md animate-scale-in mt-20 mb-8">
-        <div className="card-gradient border border-white/10 rounded-bjj p-6 bg-bjj-bg2 shadow-2xl">
+      <div className="relative w-full sm:max-w-md animate-scale-in sm:mt-20 mb-8 sm:mb-0">
+        <div className="card-gradient border border-white/10 rounded-t-2xl sm:rounded-2xl p-6 bg-bjj-bg2 shadow-2xl mobile-modal-content">
           {/* Close button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 text-bjj-muted hover:text-bjj-text transition-colors"
+            className="absolute top-4 right-4 text-bjj-muted hover:text-bjj-text transition-colors touch-target"
           >
             <X size={20} />
           </button>
@@ -194,6 +194,7 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
               <input
                 id="email"
                 type="email"
+                inputMode="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

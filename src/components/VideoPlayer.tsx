@@ -150,25 +150,25 @@ export default function VideoPlayer({ video }: { video: VideoData }) {
               </video>
               
               {/* Custom Controls Overlay */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 sm:p-4">
                 <div className="flex items-center gap-4">
                   <button
                     onClick={togglePlay}
-                    className="text-white hover:text-bjj-accent transition-colors"
+                    className="text-white hover:text-bjj-accent transition-colors touch-target tap-highlight-transparent"
                   >
                     {isPlaying ? (
-                      <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z" />
                       </svg>
                     ) : (
-                      <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                       </svg>
                     )}
                   </button>
                   
                   <div className="flex-1">
-                    <div className="bg-white/20 rounded-full h-1 cursor-pointer">
+                    <div className="bg-white/20 rounded-full h-2 sm:h-1 cursor-pointer touch-target">
                       <div 
                         className="bg-bjj-accent h-full rounded-full transition-all"
                         style={{ width: `${(currentTime / duration) * 100}%` }}
@@ -182,7 +182,7 @@ export default function VideoPlayer({ video }: { video: VideoData }) {
                   
                   <button
                     onClick={changePlaybackRate}
-                    className="text-white text-sm hover:text-bjj-accent transition-colors"
+                    className="text-white text-sm hover:text-bjj-accent transition-colors touch-target tap-highlight-transparent px-2"
                   >
                     {playbackRate}x
                   </button>
@@ -194,7 +194,7 @@ export default function VideoPlayer({ video }: { video: VideoData }) {
           {/* Video Info */}
           <div className="card-gradient border border-white/10 rounded-bjj p-6 mb-4">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">{video.title}</h1>
-            <div className="flex items-center gap-4 text-bjj-muted mb-4">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm sm:text-base text-bjj-muted mb-4">
               <span>講師: {video.instructor}</span>
               <span>•</span>
               <span>{video.duration}</span>

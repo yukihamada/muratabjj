@@ -96,9 +96,16 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
+  minimumScale: 1,
   userScalable: true,
   viewportFit: 'cover',
-  themeColor: '#1e40af',
+  themeColor: [{
+    media: '(prefers-color-scheme: light)',
+    color: '#ffffff'
+  }, {
+    media: '(prefers-color-scheme: dark)', 
+    color: '#0f0f12'
+  }],
 }
 
 export default function RootLayout({
@@ -182,9 +189,9 @@ export default function RootLayout({
                         }
                       }
                       
-                      // Then register new simple service worker
-                      const registration = await navigator.serviceWorker.register('/sw-simple.js');
-                      console.log('New SW registered: ', registration);
+                      // Then register mobile-optimized service worker
+                      const registration = await navigator.serviceWorker.register('/sw-mobile.js');
+                      console.log('Mobile SW registered: ', registration);
                     } catch (error) {
                       console.error('SW error:', error);
                     }

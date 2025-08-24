@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import mobile optimizations */
+@import '../components/MobileOptimizations.css';
+
 @layer base {
   /* ダークモード (デフォルト) */
   :root {
