@@ -416,7 +416,11 @@ export default function VideoUploadPage() {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ videoId: videoData.id })
+            body: JSON.stringify({ 
+              video_id: videoData.id,
+              trigger_analysis: true,
+              background: true
+            })
           })
           
           toast.dismiss()

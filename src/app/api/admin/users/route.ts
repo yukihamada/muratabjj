@@ -30,9 +30,9 @@ function getSupabaseAdmin() {
 async function isAdmin(userId: string): Promise<boolean> {
   const supabaseAdmin = getSupabaseAdmin()
   
-  // Check user_profiles table for admin status
+  // Check users_profile table for admin status
   const { data: profile, error: profileError } = await supabaseAdmin
-    .from('user_profiles')
+    .from('users_profile')
     .select('is_admin')
     .eq('user_id', userId)
     .single()
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
 
     // ユーザー一覧を取得
     const { data: profiles, error: profilesError } = await supabaseAdmin
-      .from('user_profiles')
+      .from('users_profile')
       .select(`
         id,
         user_id,

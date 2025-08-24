@@ -7,6 +7,7 @@ import { ArrowLeft, Clock, Calendar, User, Lock, ChevronRight, AlertTriangle, Pl
 import { useLanguage } from '@/contexts/LanguageContext'
 import { supabase } from '@/lib/supabase/client'
 import ProgressTracker from '@/components/ProgressTracker'
+import VideoAnalysisDisplay from '@/components/VideoAnalysisDisplay'
 import { useAuth } from '@/hooks/useAuth'
 import DashboardNav from '@/components/DashboardNav'
 
@@ -425,6 +426,13 @@ export default function VideoPage() {
                 }}
               />
             )}
+
+            {/* AI Video Analysis */}
+            <VideoAnalysisDisplay 
+              videoId={videoId} 
+              autoTriggerAnalysis={false}
+              showTriggerButton={true}
+            />
 
             {/* Chapters */}
             {chapters.length > 0 && (

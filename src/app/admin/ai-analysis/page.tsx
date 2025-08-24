@@ -95,16 +95,21 @@ export default function AIAnalysisPage() {
     setAnalyzingVideo(videoId)
     
     try {
-      const response = await fetch('/api/ai/analyze-video', {
+      const response = await fetch('/api/ai/auto-analyze-on-upload', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ videoId })
+        body: JSON.stringify({ 
+          video_id: videoId,
+          trigger_analysis: true,
+          background: false
+        })
       })
 
       if (!response.ok) {
-        throw new Error('Analysis failed')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Analysis failed')
       }
 
       const result = await response.json()
@@ -112,9 +117,9 @@ export default function AIAnalysisPage() {
       
       // 動画リストを更新
       fetchVideos()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error analyzing video:', error)
-      toast.error('AI分析に失敗しました')
+      toast.error(error.message || 'AI分析に失敗しました')
     } finally {
       setAnalyzingVideo(null)
     }

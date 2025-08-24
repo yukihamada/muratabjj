@@ -149,9 +149,9 @@ export default function ProfilePage() {
       // Fetching profile for user
       
       const { data, error } = await supabase
-        .from('user_profiles')
+        .from('users_profile')
         .select('*')
-        .eq('id', user!.id)
+        .eq('user_id', user!.id)
         .single()
 
       if (error) {
@@ -161,13 +161,16 @@ export default function ProfilePage() {
         if (error.code === 'PGRST116') {
           // Profile not found, creating new profile
           const { data: newProfile, error: createError } = await supabase
-            .from('user_profiles')
+            .from('users_profile')
             .insert({
-              id: user!.id,
               user_id: user!.id,
               full_name: '',
-              belt_rank: 'white',
+              belt: 'white',
               stripes: 0,
+              is_admin: false,
+              is_coach: false,
+              subscription_plan: 'free',
+              subscription_status: 'inactive',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             })
@@ -252,14 +255,14 @@ export default function ProfilePage() {
 
     try {
       const { error } = await supabase
-        .from('user_profiles')
+        .from('users_profile')
         .update({
           full_name: formData.full_name,
-          belt_rank: formData.belt,
+          belt: formData.belt,
           stripes: formData.stripes,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', user!.id)
+        .eq('user_id', user!.id)
 
       if (error) throw error
 
