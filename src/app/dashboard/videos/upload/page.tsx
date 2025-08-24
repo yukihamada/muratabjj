@@ -6,7 +6,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase/client'
 import { uploadVideo, uploadThumbnail, generateVideoThumbnail, getVideoDuration } from '@/lib/supabase/storage'
 import { transcribeVideoServerSide, saveTranscription } from '@/lib/whisper/api'
-import { checkAndCreateBuckets, checkUploadPermission } from '@/lib/supabase/check-storage'
 import { Upload, AlertCircle, Info, Video, Loader2, Plus, Mic, Brain, Trash2, Save } from 'lucide-react'
 import Link from 'next/link'
 import { useLanguage } from '@/contexts/LanguageContext'
@@ -219,25 +218,8 @@ export default function VideoUploadPage() {
     setUploadProgress(0)
     
     try {
-      // ストレージのチェックと準備（より寛容に）
-      console.log('[Upload] Starting storage check...')
-      const bucketsReady = await checkAndCreateBuckets()
-      console.log('[Upload] Bucket check result:', bucketsReady)
-      
-      // バケットチェックが失敗してもアップロードを試行する
-      if (!bucketsReady) {
-        console.warn('[Upload] Bucket check failed, but continuing with upload attempt')
-      }
-      
-      // アップロード権限のチェック（より寛容に）
-      console.log('[Upload] Checking upload permission...')
-      const hasPermission = await checkUploadPermission(user.id)
-      console.log('[Upload] Permission check result:', hasPermission)
-      
-      // 権限チェックが失敗してもアップロードを試行する
-      if (!hasPermission) {
-        console.warn('[Upload] Permission check failed, but continuing with upload attempt')
-      }
+      // ストレージチェックをスキップし、直接アップロードを試行
+      console.log('[Upload] Starting direct upload (skipping storage checks)...')
       
       // 動画のアップロード
       const { path: videoPath, url: videoUrl } = await uploadVideo(
@@ -290,14 +272,25 @@ export default function VideoUploadPage() {
       let errorMessage = t.uploadError
       
       if (error.message) {
-        if (error.message.includes('File size exceeds')) {
+        // ストレージライブラリからの日本語メッセージはそのまま使用
+        if (error.message.includes('アクセス権限の問題') || 
+            error.message.includes('認証エラー') || 
+            error.message.includes('ストレージが利用できません') ||
+            error.message.includes('ファイルサイズが大きすぎます') ||
+            error.message.includes('サポートされていない')) {
+          errorMessage = error.message
+        } else if (error.message.includes('File size exceeds') || error.message.includes('size')) {
           errorMessage = language === 'ja' ? 'ファイルサイズが大きすぎます（最大5GB）' : 
                         language === 'en' ? 'File size too large (max 5GB)' : 
                         'Arquivo muito grande (máx 5GB)'
-        } else if (error.message.includes('Invalid file type')) {
+        } else if (error.message.includes('Invalid file type') || error.message.includes('mime')) {
           errorMessage = language === 'ja' ? 'サポートされていないファイル形式です（MP4、MOV、AVIのみ）' : 
                         language === 'en' ? 'Unsupported file type (MP4, MOV, AVI only)' : 
                         'Tipo de arquivo não suportado (apenas MP4, MOV, AVI)'
+        } else if (error.message.includes('authorization') || error.message.includes('JWT') || error.message.includes('auth')) {
+          errorMessage = language === 'ja' ? '認証エラーです。ページを再読み込みしてから再度お試しください。' :
+                        language === 'en' ? 'Authentication error. Please refresh the page and try again.' :
+                        'Erro de autenticação. Recarregue a página e tente novamente.'
         } else {
           errorMessage = error.message
         }

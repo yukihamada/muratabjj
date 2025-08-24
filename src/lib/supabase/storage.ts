@@ -66,14 +66,16 @@ export async function uploadVideo(
     // Provide more helpful error messages
     let friendlyError = error.message
     
-    if (error.message.includes('row-level security')) {
-      friendlyError = 'アクセス権限の問題です。管理者にお問い合わせください。'
-    } else if (error.message.includes('exceeded')) {
+    if (error.message.includes('row-level security') || error.message.includes('policy') || error.message.includes('permission')) {
+      friendlyError = 'アクセス権限の問題です。ページを再読み込みしてから再度お試しください。'
+    } else if (error.message.includes('exceeded') || error.message.includes('size')) {
       friendlyError = 'ファイルサイズが大きすぎます。5GB以下のファイルをアップロードしてください。'
-    } else if (error.message.includes('mime')) {
+    } else if (error.message.includes('mime') || error.message.includes('type')) {
       friendlyError = 'サポートされていないファイル形式です。MP4、MOV、AVI形式のファイルをアップロードしてください。'
-    } else if (error.message.includes('bucket')) {
-      friendlyError = 'ストレージの準備中です。しばらく待ってから再度お試しください。'
+    } else if (error.message.includes('bucket') || error.message.includes('not found')) {
+      friendlyError = 'ストレージが利用できません。管理者にお問い合わせください。'
+    } else if (error.message.includes('authorization') || error.message.includes('JWT') || error.message.includes('auth')) {
+      friendlyError = '認証エラーです。ページを再読み込みしてから再度お試しください。'
     }
     
     throw new Error(friendlyError)
