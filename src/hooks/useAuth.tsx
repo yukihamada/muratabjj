@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       console.log('[useAuth] Fetching profile for userId:', userId)
       const { data, error } = await supabase
-        .from('users_profile')
+        .from('user_profiles')
         .select('*')
         .eq('user_id', userId)
         .single()
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log('[useAuth] Creating new profile')
           // Profile not found, creating new profile
           const { data: newProfile, error: createError } = await supabase
-            .from('users_profile')
+            .from('user_profiles')
             .insert([
               {
                 user_id: userId,

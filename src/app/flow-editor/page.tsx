@@ -317,6 +317,16 @@ export default function FlowEditorPage() {
       if (error) {
         console.error('Error saving flow:', error)
         
+        // 認証エラーの場合の処理
+        if (error.message?.includes('authorization') || error.message?.includes('JWT') || error.message?.includes('auth')) {
+          toast.error(
+            language === 'ja' ? 'ログインが必要です。再度ログインしてください。' :
+            language === 'en' ? 'Please log in again to save flows.' :
+            'Por favor, faça login novamente para salvar fluxos.'
+          )
+          return
+        }
+        
         // テーブルが存在しない場合はLocalStorageに保存
         if (error.code === '42P01' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
           const flowData = {
