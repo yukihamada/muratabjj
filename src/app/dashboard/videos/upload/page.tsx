@@ -376,16 +376,32 @@ export default function VideoUploadPage() {
           toast.success(language === 'ja' ? '音声解析が完了しました' : 
                        language === 'en' ? 'Audio analysis completed' : 
                        'Análise de áudio concluída')
-        } catch (transcriptionError) {
+        } catch (transcriptionError: any) {
           toast.dismiss()
-          toast.error(language === 'ja' ? '音声解析に失敗しました' : 
-                     language === 'en' ? 'Audio analysis failed' : 
-                     'Falha na análise de áudio')
+          console.error('Transcription error:', transcriptionError)
           
-          // Update transcription status to failed
+          // より詳細なエラーメッセージ
+          let errorMsg = language === 'ja' ? '音声解析に失敗しました' : 
+                        language === 'en' ? 'Audio analysis failed' : 
+                        'Falha na análise de áudio'
+          
+          if (transcriptionError.message?.includes('OpenAI API key')) {
+            errorMsg = language === 'ja' ? 
+              '音声解析機能は現在利用できません（APIキー未設定）' :
+              language === 'en' ? 
+              'Transcription unavailable (API key not configured)' :
+              'Transcrição indisponível (chave API não configurada)'
+          }
+          
+          toast.error(errorMsg)
+          
+          // Update status in database (current table structure)
           await supabase
             .from('videos')
-            .update({ transcription_status: 'failed' })
+            .update({ 
+              analysis_status: 'error',
+              analysis_error: transcriptionError.message 
+            })
             .eq('id', videoData.id)
         } finally {
           setTranscribing(false)
