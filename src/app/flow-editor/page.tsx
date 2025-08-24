@@ -13,7 +13,10 @@ import ReactFlow, {
   MiniMap,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
+import './mobile-styles.css'
+import './mobile-flow-styles.css'
 import DashboardNav from '@/components/DashboardNav'
+import MobileFlowWrapper from '@/components/MobileFlowWrapper'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
@@ -22,7 +25,7 @@ import toast from 'react-hot-toast'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { supabase } from '@/lib/supabase/client'
 
-const getInitialNodes = (language: string): Node[] => {
+const getInitialNodes = (language: string, isMobile: boolean = false): Node[] => {
   const labels = {
     ja: ['クローズドガード', 'アームドラッグ', 'スイープ'],
     en: ['Closed Guard', 'Arm Drag', 'Sweep'],
@@ -35,48 +38,64 @@ const getInitialNodes = (language: string): Node[] => {
   
   const nodeLabels = labels[language as keyof typeof labels] || labels.en
   
+  // モバイル用の配置調整
+  const positions = isMobile ? [
+    { x: 50, y: 50 },    // ノード1: 左上
+    { x: 50, y: 200 },   // ノード2: 左下
+    { x: 250, y: 200 },  // ノード3: 右下
+  ] : [
+    { x: 250, y: 100 },  // デスクトップ配置
+    { x: 100, y: 250 },
+    { x: 400, y: 250 },
+  ]
+  
   return [
     {
       id: '1',
       type: 'default',
-      position: { x: 250, y: 100 },
+      position: positions[0],
       data: { label: nodeLabels[0] },
       style: {
         background: '#13131a',
         color: '#e9e9ee',
         border: '2px solid #ea384c',
         borderRadius: '14px',
-        padding: '10px 20px',
-        width: 150,
+        padding: isMobile ? '8px 12px' : '10px 20px',
+        width: isMobile ? 120 : 150,
         textAlign: 'center',
+        fontSize: isMobile ? '13px' : '14px',
       },
     },
     {
       id: '2',
-      position: { x: 100, y: 250 },
+      type: 'default',
+      position: positions[1],
       data: { label: nodeLabels[1] },
       style: {
         background: '#13131a',
         color: '#e9e9ee',
         border: '1px solid rgba(255,255,255,0.1)',
         borderRadius: '14px',
-        padding: '10px 20px',
-        width: 150,
+        padding: isMobile ? '8px 12px' : '10px 20px',
+        width: isMobile ? 120 : 150,
         textAlign: 'center',
+        fontSize: isMobile ? '13px' : '14px',
       },
     },
     {
       id: '3',
-      position: { x: 400, y: 250 },
+      type: 'default',
+      position: positions[2],
       data: { label: nodeLabels[2] },
       style: {
         background: '#13131a',
         color: '#e9e9ee',
         border: '1px solid rgba(255,255,255,0.1)',
         borderRadius: '14px',
-        padding: '10px 20px',
-        width: 150,
+        padding: isMobile ? '8px 12px' : '10px 20px',
+        width: isMobile ? 120 : 150,
         textAlign: 'center',
+        fontSize: isMobile ? '13px' : '14px',
       },
     },
   ]
@@ -104,10 +123,12 @@ export default function FlowEditorPage() {
   const router = useRouter()
   const { language } = useLanguage()
   
-  const [nodes, setNodes, onNodesChange] = useNodesState(getInitialNodes(language))
+  const [isMobileView, setIsMobileView] = useState(false)
+  const [nodes, setNodes, onNodesChange] = useNodesState(getInitialNodes(language, isMobileView))
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
   const [flowName, setFlowName] = useState('')
-  const [isMobileView, setIsMobileView] = useState(false)
+  const [showFlowList, setShowFlowList] = useState(false)
+  const [publicFlows, setPublicFlows] = useState<any[]>([])
   
   const [hasInitialized, setHasInitialized] = useState(false)
   
@@ -122,12 +143,35 @@ export default function FlowEditorPage() {
     
     // モバイルビューの検出
     const checkMobile = () => {
-      setIsMobileView(window.innerWidth < 768)
+      const isMobile = window.innerWidth < 768
+      setIsMobileView(isMobile)
+      
+      // モバイルの場合、ノードを再配置
+      if (isMobile) {
+        setNodes(getInitialNodes(language, true))
+      }
     }
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
-  }, [language, hasInitialized])
+  }, [language, hasInitialized, setNodes])
+  
+  // 公開フローを取得
+  useEffect(() => {
+    const fetchPublicFlows = async () => {
+      const { data, error } = await supabase
+        .from('flows')
+        .select('*')
+        .eq('is_public', true)
+        .order('created_at', { ascending: false })
+      
+      if (!error && data) {
+        setPublicFlows(data)
+      }
+    }
+    
+    fetchPublicFlows()
+  }, [])
 
   useEffect(() => {
     if (!loading && !user) {
@@ -330,11 +374,12 @@ export default function FlowEditorPage() {
   }
 
   return (
-    <main className="min-h-screen bg-bjj-bg">
-      <DashboardNav />
+    <MobileFlowWrapper>
+      <main className="min-h-screen bg-bjj-bg">
+        <DashboardNav />
       
       {/* Beta Banner */}
-      <div className="p-4 bg-yellow-500/10 border-b border-yellow-500/20">
+      <div className="p-2 sm:p-4 bg-yellow-500/10 border-b border-yellow-500/20">
         <div className="container mx-auto">
           <div className="flex items-center gap-2">
             <span className="text-yellow-400 font-semibold">
@@ -360,7 +405,7 @@ export default function FlowEditorPage() {
         </div>
       </div>
       
-      <div className="h-[calc(100vh-120px)] relative">
+      <div className={`${isMobileView ? 'flow-editor-mobile-container' : 'h-[calc(100vh-120px)]'} relative`}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -381,8 +426,8 @@ export default function FlowEditorPage() {
             className="bg-bjj-bg2 border-white/10"
           />
           
-          <div className="absolute top-4 left-4 bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-bjj p-4">
-            <div className="flex items-center gap-4 mb-4">
+          <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-lg sm:rounded-bjj p-2 sm:p-4 max-w-[90%] sm:max-w-none">
+            <div className="flex items-center gap-2 sm:gap-4 mb-2 sm:mb-4">
               <input
                 type="text"
                 value={flowName}
@@ -391,46 +436,77 @@ export default function FlowEditorPage() {
                 autoCapitalize="off"
                 autoCorrect="off"
                 spellCheck="false"
-                className="px-3 py-2 bg-bjj-bg border border-white/10 rounded-lg text-bjj-text focus:border-bjj-accent focus:outline-none"
+                className="px-2 py-1 sm:px-3 sm:py-2 bg-bjj-bg border border-white/10 rounded-lg text-sm sm:text-base text-bjj-text focus:border-bjj-accent focus:outline-none w-full max-w-[150px] sm:max-w-none"
                 placeholder={language === 'ja' ? 'フロー名' : language === 'en' ? 'Flow Name' : 'Nome do Fluxo'}
               />
             </div>
             
             {!isMobileView && (
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-1 sm:gap-2 flex-wrap">
                 <button
                   onClick={(e) => {
                     e.preventDefault()
                     // Add node button clicked
                     addNode()
                   }}
-                  className="btn-ghost text-sm flex items-center gap-2"
+                  className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
                   type="button"
                 >
-                  <Plus size={16} />
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                   {language === 'ja' ? 'ノード追加' : language === 'en' ? 'Add Node' : 'Adicionar Nó'}
                 </button>
                 
                 <button
                   onClick={saveFlow}
-                  className="btn-ghost text-sm flex items-center gap-2"
+                  className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
                 >
-                  <Save size={16} />
+                  <Save className="w-3 h-3 sm:w-4 sm:h-4" />
                   {language === 'ja' ? '保存' : language === 'en' ? 'Save' : 'Salvar'}
                 </button>
                 
                 <button
                   onClick={exportFlow}
-                  className="btn-ghost text-sm flex items-center gap-2"
+                  className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
                 >
-                  <Download size={16} />
+                  <Download className="w-3 h-3 sm:w-4 sm:h-4" />
                   {language === 'ja' ? 'エクスポート' : language === 'en' ? 'Export' : 'Exportar'}
                 </button>
               </div>
             )}
+            
+            {/* モバイルでサンプルフローを表示 */}
+            {isMobileView && publicFlows.length > 0 && (
+              <div className="mt-2">
+                <button
+                  onClick={() => setShowFlowList(!showFlowList)}
+                  className="text-xs text-bjj-accent"
+                >
+                  {showFlowList ? '閉じる' : 'サンプルフローを見る'}
+                </button>
+                {showFlowList && (
+                  <div className="mt-2 space-y-1 max-h-32 overflow-y-auto">
+                    {publicFlows.map((flow) => (
+                      <button
+                        key={flow.id}
+                        onClick={() => {
+                          setFlowName(flow.name)
+                          if (flow.nodes) setNodes(flow.nodes)
+                          if (flow.edges) setEdges(flow.edges)
+                          setShowFlowList(false)
+                          toast.success('フローを読み込みました')
+                        }}
+                        className="block w-full text-left text-xs p-1 hover:bg-bjj-bg2 rounded"
+                      >
+                        {flow.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           
-          <div className="absolute top-4 right-4 bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-bjj p-4">
+          <div className="hidden sm:block absolute top-4 right-4 bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-bjj p-4">
             <div className="text-sm space-y-2">
               <p className="text-bjj-muted">
                 {language === 'ja' ? '操作方法：' : language === 'en' ? 'Controls:' : 'Controles:'}
@@ -466,5 +542,6 @@ export default function FlowEditorPage() {
         </ReactFlow>
       </div>
     </main>
+    </MobileFlowWrapper>
   )
 }

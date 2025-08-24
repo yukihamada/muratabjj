@@ -10,7 +10,7 @@ export const ko = {
     logout: '로그아웃',
     dashboard: '대시보드',
     freeStart: '무료로 시작하기',
-    upload: '동영상 업로드',
+    upload: '업로드',
   },
 
   // 히어로 섹션

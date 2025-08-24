@@ -10,6 +10,7 @@ export const pt = {
     logout: 'Sair',
     dashboard: 'Painel',
     freeStart: 'Começar Grátis',
+    upload: 'Enviar',
   },
 
   // Seção Hero

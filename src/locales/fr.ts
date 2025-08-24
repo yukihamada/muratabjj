@@ -10,7 +10,7 @@ export const fr = {
     logout: 'Déconnexion',
     dashboard: 'Tableau de Bord',
     freeStart: 'Commencer Gratuitement',
-    upload: 'Téléverser une Vidéo',
+    upload: 'Télécharger',
   },
 
   // Section Hero

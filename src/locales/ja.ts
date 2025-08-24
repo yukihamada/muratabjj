@@ -10,6 +10,7 @@ export const ja = {
     logout: 'ログアウト',
     dashboard: 'ダッシュボード',
     freeStart: '無料で始める',
+    upload: '動画投稿',
   },
 
   // ヒーローセクション

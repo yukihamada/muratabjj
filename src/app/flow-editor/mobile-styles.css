@@ -1,0 +1,103 @@
+/* React Flow mobile optimizations */
+
+/* Improve touch interaction */
+.react-flow__node {
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Better visibility on mobile */
+.react-flow__edge-path {
+  stroke-width: 3;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile specific styles */
+@media (max-width: 767px) {
+  /* React Flow container adjustments */
+  .react-flow {
+    height: calc(100vh - 240px) !important;
+  }
+  
+  /* Controls positioning */
+  .react-flow__controls {
+    bottom: 20px !important;
+    right: 10px !important;
+    background: rgba(19, 19, 26, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+  }
+  
+  .react-flow__controls-button {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 20px !important;
+    color: #e9e9ee !important;
+  }
+  
+  /* Hide minimap on mobile */
+  .react-flow__minimap {
+    display: none !important;
+  }
+  
+  /* Prevent accidental zoom */
+  .react-flow__renderer {
+    touch-action: pan-x pan-y;
+  }
+  
+  /* Better node visibility and spacing */
+  .react-flow__node {
+    min-width: 120px !important;
+    font-size: 14px !important;
+    margin: 10px !important;
+  }
+  
+  /* Adjust node padding and style */
+  .react-flow__node-default {
+    padding: 12px 16px !important;
+    background: #13131a !important;
+    border: 2px solid #ea384c !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Edge styling for better visibility */
+  .react-flow__edge {
+    stroke: #ea384c !important;
+    stroke-width: 3px !important;
+  }
+  
+  /* Background pattern adjustment */
+  .react-flow__background {
+    opacity: 0.3 !important;
+  }
+  
+  /* Panel styling */
+  .react-flow__panel {
+    margin: 10px !important;
+  }
+}
+
+/* Tablet specific adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .react-flow__controls {
+    bottom: 30px !important;
+    right: 20px !important;
+  }
+  
+  .react-flow__minimap {
+    width: 150px !important;
+    height: 100px !important;
+  }
+}

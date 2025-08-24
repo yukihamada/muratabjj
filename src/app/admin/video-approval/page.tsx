@@ -84,7 +84,7 @@ export default function VideoApprovalPage() {
 
       if (error) throw error
 
-      const videosWithEmail = data?.map(video => ({
+      const videosWithEmail = data?.map((video: any) => ({
         ...video,
         user_email: video.user_profiles?.email
       })) || []

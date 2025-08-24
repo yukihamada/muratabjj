@@ -10,6 +10,7 @@ export const en = {
     logout: 'Logout',
     dashboard: 'Dashboard',
     freeStart: 'Start Free',
+    upload: 'Upload',
   },
 
   // Hero Section

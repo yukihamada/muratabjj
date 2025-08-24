@@ -1,0 +1,108 @@
+/* Mobile-specific flow editor override styles */
+
+/* Override React Flow defaults for mobile */
+@media (max-width: 767px) {
+  /* Main container height adjustment */
+  .react-flow__container {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Viewport adjustments */
+  .react-flow__viewport {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Node positioning fixes */
+  .react-flow__nodes {
+    pointer-events: all !important;
+  }
+
+  /* Individual node styles */
+  .react-flow__node {
+    position: absolute !important;
+    user-select: none !important;
+    pointer-events: all !important;
+    transform-origin: center center !important;
+  }
+
+  /* Ensure proper node spacing on initial load */
+  .react-flow__node:nth-child(1) {
+    transform: translate(50px, 50px) !important;
+  }
+
+  .react-flow__node:nth-child(2) {
+    transform: translate(50px, 200px) !important;
+  }
+
+  .react-flow__node:nth-child(3) {
+    transform: translate(250px, 200px) !important;
+  }
+
+  /* Handle container */
+  .react-flow__handle {
+    width: 10px !important;
+    height: 10px !important;
+    background: #ea384c !important;
+    border: 2px solid #0f0f12 !important;
+  }
+
+  /* Attribution positioning */
+  .react-flow__attribution {
+    display: none !important;
+  }
+
+  /* Panel improvements */
+  .react-flow__panel {
+    position: absolute !important;
+    z-index: 5 !important;
+    margin: 0 !important;
+  }
+
+  /* Top-left panel (flow name and controls) */
+  .react-flow__panel.top.left {
+    top: 10px !important;
+    left: 10px !important;
+    right: 10px !important;
+    max-width: calc(100% - 20px) !important;
+  }
+
+  /* Control panel positioning */
+  .react-flow__panel.bottom.left {
+    bottom: 90px !important;
+    left: 10px !important;
+  }
+}
+
+/* Prevent zoom on input focus */
+@media (max-width: 767px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Improve touch targets */
+@media (max-width: 767px) {
+  button,
+  a,
+  .clickable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Fix for flow editor container on mobile */
+.flow-editor-mobile-container {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 60px;
+  overflow: hidden;
+}

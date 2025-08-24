@@ -10,7 +10,7 @@ export const ru = {
     logout: 'Выйти',
     dashboard: 'Панель',
     freeStart: 'Начать бесплатно',
-    upload: 'Загрузить видео',
+    upload: 'Загрузить',
   },
 
   // Секция Hero
