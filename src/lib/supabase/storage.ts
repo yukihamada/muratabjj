@@ -22,7 +22,13 @@ console.log('[MAX_FILE_SIZES] Current limits:', {
 })
 
 // Allowed file types
-export const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/x-msvideo']
+export const ALLOWED_VIDEO_TYPES = [
+  'video/mp4', 
+  'video/quicktime',  // .mov
+  'video/x-msvideo',  // .avi
+  'video/mov',        // 追加のMOV形式
+  'video/avi'         // 追加のAVI形式
+]
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 // Upload video to Supabase Storage
@@ -38,11 +44,15 @@ export async function uploadVideo(
     size: file.size,
     sizeInMB: Math.round(file.size / 1024 / 1024),
     maxAllowed: MAX_FILE_SIZES.VIDEO,
-    maxAllowedInGB: MAX_FILE_SIZES.VIDEO / 1024 / 1024 / 1024
+    maxAllowedInMB: MAX_FILE_SIZES.VIDEO / 1024 / 1024
   })
   
-  if (!ALLOWED_VIDEO_TYPES.includes(file.type)) {
-    throw new Error('Invalid file type. Only MP4, MOV, and AVI are allowed.')
+  // ファイル拡張子ベースでの追加チェック（MIMEタイプが正しく検出されない場合のフォールバック）
+  const fileExt = file.name.split('.').pop()?.toLowerCase()
+  const allowedExtensions = ['mp4', 'mov', 'avi', 'webm']
+  
+  if (!ALLOWED_VIDEO_TYPES.includes(file.type) && !allowedExtensions.includes(fileExt || '')) {
+    throw new Error(`Invalid file type: ${file.type}. Only MP4, MOV, AVI, and WebM are allowed.`)
   }
   
   if (file.size > MAX_FILE_SIZES.VIDEO) {
