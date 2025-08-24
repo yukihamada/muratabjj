@@ -369,7 +369,7 @@ export default function FlowsPage() {
       const { data: myData, error: myError } = await supabase
         .from('flows')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', user?.id || '')
         .order('created_at', { ascending: false })
 
       if (myError) {
@@ -436,8 +436,8 @@ export default function FlowsPage() {
   const handleNewFlow = () => {
     const newFlow = {
       id: 'new',
-      name: t.newFlowName,
-      description: t.newFlowDescription,
+      name: '新しいフロー',
+      description: '説明を入力してください',
       nodes: [
         {
           id: '1',
