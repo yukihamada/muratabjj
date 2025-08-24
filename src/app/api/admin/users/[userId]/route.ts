@@ -77,7 +77,7 @@ export async function PATCH(
 
     // ユーザー情報を更新
     const { data: updatedUser, error: updateError } = await supabaseAdmin
-      .from('users_profile')
+      .from('user_profiles')
       .update({
         ...filteredUpdateData,
         updated_at: new Date().toISOString()
@@ -137,7 +137,7 @@ export async function DELETE(
 
     // ユーザーを削除（実際には非アクティブ化）
     const { error: deleteError } = await supabaseAdmin
-      .from('users_profile')
+      .from('user_profiles')
       .update({
         is_active: false,
         updated_at: new Date().toISOString()

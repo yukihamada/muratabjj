@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         
         // Update user subscription in database
         await supabase
-          .from('users_profile')
+          .from('user_profiles')
           .update({
             subscription_plan: planId,
             subscription_status: 'active',
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         const { userId, planId } = subscription.metadata;
         
         await supabase
-          .from('users_profile')
+          .from('user_profiles')
           .update({
             subscription_plan: planId,
             subscription_status: subscription.status,
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
         const { userId } = subscription.metadata;
         
         await supabase
-          .from('users_profile')
+          .from('user_profiles')
           .update({
             subscription_plan: 'free',
             subscription_status: 'canceled',
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
         const { userId } = subscription.metadata;
         
         await supabase
-          .from('users_profile')
+          .from('user_profiles')
           .update({
             subscription_period_end: new Date(
               subscription.current_period_end * 1000
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
         
         // Update subscription status
         await supabase
-          .from('users_profile')
+          .from('user_profiles')
           .update({
             subscription_status: 'past_due',
           })

@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     
     // Get user's subscription ID
     const { data: profile } = await supabase
-      .from('users_profile')
+      .from('user_profiles')
       .select('stripe_subscription_id')
       .eq('user_id', user.id)
       .single()
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     
     // Update user profile
     await supabase
-      .from('users_profile')
+      .from('user_profiles')
       .update({
         subscription_status: 'canceled',
       })

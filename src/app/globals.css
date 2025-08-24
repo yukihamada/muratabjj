@@ -474,3 +474,62 @@ html:not(.light) body {
   z-index: 1;
   pointer-events: auto !important;
 }
+
+/* Flow cards hover effects */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+.flow-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flow-card-hover:hover {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Gradient text animation */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-text-animated {
+  background: linear-gradient(to right, #ea384c, #d21f33, #ea384c);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Flow mini preview */
+.flow-preview {
+  position: relative;
+  overflow: hidden;
+}
+
+.flow-preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(234, 56, 76, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.flow-preview:hover::before {
+  opacity: 1;
+}
+
+/* Smooth tab transitions */
+.tab-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background: #ea384c;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

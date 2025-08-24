@@ -7,7 +7,7 @@ export default function FlowsRedirect() {
   const router = useRouter()
   
   useEffect(() => {
-    router.replace('/flow-editor')
+    router.replace('/dashboard/flows')
   }, [router])
   
   return (
