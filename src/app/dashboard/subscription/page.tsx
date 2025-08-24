@@ -341,7 +341,7 @@ export default function SubscriptionPage() {
                   </button>
                 </>
               )}
-              {currentPlan === 'free' || status === 'canceled' && (
+              {currentPlan === 'free' || status === 'cancelled' && (
                 <Link href="/pricing" className="w-full btn-primary text-center block">
                   {t.changePlan}
                 </Link>
