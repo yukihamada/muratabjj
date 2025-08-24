@@ -55,12 +55,110 @@ const translations = {
     install: 'Instalar',
     later: 'Depois',
     close: 'Fechar'
+  },
+  es: {
+    installApp: 'Instalar App',
+    installTitle: 'Agregar Murata BJJ a Pantalla de Inicio',
+    installDescription: '¿Instalar nuestra app para una mejor experiencia?',
+    features: [
+      'Visualización de videos offline',
+      'Notificaciones push para recordatorios de repaso',
+      'Acceso rápido desde la pantalla de inicio',
+      'Experiencia como app nativa'
+    ],
+    install: 'Instalar',
+    later: 'Después',
+    close: 'Cerrar'
+  },
+  fr: {
+    installApp: 'Installer l\'App',
+    installTitle: 'Ajouter Murata BJJ à l\'écran d\'accueil',
+    installDescription: 'Installer notre app pour une meilleure expérience?',
+    features: [
+      'Visionnage de vidéos hors ligne',
+      'Notifications push pour rappels de révision',
+      'Accès rapide depuis l\'écran d\'accueil',
+      'Expérience comme une app native'
+    ],
+    install: 'Installer',
+    later: 'Plus tard',
+    close: 'Fermer'
+  },
+  ko: {
+    installApp: '앱 설치',
+    installTitle: 'Murata BJJ를 홈 화면에 추가',
+    installDescription: '더 나은 경험을 위해 앱을 설치하시겠습니까?',
+    features: [
+      '오프라인 동영상 시청',
+      '복습 알림을 위한 푸시 알림',
+      '홈 화면에서 빠른 접근',
+      '네이티브 앱과 같은 경험'
+    ],
+    install: '설치',
+    later: '나중에',
+    close: '닫기'
+  },
+  ru: {
+    installApp: 'Установить приложение',
+    installTitle: 'Добавить Murata BJJ на главный экран',
+    installDescription: 'Установить наше приложение для лучшего опыта?',
+    features: [
+      'Просмотр видео офлайн',
+      'Push-уведомления для напоминаний о повторении',
+      'Быстрый доступ с главного экрана',
+      'Опыт как у нативного приложения'
+    ],
+    install: 'Установить',
+    later: 'Позже',
+    close: 'Закрыть'
+  },
+  zh: {
+    installApp: '安装应用',
+    installTitle: '将 Murata BJJ 添加到主屏幕',
+    installDescription: '安装我们的应用以获得更好的体验？',
+    features: [
+      '离线视频观看',
+      '复习提醒的推送通知',
+      '从主屏幕快速访问',
+      '原生应用般的体验'
+    ],
+    install: '安装',
+    later: '稍后',
+    close: '关闭'
+  },
+  de: {
+    installApp: 'App installieren',
+    installTitle: 'Murata BJJ zum Startbildschirm hinzufügen',
+    installDescription: 'Unsere App für eine bessere Erfahrung installieren?',
+    features: [
+      'Offline-Video-Betrachtung',
+      'Push-Benachrichtigungen für Wiederholungserinnerungen',
+      'Schneller Zugriff vom Startbildschirm',
+      'Native App-ähnliche Erfahrung'
+    ],
+    install: 'Installieren',
+    later: 'Später',
+    close: 'Schließen'
+  },
+  it: {
+    installApp: 'Installa App',
+    installTitle: 'Aggiungi Murata BJJ alla schermata Home',
+    installDescription: 'Installare la nostra app per una migliore esperienza?',
+    features: [
+      'Visualizzazione video offline',
+      'Notifiche push per promemoria di ripasso',
+      'Accesso rapido dalla schermata home',
+      'Esperienza simile ad app nativa'
+    ],
+    install: 'Installa',
+    later: 'Dopo',
+    close: 'Chiudi'
   }
 }
 
 export default function PWAInstallPrompt() {
   const { language } = useLanguage()
-  const t = translations[language as keyof typeof translations]
+  const t = translations[language as keyof typeof translations] || translations.en
   
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [showPrompt, setShowPrompt] = useState(false)
@@ -90,11 +188,14 @@ export default function PWAInstallPrompt() {
       const now = new Date().getTime()
       const oneDayMs = 24 * 60 * 60 * 1000
       
-      if (!dismissed && (!lastPrompt || now - parseInt(lastPrompt) > oneDayMs * 7)) {
+      // Check if closed in this session
+      const closedThisSession = sessionStorage.getItem('pwa-install-closed-this-session')
+      
+      if (!dismissed && !closedThisSession && (!lastPrompt || now - parseInt(lastPrompt) > oneDayMs * 7)) {
         // Show prompt after a delay
         setTimeout(() => {
           setShowPrompt(true)
-        }, 30000) // 30 seconds delay
+        }, 5000) // 5 seconds delay
       }
     }
 
@@ -108,10 +209,21 @@ export default function PWAInstallPrompt() {
     }
 
     window.addEventListener('appinstalled', handleAppInstalled)
+    
+    // Handle ESC key to close prompt
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showPrompt) {
+        setShowPrompt(false)
+        sessionStorage.setItem('pwa-install-closed-this-session', 'true')
+      }
+    }
+    
+    document.addEventListener('keydown', handleKeyDown)
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
       window.removeEventListener('appinstalled', handleAppInstalled)
+      document.removeEventListener('keydown', handleKeyDown)
     }
   }, [])
 
@@ -143,7 +255,8 @@ export default function PWAInstallPrompt() {
 
   const handleClose = () => {
     setShowPrompt(false)
-    // Don't permanently dismiss, just close for this session
+    // Set a temporary dismiss flag to prevent showing again in this session
+    sessionStorage.setItem('pwa-install-closed-this-session', 'true')
     localStorage.setItem('pwa-install-last-prompt', new Date().getTime().toString())
   }
 
@@ -162,7 +275,10 @@ export default function PWAInstallPrompt() {
             <h3 className="font-semibold text-sm">{t.installTitle}</h3>
           </div>
           <button
-            onClick={handleClose}
+            onClick={() => {
+              setShowPrompt(false)
+              sessionStorage.setItem('pwa-install-closed-this-session', 'true')
+            }}
             className="p-2 -m-2 text-bjj-muted hover:text-bjj-text transition-colors"
             aria-label={t.close}
           >
@@ -181,7 +297,10 @@ export default function PWAInstallPrompt() {
         
         <div className="flex gap-2">
           <button
-            onClick={handleClose}
+            onClick={() => {
+              setShowPrompt(false)
+              sessionStorage.setItem('pwa-install-closed-this-session', 'true')
+            }}
             className="flex-1 text-xs py-2 px-3 bg-white/10 rounded-lg text-bjj-muted hover:bg-white/20 transition-colors"
           >
             {t.close}
@@ -194,7 +313,15 @@ export default function PWAInstallPrompt() {
   // Android/Desktop Install Prompt
   if (showPrompt && deferredPrompt) {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div 
+        className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            setShowPrompt(false)
+            sessionStorage.setItem('pwa-install-closed-this-session', 'true')
+          }
+        }}
+      >
         <div className="bg-bjj-bg2 border border-white/10 rounded-bjj p-6 max-w-md w-full">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -206,7 +333,10 @@ export default function PWAInstallPrompt() {
               </div>
             </div>
             <button
-              onClick={handleClose}
+              onClick={() => {
+                setShowPrompt(false)
+                sessionStorage.setItem('pwa-install-closed-this-session', 'true')
+              }}
               className="p-2 -m-2 text-bjj-muted hover:text-bjj-text transition-colors"
               aria-label={t.close}
             >
