@@ -58,6 +58,10 @@ const flowEditorTranslations = {
     nodes: 'ノード',
     editNode: 'ノードを編集',
     nodeEditPlaceholder: 'ノード名を入力',
+    translateFlow: 'フローを翻訳',
+    translating: '翻訳中...',
+    translationComplete: '翻訳完了',
+    translationError: '翻訳エラー',
   },
   en: {
     newFlow: 'New Flow',
@@ -91,6 +95,10 @@ const flowEditorTranslations = {
     nodes: 'nodes',
     editNode: 'Edit node',
     nodeEditPlaceholder: 'Enter node name',
+    translateFlow: 'Translate Flow',
+    translating: 'Translating...',
+    translationComplete: 'Translation Complete',
+    translationError: 'Translation Error',
   },
   pt: {
     newFlow: 'Novo Fluxo',
@@ -119,8 +127,15 @@ const flowEditorTranslations = {
     failedToLoad: 'Falha ao carregar fluxo',
     newFlowStarted: 'Novo fluxo iniciado',
     nodeAdded: 'Nó "{name}" adicionado!',
+    nodeUpdated: 'Nó atualizado',
     technique: 'Técnica',
     nodes: 'nós',
+    editNode: 'Editar nó',
+    nodeEditPlaceholder: 'Digite o nome do nó',
+    translateFlow: 'Traduzir Fluxo',
+    translating: 'Traduzindo...',
+    translationComplete: 'Tradução Concluída',
+    translationError: 'Erro de Tradução',
   },
   es: {
     newFlow: 'Nuevo Flujo',
@@ -149,8 +164,15 @@ const flowEditorTranslations = {
     failedToLoad: 'Error al cargar flujo',
     newFlowStarted: 'Nuevo flujo iniciado',
     nodeAdded: '¡Nodo "{name}" añadido!',
+    nodeUpdated: 'Nodo actualizado',
     technique: 'Técnica',
     nodes: 'nodos',
+    editNode: 'Editar nodo',
+    nodeEditPlaceholder: 'Ingrese nombre del nodo',
+    translateFlow: 'Traducir Flujo',
+    translating: 'Traduciendo...',
+    translationComplete: 'Traducción Completa',
+    translationError: 'Error de Traducción',
   },
   fr: {
     newFlow: 'Nouveau Flux',
@@ -179,8 +201,15 @@ const flowEditorTranslations = {
     failedToLoad: 'Échec du chargement du flux',
     newFlowStarted: 'Nouveau flux démarré',
     nodeAdded: 'Nœud "{name}" ajouté !',
+    nodeUpdated: 'Nœud mis à jour',
     technique: 'Technique',
     nodes: 'nœuds',
+    editNode: 'Modifier le nœud',
+    nodeEditPlaceholder: 'Entrez le nom du nœud',
+    translateFlow: 'Traduire le Flux',
+    translating: 'Traduction...',
+    translationComplete: 'Traduction Terminée',
+    translationError: 'Erreur de Traduction',
   },
   ko: {
     newFlow: '새 플로우',
@@ -209,8 +238,15 @@ const flowEditorTranslations = {
     failedToLoad: '플로우 로드 실패',
     newFlowStarted: '새 플로우 시작',
     nodeAdded: '노드 "{name}"이(가) 추가되었습니다!',
+    nodeUpdated: '노드가 업데이트되었습니다',
     technique: '기술',
     nodes: '노드',
+    editNode: '노드 편집',
+    nodeEditPlaceholder: '노드 이름 입력',
+    translateFlow: '플로우 번역',
+    translating: '번역 중...',
+    translationComplete: '번역 완료',
+    translationError: '번역 오류',
   },
   ru: {
     newFlow: 'Новый поток',
@@ -239,8 +275,15 @@ const flowEditorTranslations = {
     failedToLoad: 'Не удалось загрузить поток',
     newFlowStarted: 'Начат новый поток',
     nodeAdded: 'Узел "{name}" добавлен!',
+    nodeUpdated: 'Узел обновлен',
     technique: 'Техника',
     nodes: 'узлы',
+    editNode: 'Редактировать узел',
+    nodeEditPlaceholder: 'Введите название узла',
+    translateFlow: 'Перевести Поток',
+    translating: 'Перевод...',
+    translationComplete: 'Перевод Завершен',
+    translationError: 'Ошибка Перевода',
   },
   zh: {
     newFlow: '新流程',
@@ -269,8 +312,15 @@ const flowEditorTranslations = {
     failedToLoad: '加载流程失败',
     newFlowStarted: '开始新流程',
     nodeAdded: '节点 "{name}" 已添加！',
+    nodeUpdated: '节点已更新',
     technique: '技术',
     nodes: '节点',
+    editNode: '编辑节点',
+    nodeEditPlaceholder: '输入节点名称',
+    translateFlow: '翻译流程',
+    translating: '翻译中...',
+    translationComplete: '翻译完成',
+    translationError: '翻译错误',
   },
   de: {
     newFlow: 'Neuer Fluss',
@@ -299,8 +349,15 @@ const flowEditorTranslations = {
     failedToLoad: 'Fehler beim Laden des Flusses',
     newFlowStarted: 'Neuer Fluss gestartet',
     nodeAdded: 'Knoten "{name}" hinzugefügt!',
+    nodeUpdated: 'Knoten aktualisiert',
     technique: 'Technik',
     nodes: 'Knoten',
+    editNode: 'Knoten bearbeiten',
+    nodeEditPlaceholder: 'Knotennamen eingeben',
+    translateFlow: 'Fluss Übersetzen',
+    translating: 'Übersetzung...',
+    translationComplete: 'Übersetzung Abgeschlossen',
+    translationError: 'Übersetzungsfehler',
   },
   it: {
     newFlow: 'Nuovo Flusso',
@@ -329,8 +386,15 @@ const flowEditorTranslations = {
     failedToLoad: 'Impossibile caricare il flusso',
     newFlowStarted: 'Nuovo flusso avviato',
     nodeAdded: 'Nodo "{name}" aggiunto!',
+    nodeUpdated: 'Nodo aggiornato',
     technique: 'Tecnica',
     nodes: 'nodi',
+    editNode: 'Modifica nodo',
+    nodeEditPlaceholder: 'Inserisci nome del nodo',
+    translateFlow: 'Traduci Flusso',
+    translating: 'Traduzione...',
+    translationComplete: 'Traduzione Completata',
+    translationError: 'Errore di Traduzione',
   },
 }
 
@@ -449,6 +513,24 @@ export default function FlowEditorPage() {
   
   const [hasInitialized, setHasInitialized] = useState(false)
   
+  // 言語変更時にノードの翻訳を更新
+  useEffect(() => {
+    setNodes(currentNodes => 
+      currentNodes.map(node => {
+        if (node.data.multilingual && node.data.multilingual[language]) {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              label: node.data.multilingual[language]
+            }
+          }
+        }
+        return node
+      })
+    )
+  }, [language, setNodes])
+
   // URLパラメータからフローIDを取得して読み込む
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -571,7 +653,10 @@ export default function FlowEditorPage() {
         y: 100 + Math.floor(nodeCount / 10) * 80 
       },
       data: { 
-        label: `${t.technique} ${nodeCount}`
+        label: `${t.technique} ${nodeCount}`,
+        multilingual: {
+          [language]: `${t.technique} ${nodeCount}`
+        }
       },
       style: {
         background: '#13131a',
@@ -619,7 +704,17 @@ export default function FlowEditorPage() {
     setNodes(nodes => 
       nodes.map(node => 
         node.id === editingNode 
-          ? { ...node, data: { ...node.data, label: editingText } }
+          ? { 
+              ...node, 
+              data: { 
+                ...node.data, 
+                label: editingText,
+                multilingual: {
+                  ...node.data.multilingual,
+                  [language]: editingText
+                }
+              }
+            }
           : node
       )
     )
@@ -645,6 +740,68 @@ export default function FlowEditorPage() {
     setEditingNode(null)
     setEditingText('')
   }, [])
+
+  // 基本的な翻訳辞書
+  const translateTechnique = (text: string, fromLang: string, toLang: string) => {
+    const translations: Record<string, Record<string, string>> = {
+      'Guard': { ja: 'ガード', pt: 'Guarda', es: 'Guardia', fr: 'Garde', ko: '가드', ru: 'Гвардия', zh: '防守', de: 'Guard', it: 'Guardia' },
+      'Closed Guard': { ja: 'クローズドガード', pt: 'Guarda Fechada', es: 'Guardia Cerrada', fr: 'Garde Fermée', ko: '클로즈드 가드', ru: 'Закрытая гвардия', zh: '封闭式防守', de: 'Geschlossene Guard', it: 'Guardia Chiusa' },
+      'Open Guard': { ja: 'オープンガード', pt: 'Guarda Aberta', es: 'Guardia Abierta', fr: 'Garde Ouverte', ko: '오픈 가드', ru: 'Открытая гвардия', zh: '开放式防守', de: 'Offene Guard', it: 'Guardia Aperta' },
+      'Sweep': { ja: 'スイープ', pt: 'Raspagem', es: 'Barrida', fr: 'Balayage', ko: '스윕', ru: 'Свип', zh: '扫倒', de: 'Sweep', it: 'Spazzata' },
+      'Arm Drag': { ja: 'アームドラッグ', pt: 'Arm Drag', es: 'Arm Drag', fr: 'Arm Drag', ko: '암 드래그', ru: 'Арм драг', zh: '手臂拖拽', de: 'Arm Drag', it: 'Arm Drag' },
+      'Kimura': { ja: 'キムラ', pt: 'Kimura', es: 'Kimura', fr: 'Kimura', ko: '키무라', ru: 'Кимура', zh: '木村锁', de: 'Kimura', it: 'Kimura' },
+      'Armbar': { ja: 'アームバー', pt: 'Chave de Braço', es: 'Palanca de Brazo', fr: 'Clé de Bras', ko: '팔꺾기', ru: 'Рычаг локтя', zh: '手臂锁', de: 'Armhebel', it: 'Leva al Braccio' },
+      'Triangle': { ja: 'トライアングル', pt: 'Triângulo', es: 'Triángulo', fr: 'Triangle', ko: '트라이앵글', ru: 'Треугольник', zh: '三角锁', de: 'Dreieck', it: 'Triangolo' },
+      'Mount': { ja: 'マウント', pt: 'Montada', es: 'Montada', fr: 'Montée', ko: '마운트', ru: 'Маунт', zh: '骑乘位', de: 'Mount', it: 'Montata' },
+      'Back Control': { ja: 'バックコントロール', pt: 'Controle das Costas', es: 'Control de Espalda', fr: 'Contrôle du Dos', ko: '백 컨트롤', ru: 'Контроль спины', zh: '背部控制', de: 'Rückenkontrolle', it: 'Controllo della Schiena' },
+      'Side Control': { ja: 'サイドコントロール', pt: 'Controle Lateral', es: 'Control Lateral', fr: 'Contrôle Latéral', ko: '사이드 컨트롤', ru: 'Боковой контроль', zh: '侧面控制', de: 'Seitenkontrolle', it: 'Controllo Laterale' },
+      'Half Guard': { ja: 'ハーフガード', pt: 'Meia Guarda', es: 'Media Guardia', fr: 'Demi-Garde', ko: '하프 가드', ru: 'Полугвардия', zh: '半防守', de: 'Halbe Guard', it: 'Mezza Guardia' },
+      'Butterfly Guard': { ja: 'バタフライガード', pt: 'Guarda Borboleta', es: 'Guardia Mariposa', fr: 'Garde Papillon', ko: '버터플라이 가드', ru: 'Гвардия бабочка', zh: '蝴蝶防守', de: 'Schmetterling Guard', it: 'Guardia Farfalla' },
+      'Spider Guard': { ja: 'スパイダーガード', pt: 'Guarda Aranha', es: 'Guardia Araña', fr: 'Garde Araignée', ko: '스파이더 가드', ru: 'Паучья гвардия', zh: '蜘蛛防守', de: 'Spinnen Guard', it: 'Guardia Ragno' },
+      'De La Riva': { ja: 'デラヒーバ', pt: 'De La Riva', es: 'De La Riva', fr: 'De La Riva', ko: '델라히바', ru: 'Де ла Рива', zh: '德拉里瓦', de: 'De La Riva', it: 'De La Riva' },
+      'Berimbolo': { ja: 'ベリンボロ', pt: 'Berimbolo', es: 'Berimbolo', fr: 'Berimbolo', ko: '베림볼로', ru: 'Беримболо', zh: '贝林博洛', de: 'Berimbolo', it: 'Berimbolo' },
+    }
+
+    // 完全一致を探す
+    for (const [key, trans] of Object.entries(translations)) {
+      if (text.toLowerCase().includes(key.toLowerCase()) && trans[toLang]) {
+        return text.replace(new RegExp(key, 'gi'), trans[toLang])
+      }
+    }
+
+    return text // 翻訳が見つからない場合は元のテキストを返す
+  }
+
+  const translateAllNodes = useCallback(async () => {
+    if (isReadOnly) return
+    
+    const loadingToast = toast.loading(t.translating)
+    
+    try {
+      setNodes(nodes => 
+        nodes.map(node => {
+          const currentLabel = node.data.label
+          const translatedLabel = translateTechnique(currentLabel, 'en', language)
+          
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              label: translatedLabel,
+              multilingual: {
+                ...node.data.multilingual,
+                [language]: translatedLabel
+              }
+            }
+          }
+        })
+      )
+      
+      toast.success(t.translationComplete, { id: loadingToast })
+    } catch (error) {
+      toast.error(t.translationError, { id: loadingToast })
+    }
+  }, [nodes, language, isReadOnly, setNodes, t])
 
   const saveFlow = async () => {
     if (!flowName.trim()) {
@@ -768,6 +925,7 @@ export default function FlowEditorPage() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onNodeDoubleClick={onNodeDoubleClick}
           nodesDraggable={true}
           nodesConnectable={true}
           elementsSelectable={true}
@@ -840,6 +998,17 @@ export default function FlowEditorPage() {
                   >
                     <Save className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span className="hidden sm:inline">{t.save}</span>
+                  </button>
+                  
+                  <button
+                    onClick={translateAllNodes}
+                    className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
+                    title={t.translateFlow}
+                  >
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                    </svg>
+                    <span className="hidden sm:inline">{t.translateFlow}</span>
                   </button>
                 </>
               )}
@@ -947,6 +1116,44 @@ export default function FlowEditorPage() {
             </div>
           </div>
         </ReactFlow>
+        
+        {/* ノード編集モーダル */}
+        {editingNode && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={cancelNodeEdit}>
+            <div className="bg-bjj-bg2 rounded-lg p-6 max-w-md w-full mx-4" onClick={e => e.stopPropagation()}>
+              <h3 className="text-lg font-bold mb-4">{t.editNode}</h3>
+              <input
+                type="text"
+                value={editingText}
+                onChange={(e) => setEditingText(e.target.value)}
+                placeholder={t.nodeEditPlaceholder}
+                className="w-full px-3 py-2 bg-bjj-bg border border-white/10 rounded-lg text-bjj-text focus:border-bjj-accent focus:outline-none mb-4"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    saveNodeEdit()
+                  } else if (e.key === 'Escape') {
+                    cancelNodeEdit()
+                  }
+                }}
+              />
+              <div className="flex gap-2 justify-end">
+                <button
+                  onClick={cancelNodeEdit}
+                  className="px-4 py-2 text-bjj-muted hover:text-bjj-text transition-colors"
+                >
+                  {t.close}
+                </button>
+                <button
+                  onClick={saveNodeEdit}
+                  className="btn-primary"
+                >
+                  {t.save}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </main>
     </MobileFlowWrapper>
