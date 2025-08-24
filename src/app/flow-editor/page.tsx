@@ -53,8 +53,11 @@ const flowEditorTranslations = {
     failedToLoad: 'フローの読み込みに失敗しました',
     newFlowStarted: '新規フローを開始',
     nodeAdded: 'ノード「{name}」を追加しました！',
+    nodeUpdated: 'ノードを更新しました',
     technique: '技術',
     nodes: 'ノード',
+    editNode: 'ノードを編集',
+    nodeEditPlaceholder: 'ノード名を入力',
   },
   en: {
     newFlow: 'New Flow',
@@ -83,8 +86,11 @@ const flowEditorTranslations = {
     failedToLoad: 'Failed to load flow',
     newFlowStarted: 'Started new flow',
     nodeAdded: 'Added node "{name}"!',
+    nodeUpdated: 'Node updated',
     technique: 'Technique',
     nodes: 'nodes',
+    editNode: 'Edit node',
+    nodeEditPlaceholder: 'Enter node name',
   },
   pt: {
     newFlow: 'Novo Fluxo',
@@ -438,6 +444,8 @@ export default function FlowEditorPage() {
   const [publicFlows, setPublicFlows] = useState<any[]>([])
   const [currentFlowId, setCurrentFlowId] = useState<string | null>(null)
   const [isReadOnly, setIsReadOnly] = useState(false)
+  const [editingNode, setEditingNode] = useState<string | null>(null)
+  const [editingText, setEditingText] = useState('')
   
   const [hasInitialized, setHasInitialized] = useState(false)
   
@@ -598,6 +606,45 @@ export default function FlowEditorPage() {
       }
     )
   }, [nodes, language, setNodes])
+
+  const onNodeDoubleClick = useCallback((event: any, node: any) => {
+    if (isReadOnly) return
+    setEditingNode(node.id)
+    setEditingText(node.data.label)
+  }, [isReadOnly])
+
+  const saveNodeEdit = useCallback(() => {
+    if (!editingNode) return
+    
+    setNodes(nodes => 
+      nodes.map(node => 
+        node.id === editingNode 
+          ? { ...node, data: { ...node.data, label: editingText } }
+          : node
+      )
+    )
+    
+    setEditingNode(null)
+    setEditingText('')
+    
+    toast.success(
+      `✨ ${t.nodeUpdated || 'Node updated'}!`,
+      { 
+        duration: 2000,
+        style: {
+          background: 'linear-gradient(135deg, #1a1a23 0%, #2a2a33 100%)',
+          color: '#fff',
+          border: '1px solid #4ade80',
+        },
+        icon: '✏️'
+      }
+    )
+  }, [editingNode, editingText, setNodes, t])
+
+  const cancelNodeEdit = useCallback(() => {
+    setEditingNode(null)
+    setEditingText('')
+  }, [])
 
   const saveFlow = async () => {
     if (!flowName.trim()) {
