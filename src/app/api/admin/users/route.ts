@@ -30,9 +30,9 @@ function getSupabaseAdmin() {
 async function isAdmin(userId: string): Promise<boolean> {
   const supabaseAdmin = getSupabaseAdmin()
   
-  // Check users_profile table for admin status
+  // Check user_profiles table for admin status
   const { data: profile, error: profileError } = await supabaseAdmin
-    .from('users_profile')
+    .from('user_profiles')
     .select('is_admin')
     .eq('user_id', userId)
     .single()
