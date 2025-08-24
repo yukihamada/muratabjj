@@ -27,6 +27,55 @@ const translations = {
     sparring: 'Spar',
     flows: 'Fluxos',
   },
+  es: {
+    dashboard: 'Inicio',
+    videos: 'Videos',
+    progress: 'Progreso',
+    sparring: 'Spar',
+    flows: 'Flujos',
+  },
+  fr: {
+    dashboard: 'Accueil',
+    videos: 'Vidéos',
+    progress: 'Progrès',
+    sparring: 'Spar',
+    flows: 'Flux',
+  },
+  ko: {
+    dashboard: '홈',
+    videos: '동영상',
+    progress: '진도',
+    sparring: '스파',
+    flows: '플로우',
+  },
+  ru: {
+    dashboard: 'Главная',
+    videos: 'Видео',
+    progress: 'Прогресс',
+    sparring: 'Спар',
+    flows: 'Потоки',
+  },
+  zh: {
+    dashboard: '首页',
+    videos: '视频',
+    progress: '进度',
+    sparring: '对练',
+    flows: '流程',
+  },
+  de: {
+    dashboard: 'Startseite',
+    videos: 'Videos',
+    progress: 'Fortschritt',
+    sparring: 'Spar',
+    flows: 'Abläufe',
+  },
+  it: {
+    dashboard: 'Home',
+    videos: 'Video',
+    progress: 'Progresso',
+    sparring: 'Spar',
+    flows: 'Flussi',
+  },
 }
 
 export default function MobileBottomNav() {

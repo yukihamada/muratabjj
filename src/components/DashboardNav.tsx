@@ -19,6 +19,7 @@ const translations = {
     profile: 'プロフィール',
     logout: 'ログアウト',
     upload: 'アップロード',
+    coach: 'コーチ',
   },
   en: {
     dashboard: 'Dashboard',
@@ -31,6 +32,7 @@ const translations = {
     profile: 'Profile',
     logout: 'Logout',
     upload: 'Upload',
+    coach: 'Coach',
   },
   pt: {
     dashboard: 'Painel',
@@ -43,6 +45,7 @@ const translations = {
     profile: 'Perfil',
     logout: 'Sair',
     upload: 'Enviar',
+    coach: 'Treinador',
   },
   es: {
     dashboard: 'Panel',
@@ -55,6 +58,7 @@ const translations = {
     profile: 'Perfil',
     logout: 'Salir',
     upload: 'Subir',
+    coach: 'Entrenador',
   },
   fr: {
     dashboard: 'Tableau de bord',
@@ -67,6 +71,7 @@ const translations = {
     profile: 'Profil',
     logout: 'Déconnexion',
     upload: 'Télécharger',
+    coach: 'Entraîneur',
   },
   ko: {
     dashboard: '대시보드',
@@ -79,6 +84,7 @@ const translations = {
     profile: '프로필',
     logout: '로그아웃',
     upload: '업로드',
+    coach: '코치',
   },
   ru: {
     dashboard: 'Панель',
@@ -91,6 +97,46 @@ const translations = {
     profile: 'Профиль',
     logout: 'Выйти',
     upload: 'Загрузить',
+    coach: 'Тренер',
+  },
+  zh: {
+    dashboard: '仪表板',
+    videos: '视频',
+    progress: '进度',
+    sparring: '对练',
+    review: '复习',
+    flows: '流程',
+    admin: '管理员',
+    profile: '个人资料',
+    logout: '登出',
+    upload: '上传',
+    coach: '教练',
+  },
+  de: {
+    dashboard: 'Dashboard',
+    videos: 'Videos',
+    progress: 'Fortschritt',
+    sparring: 'Sparring',
+    review: 'Wiederholung',
+    flows: 'Abläufe',
+    admin: 'Admin',
+    profile: 'Profil',
+    logout: 'Abmelden',
+    upload: 'Hochladen',
+    coach: 'Trainer',
+  },
+  it: {
+    dashboard: 'Dashboard',
+    videos: 'Video',
+    progress: 'Progresso',
+    sparring: 'Sparring',
+    review: 'Ripasso',
+    flows: 'Flussi',
+    admin: 'Admin',
+    profile: 'Profilo',
+    logout: 'Esci',
+    upload: 'Carica',
+    coach: 'Allenatore',
   },
 }
 
@@ -108,7 +154,7 @@ export default function DashboardNav() {
     { href: '/dashboard/sparring', label: t.sparring, icon: Swords },
     { href: '/dashboard/review', label: t.review, icon: Brain },
     { href: '/dashboard/flows', label: t.flows, icon: PenTool },
-    ...(isCoach ? [{ href: '/coach', label: language === 'ja' ? 'コーチ' : language === 'en' ? 'Coach' : 'Treinador', icon: Shield }] : []),
+    ...(isCoach ? [{ href: '/coach', label: t.coach, icon: Shield }] : []),
     ...(isAdmin ? [{ href: '/admin', label: t.admin, icon: Shield }] : []),
   ]
 
@@ -211,7 +257,20 @@ export default function DashboardNav() {
                     </Link>
                     <button
                       onClick={() => {
-                        if (window.confirm(language === 'ja' ? 'ログアウトしますか？' : language === 'en' ? 'Are you sure you want to logout?' : 'Tem certeza que deseja sair?')) {
+                        const confirmMessages = {
+                          ja: 'ログアウトしますか？',
+                          en: 'Are you sure you want to logout?',
+                          pt: 'Tem certeza que deseja sair?',
+                          es: '¿Estás seguro de que quieres cerrar sesión?',
+                          fr: 'Êtes-vous sûr de vouloir vous déconnecter?',
+                          ko: '로그아웃하시겠습니까?',
+                          ru: 'Вы уверены, что хотите выйти?',
+                          zh: '您确定要登出吗？',
+                          de: 'Sind Sie sicher, dass Sie sich abmelden möchten?',
+                          it: 'Sei sicuro di voler uscire?',
+                        }
+                        const msg = confirmMessages[language as keyof typeof confirmMessages] || confirmMessages.en
+                        if (window.confirm(msg)) {
                           signOut()
                         }
                       }}

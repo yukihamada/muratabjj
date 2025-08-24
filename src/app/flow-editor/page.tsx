@@ -541,11 +541,7 @@ export default function FlowEditorPage() {
       
       if (error) {
         console.error('Error loading flow:', error)
-        toast.error(
-          language === 'ja' ? 'フローの読み込みに失敗しました' :
-          language === 'en' ? 'Failed to load flow' :
-          'Falha ao carregar fluxo'
-        )
+        toast.error(t.failedToLoad)
         return
       }
       
@@ -567,9 +563,7 @@ export default function FlowEditorPage() {
         y: 100 + Math.floor(nodeCount / 10) * 80 
       },
       data: { 
-        label: language === 'ja' ? `技術 ${nodeCount}` : 
-               language === 'en' ? `Technique ${nodeCount}` : 
-               `Técnica ${nodeCount}` 
+        label: `${t.technique} ${nodeCount}`
       },
       style: {
         background: '#13131a',
@@ -592,9 +586,7 @@ export default function FlowEditorPage() {
     
     // より目立つ成功フィードバック
     toast.success(
-      language === 'ja' ? `✨ ノード「${newNode.data.label}」を追加しました！` :
-      language === 'en' ? `✨ Added node "${newNode.data.label}"!` :
-      `✨ Nó "${newNode.data.label}" adicionado!`,
+      `✨ ${t.nodeAdded.replace('{name}', newNode.data.label)}`,
       { 
         duration: 2000,
         style: {
@@ -609,29 +601,17 @@ export default function FlowEditorPage() {
 
   const saveFlow = async () => {
     if (!flowName.trim()) {
-      toast.error(
-        language === 'ja' ? 'フロー名を入力してください' :
-        language === 'en' ? 'Please enter a flow name' :
-        'Por favor, insira um nome para o fluxo'
-      )
+      toast.error(t.flowNameRequired)
       return
     }
 
     if (nodes.length === 0) {
-      toast.error(
-        language === 'ja' ? 'ノードを追加してください' :
-        language === 'en' ? 'Please add nodes' :
-        'Por favor, adicione nós'
-      )
+      toast.error(t.addNodesFirst)
       return
     }
 
     if (!user) {
-      toast.error(
-        language === 'ja' ? 'ログインが必要です' :
-        language === 'en' ? 'Login required' :
-        'Login necessário'
-      )
+      toast.error(t.loginRequiredSave)
       return
     }
 
@@ -653,11 +633,7 @@ export default function FlowEditorPage() {
         
         // 認証エラーの場合の処理
         if (error.message?.includes('authorization') || error.message?.includes('JWT') || error.message?.includes('auth')) {
-          toast.error(
-            language === 'ja' ? 'ログインが必要です。再度ログインしてください。' :
-            language === 'en' ? 'Please log in again to save flows.' :
-            'Por favor, faça login novamente para salvar fluxos.'
-          )
+          toast.error(t.loginRequiredSave)
           return
         }
         
@@ -675,9 +651,7 @@ export default function FlowEditorPage() {
           localStorage.setItem('bjj-flows', JSON.stringify(savedFlows))
           
           toast.success(
-            language === 'ja' ? 'フローをローカルに保存しました（データベース準備中）' :
-            language === 'en' ? 'Flow saved locally (Database setup pending)' :
-            'Fluxo salvo localmente (Banco de dados pendente)',
+            t.flowSavedLocally,
             {
               icon: '💾',
               duration: 4000,
@@ -690,9 +664,7 @@ export default function FlowEditorPage() {
       }
 
       toast.success(
-        language === 'ja' ? 'フローを保存しました' :
-        language === 'en' ? 'Flow saved successfully' :
-        'Fluxo salvo com sucesso',
+        t.flowSaved,
         {
           icon: '✓',
           style: {
@@ -705,9 +677,7 @@ export default function FlowEditorPage() {
       )
     } catch (error: any) {
       toast.error(
-        language === 'ja' ? `保存エラー: ${error.message}` :
-        language === 'en' ? `Save error: ${error.message}` :
-        `Erro ao salvar: ${error.message}`
+        `${t.saveError}: ${error.message}`
       )
     }
   }
@@ -780,7 +750,7 @@ export default function FlowEditorPage() {
                   autoCorrect="off"
                   spellCheck="false"
                   className="px-2 py-1 sm:px-3 sm:py-2 bg-bjj-bg border border-white/10 rounded-lg text-sm sm:text-base text-bjj-text focus:border-bjj-accent focus:outline-none w-full max-w-[150px] sm:max-w-none"
-                  placeholder={language === 'ja' ? 'フロー名' : language === 'en' ? 'Flow Name' : 'Nome do Fluxo'}
+                  placeholder={t.flowName}
                 />
                 {currentFlowId && (
                   <button
@@ -789,11 +759,7 @@ export default function FlowEditorPage() {
                       setNodes(getInitialNodes(language, isMobileView))
                       setEdges(initialEdges)
                       setCurrentFlowId(null)
-                      toast.success(
-                        language === 'ja' ? '新規フローを開始' :
-                        language === 'en' ? 'Started new flow' :
-                        'Novo fluxo iniciado'
-                      )
+                      toast.success(t.newFlowStarted)
                     }}
                     className="text-xs text-bjj-muted hover:text-bjj-accent"
                     title={language === 'ja' ? '新規作成' : 'New'}
@@ -817,7 +783,7 @@ export default function FlowEditorPage() {
                     style={{ position: 'relative', zIndex: 100 }}
                   >
                     <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">{language === 'ja' ? 'ノード追加' : language === 'en' ? 'Add Node' : 'Adicionar Nó'}</span>
+                    <span className="hidden sm:inline">{t.addNode}</span>
                     <span className="sm:hidden">+</span>
                   </button>
                   
@@ -826,14 +792,14 @@ export default function FlowEditorPage() {
                     className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
                   >
                     <Save className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">{language === 'ja' ? '保存' : language === 'en' ? 'Save' : 'Salvar'}</span>
+                    <span className="hidden sm:inline">{t.save}</span>
                   </button>
                 </>
               )}
               
               {isReadOnly && (
                 <div className="text-xs sm:text-sm text-bjj-muted px-2 py-1 sm:px-3 sm:py-2">
-                  {language === 'ja' ? '読み取り専用' : language === 'en' ? 'Read-only' : 'Somente leitura'}
+                  {t.readOnly}
                 </div>
               )}
               
@@ -842,7 +808,7 @@ export default function FlowEditorPage() {
                 className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
               >
                 <Download className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">{language === 'ja' ? 'エクスポート' : language === 'en' ? 'Export' : 'Exportar'}</span>
+                <span className="hidden sm:inline">{t.export}</span>
               </button>
             </div>
             
@@ -853,11 +819,7 @@ export default function FlowEditorPage() {
                   onClick={() => setShowFlowList(!showFlowList)}
                   className="text-xs sm:text-sm text-bjj-accent hover:text-bjj-accent/80 transition-colors"
                 >
-                  {showFlowList ? (
-                    language === 'ja' ? '閉じる' : language === 'en' ? 'Close' : 'Fechar'
-                  ) : (
-                    language === 'ja' ? 'サンプルフローを見る' : language === 'en' ? 'View Sample Flows' : 'Ver Fluxos de Exemplo'
-                  )}
+                  {showFlowList ? t.close : t.viewSampleFlows}
                 </button>
                 {showFlowList && (
                   <div className="mt-2 space-y-1 max-h-48 overflow-y-auto bg-bjj-bg/50 rounded-lg p-2">
@@ -888,7 +850,7 @@ export default function FlowEditorPage() {
           <div className="hidden lg:block absolute top-4 right-4 w-64 max-h-[calc(100vh-200px)] bg-bjj-bg2/90 backdrop-blur-sm border border-white/10 rounded-bjj overflow-hidden z-10">
             <div className="p-4">
               <h3 className="text-sm font-bold text-bjj-text mb-3">
-                {language === 'ja' ? 'フローライブラリ' : language === 'en' ? 'Flow Library' : 'Biblioteca de Fluxos'}
+                {t.flowLibrary}
               </h3>
               {publicFlows.length > 0 ? (
                 <div className="space-y-2 max-h-[400px] overflow-y-auto">
@@ -913,47 +875,27 @@ export default function FlowEditorPage() {
                         <p className="text-xs text-bjj-muted mt-1 line-clamp-2">{flow.description}</p>
                       )}
                       <div className="text-xs text-bjj-muted mt-2">
-                        {flow.nodes?.length || 0} {language === 'ja' ? 'ノード' : 'nodes'}
+                        {flow.nodes?.length || 0} {t.nodes}
                       </div>
                     </button>
                   ))}
                 </div>
               ) : (
                 <p className="text-xs text-bjj-muted">
-                  {language === 'ja' ? 'フローがありません' : language === 'en' ? 'No flows available' : 'Nenhum fluxo disponível'}
+                  {t.noFlowsAvailable}
                 </p>
               )}
             </div>
             
             <div className="border-t border-white/10 p-4 mt-4">
               <h4 className="text-xs font-bold text-bjj-muted mb-2">
-                {language === 'ja' ? '操作方法' : language === 'en' ? 'Controls' : 'Controles'}
+                {t.controls}
               </h4>
               <ul className="space-y-1 text-xs text-bjj-muted">
-                {language === 'ja' && (
-                  <>
-                    <li>• ドラッグ: ノードを移動</li>
-                    <li>• ノードをドラッグ: 接続を作成</li>
-                    <li>• ダブルクリック: ノードを編集</li>
-                    <li>• Delete: 選択を削除</li>
-                  </>
-                )}
-                {language === 'en' && (
-                  <>
-                    <li>• Drag: Move nodes</li>
-                    <li>• Drag from node: Create connection</li>
-                    <li>• Double click: Edit node</li>
-                    <li>• Delete: Remove selection</li>
-                  </>
-                )}
-                {language === 'pt' && (
-                  <>
-                    <li>• Arrastar: Mover nós</li>
-                    <li>• Arrastar do nó: Criar conexão</li>
-                    <li>• Duplo clique: Editar nó</li>
-                    <li>• Delete: Remover seleção</li>
-                  </>
-                )}
+                <li>• {t.drag}</li>
+                <li>• {t.dragFromNode}</li>
+                <li>• {t.doubleClick}</li>
+                <li>• {t.delete}</li>
               </ul>
             </div>
           </div>
