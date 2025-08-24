@@ -14,11 +14,15 @@ export async function POST(request: NextRequest) {
     // Check if OPENAI_API_KEY is available
     const openaiApiKey = process.env.OPENAI_API_KEY
     if (!openaiApiKey) {
+      console.error('[Transcribe] OpenAI API key is not configured')
       return NextResponse.json(
         { error: 'OpenAI API key is not configured' },
         { status: 500 }
       )
     }
+    
+    console.log('[Transcribe] Starting transcription for:', videoUrl)
+    console.log('[Transcribe] Language:', language)
 
     // Download video from Supabase Storage
     const response = await fetch(videoUrl)
@@ -51,6 +55,9 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await whisperResponse.json()
+    
+    console.log('[Transcribe] Success! Text length:', result.text?.length || 0)
+    console.log('[Transcribe] Segments:', result.segments?.length || 0)
 
     return NextResponse.json({
       text: result.text,
