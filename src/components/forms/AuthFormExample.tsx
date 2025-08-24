@@ -18,7 +18,6 @@ export default function AuthFormExample() {
   const onSubmit = async (data: LoginInput) => {
     try {
       // ここで実際の認証処理を行う
-      console.log('Valid form data:', data)
       toast.success('ログインしました')
     } catch (error) {
       toast.error('ログインに失敗しました')

@@ -41,7 +41,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     try {
       localStorage.setItem('theme', theme)
     } catch (e) {
-      console.warn('Could not save theme to localStorage:', e)
+      // Silently handle localStorage errors
     }
     
     // 背景色も変更
@@ -50,13 +50,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else {
       root.style.backgroundColor = '#ffffff'
     }
-    
-    console.log('[ThemeProvider] Theme changed to:', theme)
   }, [theme, mounted])
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light'
-    console.log('[ThemeProvider] Toggling theme from', theme, 'to', newTheme)
     setTheme(newTheme)
   }
 

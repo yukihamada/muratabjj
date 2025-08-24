@@ -9,10 +9,17 @@ export const STORAGE_BUCKETS = {
 
 // Maximum file sizes in bytes
 export const MAX_FILE_SIZES = {
-  VIDEO: 5 * 1024 * 1024 * 1024, // 5GB
+  VIDEO: 5 * 1024 * 1024 * 1024, // 5GB = 5,368,709,120 bytes
   THUMBNAIL: 5 * 1024 * 1024, // 5MB
   AVATAR: 2 * 1024 * 1024, // 2MB
 } as const
+
+console.log('[MAX_FILE_SIZES] Current limits:', {
+  VIDEO: MAX_FILE_SIZES.VIDEO,
+  VIDEO_GB: MAX_FILE_SIZES.VIDEO / 1024 / 1024 / 1024,
+  THUMBNAIL: MAX_FILE_SIZES.THUMBNAIL,
+  AVATAR: MAX_FILE_SIZES.AVATAR
+})
 
 // Allowed file types
 export const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/x-msvideo']
@@ -25,12 +32,21 @@ export async function uploadVideo(
   onProgress?: (progress: number) => void
 ) {
   // Validate file
+  console.log(`[uploadVideo] File validation:`, {
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    sizeInMB: Math.round(file.size / 1024 / 1024),
+    maxAllowed: MAX_FILE_SIZES.VIDEO,
+    maxAllowedInGB: MAX_FILE_SIZES.VIDEO / 1024 / 1024 / 1024
+  })
+  
   if (!ALLOWED_VIDEO_TYPES.includes(file.type)) {
     throw new Error('Invalid file type. Only MP4, MOV, and AVI are allowed.')
   }
   
   if (file.size > MAX_FILE_SIZES.VIDEO) {
-    throw new Error(`File size exceeds ${MAX_FILE_SIZES.VIDEO / 1024 / 1024}MB limit.`)
+    throw new Error(`File size exceeds ${MAX_FILE_SIZES.VIDEO / 1024 / 1024 / 1024}GB limit. Your file is ${Math.round(file.size / 1024 / 1024)}MB.`)
   }
   
   // Generate unique filename
@@ -39,7 +55,7 @@ export async function uploadVideo(
   const fileName = `${userId}/${timestamp}.${fileExt}`
   
   // Upload with progress tracking
-  console.log(`[Upload] Starting upload: ${fileName}, size: ${file.size} bytes`)
+  // Starting upload
   
   const { data, error } = await supabase.storage
     .from(STORAGE_BUCKETS.VIDEOS)
@@ -55,13 +71,7 @@ export async function uploadVideo(
     })
   
   if (error) {
-    console.error('[Upload] Error details:', {
-      error: error.message,
-      bucket: STORAGE_BUCKETS.VIDEOS,
-      fileName,
-      fileSize: file.size,
-      fileType: file.type
-    })
+    // Upload error occurred
     
     // Provide more helpful error messages
     let friendlyError = error.message
@@ -81,7 +91,7 @@ export async function uploadVideo(
     throw new Error(friendlyError)
   }
   
-  console.log('[Upload] Success:', data)
+  // Upload successful
   
   // Get public URL
   const { data: { publicUrl } } = supabase.storage

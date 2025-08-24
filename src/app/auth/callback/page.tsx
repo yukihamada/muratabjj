@@ -19,7 +19,6 @@ function AuthCallbackContent() {
           const { error } = await supabase.auth.exchangeCodeForSession(code)
           
           if (error) {
-            console.error('Auth callback error:', error)
             router.push('/')
             return
           }
@@ -28,7 +27,6 @@ function AuthCallbackContent() {
         // 認証成功後、ダッシュボードへリダイレクト
         router.push('/dashboard')
       } catch (error) {
-        console.error('Unexpected error during auth callback:', error)
         router.push('/')
       }
     }

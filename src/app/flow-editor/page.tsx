@@ -247,11 +247,8 @@ export default function FlowEditorPage() {
       },
     }
     
-    console.log(`[FlowEditor] Adding node ${nodeCount} at position (${newNode.position.x}, ${newNode.position.y})`)
-    
     setNodes((nds) => {
       const updatedNodes = [...nds, newNode]
-      console.log(`[FlowEditor] Total nodes: ${updatedNodes.length}`)
       return updatedNodes
     })
     
@@ -315,7 +312,6 @@ export default function FlowEditorPage() {
         .single()
 
       if (error) {
-        console.error('Error saving flow:', error)
         
         // 認証エラーの場合の処理
         if (error.message?.includes('authorization') || error.message?.includes('JWT') || error.message?.includes('auth')) {
@@ -370,7 +366,6 @@ export default function FlowEditorPage() {
         }
       )
     } catch (error: any) {
-      console.error('Save error:', error)
       toast.error(
         language === 'ja' ? `保存エラー: ${error.message}` :
         language === 'en' ? `Save error: ${error.message}` :

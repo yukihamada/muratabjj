@@ -70,7 +70,6 @@ export async function analyzeVideoWithAI(
   const systemPrompt = getSystemPrompt(language)
   
   try {
-    console.log('[AI Analysis] Starting video analysis for:', videoTitle)
     
     // GPT-4 Visionで画像分析
     const response = await openai.chat.completions.create({
@@ -117,7 +116,7 @@ export async function analyzeVideoWithAI(
       throw new Error('No response from GPT-4 Vision')
     }
 
-    console.log('[AI Analysis] Raw response:', content)
+    // Process response
 
     // JSONレスポンスを解析
     try {
@@ -136,7 +135,6 @@ export async function analyzeVideoWithAI(
       }
       
     } catch (parseError) {
-      console.error('[AI Analysis] JSON parse error:', parseError)
       
       // JSONパースに失敗した場合は、テキストから情報を抽出
       return {
@@ -150,7 +148,6 @@ export async function analyzeVideoWithAI(
     }
 
   } catch (error) {
-    console.error('[AI Analysis] Error:', error)
     throw error
   }
 }
@@ -229,8 +226,8 @@ export async function saveAnalysisResult(
   analysisResult: Partial<VideoAnalysisResult>
 ) {
   // この関数は別ファイルで実装される予定
-  // 現在はコンソールログのみ
-  console.log('[AI Analysis] Saving result for video:', videoId, analysisResult)
+  // Analysis result would be saved to database here
+  return Promise.resolve()
 }
 
 /**
@@ -241,5 +238,6 @@ export async function updateAnalysisStatus(
   status: VideoAnalysisResult['analysis_status'],
   error?: string
 ) {
-  console.log(`[AI Analysis] Status update for ${videoId}: ${status}`, error)
+  // Analysis status would be updated in database here
+  return Promise.resolve()
 }

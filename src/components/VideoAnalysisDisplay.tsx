@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Brain, Clock, Star, Target, Lightbulb, CheckCircle, AlertCircle, Loader } from 'lucide-react'
 
 interface VideoAnalysis {
@@ -37,7 +37,7 @@ export default function VideoAnalysisDisplay({
   const [analyzing, setAnalyzing] = useState(false)
 
   // 分析結果を取得
-  const fetchAnalysis = async () => {
+  const fetchAnalysis = useCallback(async () => {
     try {
       const response = await fetch(`/api/ai/auto-analyze-on-upload?video_id=${videoId}`)
       const data = await response.json()
@@ -46,12 +46,12 @@ export default function VideoAnalysisDisplay({
         setAnalysis(data.analysis)
       }
     } catch (err) {
-      console.error('Failed to fetch analysis:', err)
+      // Silently handle fetch errors
     }
-  }
+  }, [videoId])
 
   // AI分析をトリガー
-  const triggerAnalysis = async (background = true) => {
+  const triggerAnalysis = useCallback(async (background = true) => {
     setAnalyzing(true)
     setError(null)
     
@@ -106,7 +106,7 @@ export default function VideoAnalysisDisplay({
       setError(err.message)
       setAnalyzing(false)
     }
-  }
+  }, [videoId, fetchAnalysis, analysis])
 
   useEffect(() => {
     fetchAnalysis()
@@ -114,7 +114,7 @@ export default function VideoAnalysisDisplay({
     if (autoTriggerAnalysis && !analysis) {
       triggerAnalysis(true)
     }
-  }, [videoId])
+  }, [videoId, fetchAnalysis, autoTriggerAnalysis, analysis, triggerAnalysis])
 
   const getBeltColor = (belt?: string) => {
     switch (belt) {
