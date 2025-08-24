@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase/client'
 import { uploadVideo, uploadThumbnail, generateVideoThumbnail, getVideoDuration } from '@/lib/supabase/storage'
 import { transcribeVideoServerSide, saveTranscription } from '@/lib/whisper/api'
 import { checkAndCreateBuckets, checkUploadPermission } from '@/lib/supabase/check-storage'
-import { Upload, AlertCircle, Info, Video, Loader2, Plus, Mic, Brain } from 'lucide-react'
+import { Upload, AlertCircle, Info, Video, Loader2, Plus, Mic, Brain, Trash2, Save } from 'lucide-react'
 import Link from 'next/link'
 import { useLanguage } from '@/contexts/LanguageContext'
 import DashboardNav from '@/components/DashboardNav'
@@ -567,40 +567,123 @@ export default function VideoUploadPage() {
               <label className="block text-sm font-medium mb-4">
                 {t.videoFile} <span className="text-bjj-accent">*</span>
               </label>
-              <div className="border-2 border-dashed border-white/20 rounded-bjj p-8 text-center">
-                <Video className="w-12 h-12 mx-auto mb-4 text-bjj-muted" />
-                <input
-                  type="file"
-                  accept="video/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                  id="video-upload"
-                  required
-                  disabled={loading}
-                />
-                <label
-                  htmlFor="video-upload"
-                  className="btn-primary cursor-pointer inline-block"
-                >
-                  {t.selectVideo}
-                </label>
-                {videoFile && (
+              
+              {/* アップロード前の状態 */}
+              {!uploadedVideoData && !isUploading && (
+                <div className="border-2 border-dashed border-white/20 rounded-bjj p-8 text-center">
+                  <Video className="w-12 h-12 mx-auto mb-4 text-bjj-muted" />
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="video-upload"
+                    required
+                    disabled={isUploading}
+                  />
+                  <label
+                    htmlFor="video-upload"
+                    className="btn-primary cursor-pointer inline-block"
+                  >
+                    {t.selectVideo}
+                  </label>
                   <p className="mt-4 text-sm text-bjj-muted">
-                    {t.selected}: {videoFile.name}
+                    {language === 'ja' ? '動画を選択すると自動的にアップロードが始まります' :
+                     language === 'en' ? 'Upload will start automatically after selection' :
+                     'O upload começará automaticamente após a seleção'}
                   </p>
-                )}
-                {loading && uploadProgress > 0 && (
-                  <div className="mt-4">
-                    <div className="w-full bg-white/10 rounded-full h-2">
-                      <div
-                        className="bg-bjj-accent h-2 rounded-full transition-all"
-                        style={{ width: `${uploadProgress}%` }}
-                      />
-                    </div>
-                    <p className="text-sm text-bjj-muted mt-2">{uploadProgress}%</p>
+                </div>
+              )}
+              
+              {/* アップロード中の状態 */}
+              {isUploading && (
+                <div className="border-2 border-dashed border-white/20 rounded-bjj p-8 text-center">
+                  <Loader2 className="w-12 h-12 mx-auto mb-4 text-bjj-accent animate-spin" />
+                  <p className="text-sm font-medium mb-2">
+                    {language === 'ja' ? 'アップロード中...' :
+                     language === 'en' ? 'Uploading...' :
+                     'Enviando...'}
+                  </p>
+                  {videoFile && (
+                    <p className="text-sm text-bjj-muted mb-4">
+                      {videoFile.name}
+                    </p>
+                  )}
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div
+                      className="bg-bjj-accent h-2 rounded-full transition-all"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
                   </div>
-                )}
-              </div>
+                  <p className="text-sm text-bjj-muted mt-2">{uploadProgress}%</p>
+                </div>
+              )}
+              
+              {/* アップロード完了後の状態 */}
+              {uploadedVideoData && !isUploading && (
+                <div className="bg-bjj-bg2 rounded-bjj p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="relative w-32 h-24 bg-black rounded-lg overflow-hidden flex-shrink-0">
+                      <img
+                        src={uploadedVideoData.thumbnailUrl}
+                        alt="Video thumbnail"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="bg-black/60 rounded-full p-2">
+                          <Video className="w-6 h-6 text-white" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-bjj-text">{uploadedVideoData.fileName}</p>
+                      <p className="text-sm text-bjj-muted mt-1">
+                        {language === 'ja' ? '長さ' : language === 'en' ? 'Duration' : 'Duração'}: {Math.floor(uploadedVideoData.duration / 60)}:{(uploadedVideoData.duration % 60).toString().padStart(2, '0')}
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center gap-1 text-green-400">
+                          <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                          <span className="text-xs">
+                            {language === 'ja' ? 'アップロード完了' :
+                             language === 'en' ? 'Upload complete' :
+                             'Upload concluído'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUploadedVideoData(null)
+                        setVideoFile(null)
+                        setFormData({
+                          title_ja: '',
+                          title_en: '',
+                          title_pt: '',
+                          description_ja: '',
+                          description_en: '',
+                          description_pt: '',
+                          technique_id: '',
+                          belt_requirement: '',
+                          is_premium: false,
+                          add_to_flow: false,
+                          flow_id: '',
+                          create_new_flow: false,
+                          new_flow_name: '',
+                        })
+                      }}
+                      className="text-bjj-muted hover:text-bjj-accent"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <p className="text-sm text-yellow-400 mt-4">
+                    {language === 'ja' ? '以下の情報を入力して「保存」をクリックしてください' :
+                     language === 'en' ? 'Please fill in the information below and click "Save"' :
+                     'Por favor, preencha as informações abaixo e clique em "Salvar"'}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Basic Information */}
@@ -872,7 +955,7 @@ export default function VideoUploadPage() {
               <button
                 type="submit"
                 className="btn-primary flex items-center gap-2"
-                disabled={loading || !videoFile}
+                disabled={loading || !uploadedVideoData}
               >
                 {loading ? (
                   <>
@@ -880,12 +963,12 @@ export default function VideoUploadPage() {
                     {transcribing ? (language === 'ja' ? '音声解析中...' : 
                                     language === 'en' ? 'Transcribing...' : 
                                     'Transcrevendo...') : 
-                     uploadProgress > 0 ? t.uploading : t.analyzing}
+                     language === 'ja' ? '保存中...' : language === 'en' ? 'Saving...' : 'Salvando...'}
                   </>
                 ) : (
                   <>
-                    <Upload className="w-4 h-4" />
-                    {t.upload}
+                    <Save className="w-4 h-4" />
+                    {language === 'ja' ? '保存' : language === 'en' ? 'Save' : 'Salvar'}
                   </>
                 )}
               </button>
@@ -901,6 +984,14 @@ export default function VideoUploadPage() {
                 <p>User Email: {user?.email || 'Not logged in'}</p>
                 <p>File Selected: {videoFile ? `${videoFile.name} (${(videoFile.size / 1024 / 1024).toFixed(2)} MB)` : 'No file'}</p>
                 <p>File Type: {videoFile?.type || 'N/A'}</p>
+                <p>Upload Status: {uploadedVideoData ? 'Uploaded' : isUploading ? 'Uploading...' : 'Not uploaded'}</p>
+                {uploadedVideoData && (
+                  <>
+                    <p>Video URL: {uploadedVideoData.videoUrl}</p>
+                    <p>Thumbnail URL: {uploadedVideoData.thumbnailUrl}</p>
+                    <p>Duration: {uploadedVideoData.duration}s</p>
+                  </>
+                )}
                 <p>Supabase URL: {process.env.NEXT_PUBLIC_SUPABASE_URL || 'Not set'}</p>
                 <p>Storage Buckets Check: Click upload to test</p>
                 <div className="mt-4 p-3 bg-black/50 rounded overflow-x-auto">
