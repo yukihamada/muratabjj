@@ -247,7 +247,8 @@ export default function VideoUploadPage() {
         videoUrl,
         thumbnailUrl,
         duration,
-        fileName: file.name
+        fileName: file.name,
+        fileSize: file.size
       })
       
       toast.success(
@@ -329,9 +330,11 @@ export default function VideoUploadPage() {
       const { data: videoData, error: dbError } = await supabase
         .from('videos')
         .insert({
-          // 現在のテーブル構造に合わせたマッピング
+          // 実際のカラムに合わせたマッピング
           title: formData.title_ja || formData.title_en || formData.title_pt || uploadedVideoData.fileName,
-          description: formData.description_ja || formData.description_en || formData.description_pt,
+          description: formData.description_ja || formData.description_en || formData.description_pt || '',
+          filename: uploadedVideoData.fileName,
+          file_size: uploadedVideoData.fileSize || 0,
           video_url: uploadedVideoData.videoUrl,
           thumbnail_url: uploadedVideoData.thumbnailUrl,
           duration: uploadedVideoData.duration,
@@ -340,6 +343,8 @@ export default function VideoUploadPage() {
           difficulty_level: formData.belt_requirement || 'beginner',
           is_free: !formData.is_premium,
           is_published: true,
+          approval_status: 'pending',
+          analysis_status: 'pending',
         })
         .select()
         .single()
