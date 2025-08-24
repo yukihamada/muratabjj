@@ -39,6 +39,8 @@ export async function uploadVideo(
   const fileName = `${userId}/${timestamp}.${fileExt}`
   
   // Upload with progress tracking
+  console.log(`[Upload] Starting upload: ${fileName}, size: ${file.size} bytes`)
+  
   const { data, error } = await supabase.storage
     .from(STORAGE_BUCKETS.VIDEOS)
     .upload(fileName, file, {
@@ -52,7 +54,18 @@ export async function uploadVideo(
       },
     })
   
-  if (error) throw error
+  if (error) {
+    console.error('[Upload] Error details:', {
+      error,
+      bucket: STORAGE_BUCKETS.VIDEOS,
+      fileName,
+      fileSize: file.size,
+      fileType: file.type
+    })
+    throw error
+  }
+  
+  console.log('[Upload] Success:', data)
   
   // Get public URL
   const { data: { publicUrl } } = supabase.storage

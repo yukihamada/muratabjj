@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase/client'
 import { uploadVideo, uploadThumbnail, generateVideoThumbnail, getVideoDuration } from '@/lib/supabase/storage'
 import { transcribeVideoServerSide, saveTranscription } from '@/lib/whisper/api'
+import { checkAndCreateBuckets, checkUploadPermission } from '@/lib/supabase/check-storage'
 import { Upload, AlertCircle, Info, Video, Loader2, Plus, Mic, Brain } from 'lucide-react'
 import Link from 'next/link'
 import { useLanguage } from '@/contexts/LanguageContext'
@@ -132,6 +133,7 @@ export default function VideoUploadPage() {
   const [transcribing, setTranscribing] = useState(false)
   const [enableTranscription, setEnableTranscription] = useState(true)
   const [enableAIAnalysis, setEnableAIAnalysis] = useState(true)
+  const [debugMode, setDebugMode] = useState(false)
   const [formData, setFormData] = useState({
     title_ja: '',
     title_en: '',
@@ -205,6 +207,21 @@ export default function VideoUploadPage() {
     setUploadProgress(0)
 
     try {
+      // Check and create storage buckets if needed
+      const bucketsReady = await checkAndCreateBuckets()
+      if (!bucketsReady) {
+        throw new Error(language === 'ja' ? 'ストレージの準備中です。もう一度お試しください。' : 
+                       language === 'en' ? 'Storage is being prepared. Please try again.' : 
+                       'O armazenamento está sendo preparado. Tente novamente.')
+      }
+      
+      // Check upload permission
+      const hasPermission = await checkUploadPermission(user.id)
+      if (!hasPermission) {
+        throw new Error(language === 'ja' ? 'アップロード権限がありません。管理者にお問い合わせください。' : 
+                       language === 'en' ? 'Upload permission denied. Please contact administrator.' : 
+                       'Permissão de upload negada. Entre em contato com o administrador.')
+      }
       // 1. Upload video with progress tracking
       const uploaderId = user.id
       const { path: videoPath, url: videoUrl } = await uploadVideo(
@@ -382,9 +399,35 @@ export default function VideoUploadPage() {
 
       toast.success(t.uploadSuccess)
       router.push('/dashboard/videos')
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload error:', error)
-      toast.error(t.uploadError)
+      
+      // More specific error messages
+      let errorMessage = t.uploadError
+      
+      if (error.message) {
+        if (error.message.includes('File size exceeds')) {
+          errorMessage = language === 'ja' ? 'ファイルサイズが大きすぎます（最大500MB）' : 
+                        language === 'en' ? 'File size too large (max 500MB)' : 
+                        'Arquivo muito grande (máx 500MB)'
+        } else if (error.message.includes('Invalid file type')) {
+          errorMessage = language === 'ja' ? 'サポートされていないファイル形式です（MP4、MOV、AVIのみ）' : 
+                        language === 'en' ? 'Unsupported file type (MP4, MOV, AVI only)' : 
+                        'Tipo de arquivo não suportado (apenas MP4, MOV, AVI)'
+        } else if (error.message.includes('storage')) {
+          errorMessage = language === 'ja' ? 'ストレージエラー: 管理者にお問い合わせください' : 
+                        language === 'en' ? 'Storage error: Please contact administrator' : 
+                        'Erro de armazenamento: Entre em contato com o administrador'
+        } else if (error.message.includes('row-level security')) {
+          errorMessage = language === 'ja' ? 'アクセス権限がありません' : 
+                        language === 'en' ? 'Access denied' : 
+                        'Acesso negado'
+        } else {
+          errorMessage = `${t.uploadError}: ${error.message}`
+        }
+      }
+      
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
       setUploadProgress(0)

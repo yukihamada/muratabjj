@@ -4,13 +4,25 @@ import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
+    // Get the authorization header
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader) {
+      console.error('No authorization header provided');
+      return NextResponse.json(
+        { error: 'Authorization required' },
+        { status: 401 }
+      );
+    }
+
     // Use the server-side supabase client
     const supabase = createClient();
     
-    // Check if user is authenticated
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Check if user is authenticated using the token from the header
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     
     if (authError || !user) {
+      console.error('Auth error:', authError);
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -42,9 +54,9 @@ export async function POST(request: NextRequest) {
     
     // Check if user already has a Stripe customer ID in the database
     const { data: profile } = await supabase
-      .from('users_profile')
+      .from('user_profiles')
       .select('stripe_customer_id')
-      .eq('user_id', user.id)
+      .or(`id.eq.${user.id},user_id.eq.${user.id}`)
       .single();
 
     if (profile?.stripe_customer_id) {
@@ -61,8 +73,13 @@ export async function POST(request: NextRequest) {
 
       // Save customer ID to database
       await supabase
-        .from('users_profile')
-        .update({ stripe_customer_id: customerId })
+        .from('user_profiles')
+        .upsert({ 
+          id: user.id,
+          user_id: user.id,
+          stripe_customer_id: customerId,
+          email: user.email
+        })
         .eq('user_id', user.id);
     }
 

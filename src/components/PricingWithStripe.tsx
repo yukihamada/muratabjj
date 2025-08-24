@@ -6,6 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import { SUBSCRIPTION_PLANS, type PlanId } from '@/lib/stripe/config'
 import { getStripe } from '@/lib/stripe/client'
 import { useAuth } from '@/hooks/useAuth'
+import { supabase } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 
 export default function PricingWithStripe() {
@@ -49,15 +50,24 @@ export default function PricingWithStripe() {
     setLoading(planId)
 
     try {
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (!session) {
+        throw new Error('No active session')
+      }
+
       // Create checkout session
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           planId,
           locale: language,
+          billingPeriod: 'monthly', // TODO: Add billing period selection
         }),
       })
 
