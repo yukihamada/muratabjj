@@ -77,12 +77,12 @@ export async function PATCH(
 
     // ユーザー情報を更新
     const { data: updatedUser, error: updateError } = await supabaseAdmin
-      .from('user_profiles')
+      .from('users_profile')
       .update({
         ...filteredUpdateData,
         updated_at: new Date().toISOString()
       })
-      .eq('id', userId)
+      .eq('user_id', userId)
       .select()
       .single()
 
@@ -137,12 +137,12 @@ export async function DELETE(
 
     // ユーザーを削除（実際には非アクティブ化）
     const { error: deleteError } = await supabaseAdmin
-      .from('user_profiles')
+      .from('users_profile')
       .update({
         is_active: false,
         updated_at: new Date().toISOString()
       })
-      .eq('id', userId)
+      .eq('user_id', userId)
 
     if (deleteError) {
       console.error('Error deleting user:', deleteError)
