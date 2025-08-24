@@ -61,8 +61,8 @@ export async function uploadVideo(
   
   // Generate unique filename
   const timestamp = Date.now()
-  const fileExt = file.name.split('.').pop()
-  const fileName = `${userId}/${timestamp}.${fileExt}`
+  const originalExt = file.name.split('.').pop()
+  const fileName = `${userId}/${timestamp}.${originalExt}`
   
   // Upload with progress tracking
   // Starting upload
