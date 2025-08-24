@@ -396,10 +396,10 @@ export default function FlowEditorPage() {
           {isMobileView && (
             <p className="text-xs text-yellow-200 mt-2">
               {language === 'ja' 
-                ? '📱 モバイルでは閲覧モードです。編集はPCをご利用ください。' 
+                ? '📱 モバイルでは一部機能が制限されています。' 
                 : language === 'en'
-                ? '📱 View-only mode on mobile. Please use a PC for editing.'
-                : '📱 Modo somente visualização no celular. Use um PC para editar.'}
+                ? '📱 Some features are limited on mobile.'
+                : '📱 Alguns recursos são limitados no celular.'}
             </p>
           )}
         </div>
@@ -409,12 +409,12 @@ export default function FlowEditorPage() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={isMobileView ? undefined : onNodesChange}
-          onEdgesChange={isMobileView ? undefined : onEdgesChange}
-          onConnect={isMobileView ? undefined : onConnect}
-          nodesDraggable={!isMobileView}
-          nodesConnectable={!isMobileView}
-          elementsSelectable={!isMobileView}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodesDraggable={true}
+          nodesConnectable={true}
+          elementsSelectable={true}
           fitView
           attributionPosition="bottom-left"
         >
@@ -441,38 +441,37 @@ export default function FlowEditorPage() {
               />
             </div>
             
-            {!isMobileView && (
-              <div className="flex gap-1 sm:gap-2 flex-wrap">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault()
-                    // Add node button clicked
-                    addNode()
-                  }}
-                  className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
-                  type="button"
-                >
-                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-                  {language === 'ja' ? 'ノード追加' : language === 'en' ? 'Add Node' : 'Adicionar Nó'}
-                </button>
-                
-                <button
-                  onClick={saveFlow}
-                  className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
-                >
-                  <Save className="w-3 h-3 sm:w-4 sm:h-4" />
-                  {language === 'ja' ? '保存' : language === 'en' ? 'Save' : 'Salvar'}
-                </button>
-                
-                <button
-                  onClick={exportFlow}
-                  className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
-                >
-                  <Download className="w-3 h-3 sm:w-4 sm:h-4" />
-                  {language === 'ja' ? 'エクスポート' : language === 'en' ? 'Export' : 'Exportar'}
-                </button>
-              </div>
-            )}
+            <div className="flex gap-1 sm:gap-2 flex-wrap">
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  // Add node button clicked
+                  addNode()
+                }}
+                className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
+                type="button"
+              >
+                <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">{language === 'ja' ? 'ノード追加' : language === 'en' ? 'Add Node' : 'Adicionar Nó'}</span>
+                <span className="sm:hidden">+</span>
+              </button>
+              
+              <button
+                onClick={saveFlow}
+                className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
+              >
+                <Save className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">{language === 'ja' ? '保存' : language === 'en' ? 'Save' : 'Salvar'}</span>
+              </button>
+              
+              <button
+                onClick={exportFlow}
+                className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
+              >
+                <Download className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">{language === 'ja' ? 'エクスポート' : language === 'en' ? 'Export' : 'Exportar'}</span>
+              </button>
+            </div>
             
             {/* サンプルフローを表示（PC・モバイル共通） */}
             {publicFlows.length > 0 && (
