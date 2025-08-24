@@ -107,7 +107,7 @@ export default function DashboardNav() {
     { href: '/dashboard/progress', label: t.progress, icon: Target },
     { href: '/dashboard/sparring', label: t.sparring, icon: Swords },
     { href: '/dashboard/review', label: t.review, icon: Brain },
-    { href: '/flow-editor', label: t.flows, icon: PenTool },
+    { href: '/dashboard/flows', label: t.flows, icon: PenTool },
     ...(isCoach ? [{ href: '/coach', label: language === 'ja' ? 'コーチ' : language === 'en' ? 'Coach' : 'Treinador', icon: Shield }] : []),
     ...(isAdmin ? [{ href: '/admin', label: t.admin, icon: Shield }] : []),
   ]

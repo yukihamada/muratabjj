@@ -130,12 +130,20 @@ export default function FlowEditorPage() {
   const [showFlowList, setShowFlowList] = useState(false)
   const [publicFlows, setPublicFlows] = useState<any[]>([])
   const [currentFlowId, setCurrentFlowId] = useState<string | null>(null)
+  const [isReadOnly, setIsReadOnly] = useState(false)
   
   const [hasInitialized, setHasInitialized] = useState(false)
   
+  // URLパラメータからフローIDを取得して読み込む
   useEffect(() => {
-    // 初回のみフロー名を設定（言語変更時に上書きしない）
-    if (!hasInitialized && flowName === '') {
+    const urlParams = new URLSearchParams(window.location.search)
+    const flowId = urlParams.get('id')
+    
+    if (flowId && !hasInitialized) {
+      loadFlowById(flowId)
+      setHasInitialized(true)
+    } else if (!hasInitialized && flowName === '') {
+      // 初回のみフロー名を設定（言語変更時に上書きしない）
       if (language === 'ja') setFlowName('新しいフロー')
       else if (language === 'en') setFlowName('New Flow')
       else if (language === 'pt') setFlowName('Novo Fluxo')
@@ -212,12 +220,46 @@ export default function FlowEditorPage() {
     if (flow.edges) setEdges(flow.edges)
     setCurrentFlowId(flow.id)
     setShowFlowList(false)
+    
+    // 自分のフローでない場合は読み取り専用に
+    if (user && flow.user_id !== user.id) {
+      setIsReadOnly(true)
+    } else {
+      setIsReadOnly(false)
+    }
+    
     toast.success(
       language === 'ja' ? `「${flow.name}」を読み込みました` :
       language === 'en' ? `Loaded "${flow.name}"` :
       `Carregado "${flow.name}"`
     )
-  }, [language, setNodes, setEdges])
+  }, [language, setNodes, setEdges, user])
+  
+  const loadFlowById = async (flowId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('flows')
+        .select('*')
+        .eq('id', flowId)
+        .single()
+      
+      if (error) {
+        console.error('Error loading flow:', error)
+        toast.error(
+          language === 'ja' ? 'フローの読み込みに失敗しました' :
+          language === 'en' ? 'Failed to load flow' :
+          'Falha ao carregar fluxo'
+        )
+        return
+      }
+      
+      if (data) {
+        loadFlow(data)
+      }
+    } catch (error) {
+      console.error('Error loading flow:', error)
+    }
+  }
 
   const addNode = useCallback(() => {
     const nodeCount = nodes.length + 1
@@ -467,27 +509,37 @@ export default function FlowEditorPage() {
             </div>
             
             <div className="flex gap-1 sm:gap-2 flex-wrap">
-              <button
-                onClick={(e) => {
-                  e.preventDefault()
-                  // Add node button clicked
-                  addNode()
-                }}
-                className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
-                type="button"
-              >
-                <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">{language === 'ja' ? 'ノード追加' : language === 'en' ? 'Add Node' : 'Adicionar Nó'}</span>
-                <span className="sm:hidden">+</span>
-              </button>
+              {!isReadOnly && (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      // Add node button clicked
+                      addNode()
+                    }}
+                    className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
+                    type="button"
+                  >
+                    <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">{language === 'ja' ? 'ノード追加' : language === 'en' ? 'Add Node' : 'Adicionar Nó'}</span>
+                    <span className="sm:hidden">+</span>
+                  </button>
+                  
+                  <button
+                    onClick={saveFlow}
+                    className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
+                  >
+                    <Save className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">{language === 'ja' ? '保存' : language === 'en' ? 'Save' : 'Salvar'}</span>
+                  </button>
+                </>
+              )}
               
-              <button
-                onClick={saveFlow}
-                className="btn-ghost text-xs sm:text-sm flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2"
-              >
-                <Save className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">{language === 'ja' ? '保存' : language === 'en' ? 'Save' : 'Salvar'}</span>
-              </button>
+              {isReadOnly && (
+                <div className="text-xs sm:text-sm text-bjj-muted px-2 py-1 sm:px-3 sm:py-2">
+                  {language === 'ja' ? '読み取り専用' : language === 'en' ? 'Read-only' : 'Somente leitura'}
+                </div>
+              )}
               
               <button
                 onClick={exportFlow}

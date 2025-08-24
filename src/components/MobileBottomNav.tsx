@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Video, Target, Swords, User } from 'lucide-react'
+import { Home, Video, Target, Swords, PenTool } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 
 const translations = {
@@ -11,21 +11,21 @@ const translations = {
     videos: '動画',
     progress: '習得度',
     sparring: 'スパー',
-    profile: 'プロフ',
+    flows: 'フロー',
   },
   en: {
     dashboard: 'Home',
     videos: 'Videos',
     progress: 'Progress',
     sparring: 'Spar',
-    profile: 'Profile',
+    flows: 'Flows',
   },
   pt: {
     dashboard: 'Início',
     videos: 'Vídeos',
     progress: 'Progresso',
     sparring: 'Spar',
-    profile: 'Perfil',
+    flows: 'Fluxos',
   },
 }
 
@@ -42,9 +42,9 @@ export default function MobileBottomNav() {
   const navItems = [
     { href: '/dashboard', label: t.dashboard, icon: Home },
     { href: '/dashboard/videos', label: t.videos, icon: Video },
+    { href: '/dashboard/flows', label: t.flows, icon: PenTool },
     { href: '/dashboard/progress', label: t.progress, icon: Target },
     { href: '/dashboard/sparring', label: t.sparring, icon: Swords },
-    { href: '/dashboard/profile', label: t.profile, icon: User },
   ]
 
   return (
