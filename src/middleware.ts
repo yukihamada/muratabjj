@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
     }
     
     // Check for all supported locales except ja (ja is at root)
-    const pathnameHasLocale = /^\/(en|pt|es|fr|ko|ru)(\/|$)/.test(pathname)
+    const pathnameHasLocale = /^\/(en|pt|es|fr|ko|ru|zh|de|it)(\/|$)/.test(pathname)
     
     if (pathnameHasLocale) {
       const response = NextResponse.next()
