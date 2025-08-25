@@ -1,0 +1,513 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - main [ref=e3]:
+    - navigation [ref=e5]:
+      - generic [ref=e6]:
+        - link "Murata BJJ" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img [ref=e8] [cursor=pointer]:
+            - generic [ref=e11] [cursor=pointer]: 柔
+          - generic [ref=e12] [cursor=pointer]: Murata BJJ
+        - generic [ref=e13]:
+          - link "機能" [ref=e14] [cursor=pointer]:
+            - /url: "#features"
+          - link "使い方" [ref=e15] [cursor=pointer]:
+            - /url: "#how"
+          - link "料金" [ref=e16] [cursor=pointer]:
+            - /url: "#pricing"
+          - link "監修" [ref=e17] [cursor=pointer]:
+            - /url: "#supervisor"
+          - link "FAQ" [ref=e18] [cursor=pointer]:
+            - /url: "#faq"
+        - generic [ref=e19]:
+          - button "ライトモードに切り替え" [ref=e21] [cursor=pointer]:
+            - img [ref=e22] [cursor=pointer]
+          - button "Change language" [ref=e29] [cursor=pointer]:
+            - img [ref=e30] [cursor=pointer]
+            - generic [ref=e33] [cursor=pointer]: 日本語
+          - button "ログイン" [ref=e34] [cursor=pointer]
+          - button "無料で始める" [ref=e35] [cursor=pointer]
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - generic [ref=e40]: Flow × Video × Progress
+        - heading "フローと動画で 柔術を 最速で習得" [level=1] [ref=e41]:
+          - generic [ref=e42]: フローと動画で
+          - generic [ref=e43]: 柔術を
+          - generic [ref=e44]: 最速で習得
+        - paragraph [ref=e45]: Murata BJJは、連携（Flow）中心で学ぶ柔術プラットフォーム。
+        - generic [ref=e46]:
+          - generic [ref=e47]: 動画
+          - generic [ref=e48]: フロー
+          - generic [ref=e49]: 習得度
+          - generic [ref=e50]: スパーリングログ
+        - paragraph [ref=e51]:
+          - img [ref=e52]
+          - text: 安全な指導で生涯スポーツとしての生活の質（Quality of Life）と心の健康向上をサポート。
+        - generic [ref=e54]:
+          - link "無料で始める" [ref=e55] [cursor=pointer]:
+            - /url: /signup
+          - link "機能を見る" [ref=e56] [cursor=pointer]:
+            - /url: "#features"
+      - generic [ref=e60]:
+        - generic [ref=e61]: ●
+        - text: 技術の連携フロー
+    - generic [ref=e63]:
+      - heading "主な機能" [level=2] [ref=e64]
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - img [ref=e68]
+          - heading "動画カタログ" [level=3] [ref=e70]
+          - paragraph [ref=e71]: 帯 / ポジション / テクニック系で整理。チャプター & 要点、再生速度、自動文字起こし。
+        - generic [ref=e72]:
+          - img [ref=e74]
+          - heading "フローエディタ" [level=3] [ref=e76]
+          - paragraph [ref=e77]: ノード（技/体勢）とエッジ（遷移）で連携を可視化。分岐や代替ルートに対応。
+        - generic [ref=e78]:
+          - img [ref=e80]
+          - heading "習得度トラッカー" [level=3] [ref=e82]
+          - paragraph [ref=e83]: 理解→手順→再現→実戦→復習（定着）の5段階。弱点と次の一手を提示。
+        - generic [ref=e84]:
+          - img [ref=e86]
+          - heading "スパーログ" [level=3] [ref=e88]
+          - paragraph [ref=e89]: 開始体勢/イベント（パス/スイープ/サブミット）を時系列で記録。
+        - generic [ref=e90]:
+          - img [ref=e92]
+          - heading "アダプティブ復習" [level=3] [ref=e94]
+          - paragraph [ref=e95]: 忘却曲線に合わせて出題間隔を最適化。詰まりやすい遷移を重点練習。
+        - generic [ref=e96]:
+          - img [ref=e98]
+          - heading "コーチ/道場向け" [level=3] [ref=e100]
+          - paragraph [ref=e101]: カリキュラム配信、帯別課題、評価レポート、非公開スペース。
+    - generic [ref=e103]:
+      - heading "BJJ技術フローチャート" [level=2] [ref=e104]
+      - generic [ref=e106]:
+        - paragraph [ref=e108]: クリックして展開・選択できます。矢印アイコンがある項目は、さらに詳細な技術に分岐します。
+        - generic [ref=e110]:
+          - generic [ref=e111] [cursor=pointer]:
+            - img [ref=e112] [cursor=pointer]
+            - generic [ref=e114] [cursor=pointer]: スタート
+          - generic [ref=e115]:
+            - generic [ref=e117] [cursor=pointer]:
+              - img [ref=e118] [cursor=pointer]
+              - generic [ref=e120] [cursor=pointer]: 立技
+            - generic [ref=e122] [cursor=pointer]:
+              - img [ref=e123] [cursor=pointer]
+              - generic [ref=e125] [cursor=pointer]: 寝技
+            - generic [ref=e127] [cursor=pointer]:
+              - img [ref=e128] [cursor=pointer]
+              - generic [ref=e130] [cursor=pointer]: サブミッション
+            - generic [ref=e132] [cursor=pointer]:
+              - img [ref=e133] [cursor=pointer]
+              - generic [ref=e135] [cursor=pointer]: エスケープ
+    - generic [ref=e137]:
+      - heading "使い方（3分）" [level=2] [ref=e138]
+      - generic [ref=e139]:
+        - generic [ref=e140]:
+          - generic [ref=e141]: "01"
+          - heading "プロフィール作成" [level=3] [ref=e142]
+          - paragraph [ref=e143]: 帯・体格・得意技を設定 → スターターフローを自動提案
+        - generic [ref=e144]:
+          - generic [ref=e145]: "02"
+          - heading "動画で理解" [level=3] [ref=e146]
+          - paragraph [ref=e147]: チャプターと要点でコツを把握
+        - generic [ref=e148]:
+          - generic [ref=e149]: "03"
+          - heading "ドリルで再現" [level=3] [ref=e150]
+          - paragraph [ref=e151]: 回数・左右・抵抗％を記録。つなぎ目を重点練習
+        - generic [ref=e152]:
+          - generic [ref=e153]: "04"
+          - heading "スパーで適用" [level=3] [ref=e154]
+          - paragraph [ref=e155]: イベントをログ化。ダッシュボードが次の一手を提案
+    - generic [ref=e157]:
+      - generic [ref=e158]:
+        - generic [ref=e159]:
+          - img [ref=e160]
+          - text: Safety First
+        - heading "安全性と健康への配慮" [level=2] [ref=e162]
+        - paragraph [ref=e163]: Murata BJJは生涯スポーツとしての柔術を重視し、安全で効果的な練習をサポートします
+      - generic [ref=e164]:
+        - heading "怪我防止と安全な技術" [level=3] [ref=e165]:
+          - img [ref=e166]
+          - text: 怪我防止と安全な技術
+        - generic [ref=e168]:
+          - generic [ref=e169]:
+            - heading "安全な技術の習得" [level=4] [ref=e170]
+            - paragraph [ref=e171]: 基礎から段階的に学び、無理のない範囲で技術を身につけます
+            - list [ref=e172]:
+              - listitem [ref=e173]:
+                - generic [ref=e175]: 正しいフォームの重要性
+              - listitem [ref=e176]:
+                - generic [ref=e178]: タップアウトのタイミング
+              - listitem [ref=e179]:
+                - generic [ref=e181]: パートナーとの意思疎通
+          - generic [ref=e182]:
+            - heading "怪我のリスク管理" [level=4] [ref=e183]
+            - paragraph [ref=e184]: 危険な状況や技術には注意書きと代替案を提供
+            - list [ref=e185]:
+              - listitem [ref=e186]:
+                - generic [ref=e188]: 関節技の注意点
+              - listitem [ref=e189]:
+                - generic [ref=e191]: 首・脊椎への配慮
+              - listitem [ref=e192]:
+                - generic [ref=e194]: オーバートレーニング防止
+          - generic [ref=e195]:
+            - heading "年齢・体格に応じた指導" [level=4] [ref=e196]
+            - paragraph [ref=e197]: 個人の身体特性に合わせたアプローチ
+            - list [ref=e198]:
+              - listitem [ref=e199]:
+                - generic [ref=e201]: シニア向けの配慮
+              - listitem [ref=e202]:
+                - generic [ref=e204]: 女性向けの技術
+              - listitem [ref=e205]:
+                - generic [ref=e207]: 初心者への段階指導
+      - generic [ref=e208]:
+        - heading "QOL・MQの向上効果" [level=3] [ref=e209]
+        - generic [ref=e210]:
+          - generic [ref=e211]:
+            - heading "QOL" [level=4] [ref=e212]
+            - paragraph [ref=e213]: Quality of Life（生活の質）の向上
+          - generic [ref=e214]:
+            - heading "MQ" [level=4] [ref=e215]
+            - paragraph [ref=e216]: Movement Quality（動きの質）の向上
+        - generic [ref=e217]:
+          - generic [ref=e218]:
+            - generic [ref=e219]:
+              - img [ref=e220]
+              - heading "心血管系の健康" [level=4] [ref=e222]
+            - paragraph [ref=e223]: 有酸素運動と無酸素運動のバランスで心肺機能向上
+            - list [ref=e224]:
+              - listitem [ref=e225]:
+                - generic [ref=e227]: 心拍数の改善
+              - listitem [ref=e228]:
+                - generic [ref=e230]: 血圧の安定
+              - listitem [ref=e231]:
+                - generic [ref=e233]: 持久力の向上
+          - generic [ref=e234]:
+            - generic [ref=e235]:
+              - img [ref=e236]
+              - heading "筋力・柔軟性" [level=4] [ref=e238]
+            - paragraph [ref=e239]: 全身をバランスよく使う運動で筋力と可動域を改善
+            - list [ref=e240]:
+              - listitem [ref=e241]:
+                - generic [ref=e243]: 体幹強化
+              - listitem [ref=e244]:
+                - generic [ref=e246]: 関節可動域拡大
+              - listitem [ref=e247]:
+                - generic [ref=e249]: 姿勢改善
+          - generic [ref=e250]:
+            - generic [ref=e251]:
+              - img [ref=e252]
+              - heading "メンタルヘルス" [level=4] [ref=e256]
+            - paragraph [ref=e257]: ストレス解消と集中力・判断力の向上
+            - list [ref=e258]:
+              - listitem [ref=e259]:
+                - generic [ref=e261]: ストレス軽減
+              - listitem [ref=e262]:
+                - generic [ref=e264]: 自信の向上
+              - listitem [ref=e265]:
+                - generic [ref=e267]: 問題解決能力の向上
+        - generic [ref=e268]:
+          - heading "生涯スポーツとしての効果" [level=4] [ref=e269]:
+            - img [ref=e270]
+            - text: 生涯スポーツとしての効果
+          - generic [ref=e275]:
+            - generic [ref=e278]: 日常生活での体の使い方が改善される
+            - generic [ref=e281]: バランス感覚と反射神経が向上する
+            - generic [ref=e284]: 年齢に関係なく続けられる生涯スポーツ
+            - generic [ref=e287]: コミュニティでの社会的つながりが生まれる
+            - generic [ref=e290]: MMA（総合格闘技）への応用も可能
+            - generic [ref=e293]: 体重管理とダイエット効果
+      - generic [ref=e294]:
+        - heading "注意が必要な技術・状況" [level=3] [ref=e295]:
+          - img [ref=e296]
+          - text: 注意が必要な技術・状況
+        - generic [ref=e298]:
+          - generic [ref=e299]:
+            - img [ref=e300]
+            - generic [ref=e302]: 首や脊椎に負荷がかかる技術
+          - generic [ref=e303]:
+            - img [ref=e304]
+            - generic [ref=e306]: 関節への過度な圧力
+          - generic [ref=e307]:
+            - img [ref=e308]
+            - generic [ref=e310]: 疲労時の無理な練習
+          - generic [ref=e311]:
+            - img [ref=e312]
+            - generic [ref=e314]: 体調不良時の参加
+          - generic [ref=e315]:
+            - img [ref=e316]
+            - generic [ref=e318]: 適切でない相手との練習
+        - paragraph [ref=e320]:
+          - strong [ref=e321]: "安全への取り組み:"
+          - text: すべての動画と技術解説には安全に関する注意書きを併記し、初心者から上級者まで安全に練習できるようサポートしています。
+    - generic [ref=e323]:
+      - heading "料金" [level=2] [ref=e324]
+      - generic [ref=e325]:
+        - heading "個人プラン" [level=3] [ref=e326]
+        - generic [ref=e327]:
+          - generic [ref=e328]:
+            - heading "Free Plan" [level=4] [ref=e329]
+            - generic [ref=e330]:
+              - paragraph [ref=e331]: 無料
+              - text: "0"
+            - list [ref=e332]:
+              - listitem [ref=e333]:
+                - generic [ref=e334]: ✓
+                - generic [ref=e335]: 基本動画アクセス（月5本まで）
+              - listitem [ref=e336]:
+                - generic [ref=e337]: ✓
+                - generic [ref=e338]: 基本的な習得度トラッキング
+              - listitem [ref=e339]:
+                - generic [ref=e340]: ✓
+                - generic [ref=e341]: コミュニティフォーラム
+            - button "無料で始める" [ref=e342] [cursor=pointer]
+          - generic [ref=e343]:
+            - heading "Basic Plan" [level=4] [ref=e344]
+            - generic [ref=e345]:
+              - paragraph [ref=e346]: ¥980/月
+              - paragraph [ref=e347]: 年払いで¥833/月
+            - list [ref=e348]:
+              - listitem [ref=e349]:
+                - generic [ref=e350]: ✓
+                - generic [ref=e351]: 動画アクセス（月50本まで）
+              - listitem [ref=e352]:
+                - generic [ref=e353]: ✓
+                - generic [ref=e354]: ドリル・スパーログ
+              - listitem [ref=e355]:
+                - generic [ref=e356]: ✓
+                - generic [ref=e357]: 習得度トラッキング
+              - listitem [ref=e358]:
+                - generic [ref=e359]: ✓
+                - generic [ref=e360]: モバイルアプリ対応
+            - button "申し込む" [ref=e361] [cursor=pointer]
+          - generic [ref=e362]:
+            - generic [ref=e363]: 人気
+            - heading "Pro Plan" [level=4] [ref=e364]
+            - generic [ref=e365]:
+              - paragraph [ref=e366]: ¥2,480/月
+              - paragraph [ref=e367]: 年払いで¥2,108/月
+            - list [ref=e368]:
+              - listitem [ref=e369]:
+                - generic [ref=e370]: ✓
+                - generic [ref=e371]: 全動画への無制限アクセス
+              - listitem [ref=e372]:
+                - generic [ref=e373]: ✓
+                - generic [ref=e374]: フローエディタ全機能
+              - listitem [ref=e375]:
+                - generic [ref=e376]: ✓
+                - generic [ref=e377]: アダプティブ復習システム
+              - listitem [ref=e378]:
+                - generic [ref=e379]: ✓
+                - generic [ref=e380]: AI動画解析
+              - listitem [ref=e381]:
+                - generic [ref=e382]: ✓
+                - generic [ref=e383]: スパーリングログ詳細分析
+              - listitem [ref=e384]:
+                - generic [ref=e385]: ✓
+                - generic [ref=e386]: 優先サポート
+            - button "申し込む" [ref=e387] [cursor=pointer]
+          - generic [ref=e388]:
+            - heading "Master Plan" [level=4] [ref=e389]
+            - generic [ref=e390]:
+              - paragraph [ref=e391]: ¥3,980/月
+              - paragraph [ref=e392]: 年払いで¥3,383/月
+            - list [ref=e393]:
+              - listitem [ref=e394]:
+                - generic [ref=e395]: ✓
+                - generic [ref=e396]: Pro Planの全機能
+              - listitem [ref=e397]:
+                - generic [ref=e398]: ✓
+                - generic [ref=e399]: 月1回のオンラインコーチング
+              - listitem [ref=e400]:
+                - generic [ref=e401]: ✓
+                - generic [ref=e402]: 動画リクエスト権
+              - listitem [ref=e403]:
+                - generic [ref=e404]: ✓
+                - generic [ref=e405]: 新機能への早期アクセス
+              - listitem [ref=e406]:
+                - generic [ref=e407]: ✓
+                - generic [ref=e408]: プライベートコミュニティ
+              - listitem [ref=e409]:
+                - generic [ref=e410]: ✓
+                - generic [ref=e411]: カスタムトレーニングプラン
+            - button "申し込む" [ref=e412] [cursor=pointer]
+      - generic [ref=e413]:
+        - heading "道場プラン" [level=3] [ref=e414]
+        - generic [ref=e415]:
+          - generic [ref=e416]:
+            - heading "Dojo Basic" [level=4] [ref=e417]
+            - generic [ref=e418]:
+              - paragraph [ref=e419]: ¥9,800/月
+              - paragraph [ref=e420]: 年払いで¥8,330/月
+            - list [ref=e421]:
+              - listitem [ref=e422]:
+                - generic [ref=e423]: ✓
+                - generic [ref=e424]: 生徒10名まで
+              - listitem [ref=e425]:
+                - generic [ref=e426]: ✓
+                - generic [ref=e427]: 基本カリキュラム配信
+              - listitem [ref=e428]:
+                - generic [ref=e429]: ✓
+                - generic [ref=e430]: 生徒進捗管理
+              - listitem [ref=e431]:
+                - generic [ref=e432]: ✓
+                - generic [ref=e433]: 基本レポート機能
+              - listitem [ref=e434]:
+                - generic [ref=e435]: ✓
+                - generic [ref=e436]: メールサポート
+            - button "申し込む" [ref=e437] [cursor=pointer]
+          - generic [ref=e438]:
+            - generic [ref=e439]: 推奨
+            - heading "Dojo Pro" [level=4] [ref=e440]
+            - generic [ref=e441]:
+              - paragraph [ref=e442]: ¥19,800/月
+              - paragraph [ref=e443]: 年払いで¥16,830/月
+            - list [ref=e444]:
+              - listitem [ref=e445]:
+                - generic [ref=e446]: ✓
+                - generic [ref=e447]: 生徒50名まで
+              - listitem [ref=e448]:
+                - generic [ref=e449]: ✓
+                - generic [ref=e450]: カスタムカリキュラム作成
+              - listitem [ref=e451]:
+                - generic [ref=e452]: ✓
+                - generic [ref=e453]: 詳細分析レポート
+              - listitem [ref=e454]:
+                - generic [ref=e455]: ✓
+                - generic [ref=e456]: コーチ評価機能
+              - listitem [ref=e457]:
+                - generic [ref=e458]: ✓
+                - generic [ref=e459]: 優先サポート
+              - listitem [ref=e460]:
+                - generic [ref=e461]: ✓
+                - generic [ref=e462]: API連携（制限あり）
+            - button "申し込む" [ref=e463] [cursor=pointer]
+          - generic [ref=e464]:
+            - heading "Dojo Enterprise" [level=4] [ref=e465]
+            - paragraph [ref=e467]: カスタム価格
+            - list [ref=e468]:
+              - listitem [ref=e469]:
+                - generic [ref=e470]: ✓
+                - generic [ref=e471]: 生徒数無制限
+              - listitem [ref=e472]:
+                - generic [ref=e473]: ✓
+                - generic [ref=e474]: 完全カスタマイズ可能
+              - listitem [ref=e475]:
+                - generic [ref=e476]: ✓
+                - generic [ref=e477]: 専用サーバー環境
+              - listitem [ref=e478]:
+                - generic [ref=e479]: ✓
+                - generic [ref=e480]: フルAPI連携
+              - listitem [ref=e481]:
+                - generic [ref=e482]: ✓
+                - generic [ref=e483]: 専任サポートチーム
+              - listitem [ref=e484]:
+                - generic [ref=e485]: ✓
+                - generic [ref=e486]: SLA保証
+            - button "お問い合わせ" [ref=e487] [cursor=pointer]
+      - generic [ref=e488]:
+        - paragraph [ref=e489]: ※ いつでもキャンセル可能
+        - paragraph [ref=e490]: ※ 料金は税込み表示です
+        - paragraph [ref=e491]: ※ 年額プランは15%オフ
+    - generic [ref=e493]:
+      - heading "監修：村田 良蔵（Ryozo Murata）" [level=2] [ref=e494]
+      - generic [ref=e495]:
+        - generic [ref=e496]:
+          - heading "村田 良蔵（Ryozo Murata）" [level=3] [ref=e497]
+          - generic [ref=e498]:
+            - paragraph [ref=e499]: グレイシー直系 黒帯
+            - paragraph [ref=e500]:
+              - text: SJJIF世界選手権マスター2黒帯フェザー級
+              - strong [ref=e501]: 2018年・2019年 二年連続優勝
+          - generic [ref=e502]:
+            - generic [ref=e503]:
+              - heading "柔術の肩書" [level=4] [ref=e504]
+              - list [ref=e505]:
+                - listitem [ref=e506]: • グレイシー直系 黒帯
+                - listitem [ref=e507]: • SJJIF世界選手権マスター2フェザー級 2018年・2019年 二年連続優勝
+                - listitem [ref=e508]: • SJJIF世界選手権マスター2フェザー級 2016年・2017年 準優勝
+            - generic [ref=e509]:
+              - heading "組織運営者・経営者" [level=4] [ref=e510]
+              - list [ref=e511]:
+                - listitem [ref=e512]: • オーバーリミット札幌道場 運営
+                - listitem [ref=e513]: • ヨガスタジオ 経営
+                - listitem [ref=e514]: • YAWARA柔術アカデミー 代表
+            - generic [ref=e515]:
+              - heading "NPO代表" [level=4] [ref=e516]
+              - list [ref=e517]:
+                - listitem [ref=e518]: • スポーツ柔術日本連盟（SJJJF）代表理事および会長
+            - generic [ref=e519]:
+              - heading "ヨガインストラクター" [level=4] [ref=e520]
+              - list [ref=e521]:
+                - listitem [ref=e522]: • ヨガのマスター／インストラクターとしての活動
+        - generic [ref=e523]:
+          - heading "コメント" [level=3] [ref=e524]
+          - blockquote [ref=e525]: 「柔術は連携で強くなる。Murata BJJは理解→再現→実戦の循環を設計し、現場の上達速度にこだわりました。」
+          - generic [ref=e526]:
+            - heading "支援・提携道場" [level=4] [ref=e527]
+            - generic [ref=e528]:
+              - generic [ref=e529]: YAWARA
+              - generic [ref=e530]: •
+              - generic [ref=e531]: Over Limit
+    - generic [ref=e533]:
+      - heading "FAQ" [level=2] [ref=e534]
+      - generic [ref=e535]:
+        - generic [ref=e536]:
+          - button "動画の著作権について教えてください" [ref=e537] [cursor=pointer]:
+            - generic [ref=e538] [cursor=pointer]: 動画の著作権について教えてください
+            - img [ref=e539] [cursor=pointer]
+          - paragraph [ref=e541]: 監修者（村田良蔵氏）が制作・提供する動画コンテンツの著作権は、Murata BJJまたは提供者に帰属します。個人学習目的での視聴のみ許可されており、無断転載・配布は禁止されています。
+        - generic [ref=e542]:
+          - button "プライバシー保護はどうなっていますか？" [ref=e543] [cursor=pointer]:
+            - generic [ref=e544] [cursor=pointer]: プライバシー保護はどうなっていますか？
+            - img [ref=e545] [cursor=pointer]
+          - paragraph [ref=e547]: ユーザーの練習データ、スパーログは暗号化して保存され、本人と許可されたコーチのみがアクセスできます。第三者への提供は一切行いません。詳細はプライバシーポリシーをご確認ください。
+        - generic [ref=e548]:
+          - button "無料プランから有料プランへの移行は簡単ですか？" [ref=e549] [cursor=pointer]:
+            - generic [ref=e550] [cursor=pointer]: 無料プランから有料プランへの移行は簡単ですか？
+            - img [ref=e551] [cursor=pointer]
+          - paragraph [ref=e553]: はい、いつでもアップグレード可能です。アップグレード後も、これまでの記録データはすべて引き継がれます。日割り計算で課金されるため、月の途中でも安心して移行できます。
+        - generic [ref=e554]:
+          - button "道場プランの詳細を教えてください" [ref=e555] [cursor=pointer]:
+            - generic [ref=e556] [cursor=pointer]: 道場プランの詳細を教えてください
+            - img [ref=e557] [cursor=pointer]
+          - paragraph [ref=e559]: 道場プランは5名以上から利用可能で、人数に応じた料金設定となります。カリキュラム配信、非公開スペース、生徒の進捗管理、コーチによる評価機能などが含まれます。詳細はお問い合わせください。
+        - generic [ref=e560]:
+          - button "対応している支払い方法は？" [ref=e561] [cursor=pointer]:
+            - generic [ref=e562] [cursor=pointer]: 対応している支払い方法は？
+            - img [ref=e563] [cursor=pointer]
+          - paragraph [ref=e565]: クレジットカード（Visa、Mastercard、JCB、AMEX）、デビットカードに対応しています。道場プランは銀行振込にも対応しています。
+        - generic [ref=e566]:
+          - button "初心者でも安全に練習できますか？" [ref=e567] [cursor=pointer]:
+            - generic [ref=e568] [cursor=pointer]: 初心者でも安全に練習できますか？
+            - img [ref=e569] [cursor=pointer]
+          - paragraph [ref=e571]: 全ての動画に安全に関する注意書きを併記し、段階的な学習プログラムを提供しています。危険な技術には警告と代替案を表示し、年齢や体格に応じた指導も行っています。
+        - generic [ref=e572]:
+          - button "シニアや女性でも柔術を始められますか？" [ref=e573] [cursor=pointer]:
+            - generic [ref=e574] [cursor=pointer]: シニアや女性でも柔術を始められますか？
+            - img [ref=e575] [cursor=pointer]
+          - paragraph [ref=e577]: 柔術は生涯スポーツです。年齢や性別に関係なく、個人の身体特性に合わせたカリキュラムを提供します。無理のない範囲で心血管系の健康向上、筋力・柔軟性の改善、メンタルヘルスの向上、そして生活の質（QOL）と心の健康の向上が期待できます。
+        - generic [ref=e578]:
+          - button "怪我のリスクはありますか？" [ref=e579] [cursor=pointer]:
+            - generic [ref=e580] [cursor=pointer]: 怪我のリスクはありますか？
+            - img [ref=e581] [cursor=pointer]
+          - paragraph [ref=e583]: 適切な指導と段階的な練習により怪我のリスクを最小限に抑えています。首・脊椎に負荷がかかる技術や関節への過度な圧力については特に注意喚起し、安全な代替技術も提示しています。
+      - paragraph [ref=e585]: その他のご質問は、お問い合わせフォームよりご連絡ください。
+    - generic [ref=e588]:
+      - generic [ref=e589]:
+        - heading "無料で始める" [level=2] [ref=e590]
+        - paragraph [ref=e591]: 今すぐ無料でアカウントを作成して、柔術の学習を始めましょう。
+        - button "無料で始める" [ref=e592] [cursor=pointer]
+      - generic [ref=e593]:
+        - heading "What is Murata BJJ?" [level=3] [ref=e594]
+        - paragraph [ref=e595]: フロー中心のブラジリアン柔術学習プラットフォーム。村田良蔵監修。
+        - generic [ref=e596]:
+          - link "See English" [ref=e597] [cursor=pointer]:
+            - /url: /en
+          - link "Ver em Português" [ref=e598] [cursor=pointer]:
+            - /url: /pt
+    - generic [ref=e601]: © 2025 Murata BJJ — Flow × Video × Progress
+```
