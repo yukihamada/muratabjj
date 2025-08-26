@@ -59,7 +59,7 @@ class ExperimentManager {
       
       if (error) throw error
       
-      data?.forEach(exp => {
+      data?.forEach((exp: any) => {
         this.experiments.set(exp.id, {
           id: exp.id,
           name: exp.name,
@@ -87,7 +87,7 @@ class ExperimentManager {
       
       if (error) throw error
       
-      data?.forEach(assignment => {
+      data?.forEach((assignment: any) => {
         const key = `${assignment.experiment_id}-${this.userId}`
         this.assignments.set(key, {
           experimentId: assignment.experiment_id,
