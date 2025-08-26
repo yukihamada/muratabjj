@@ -2,7 +2,7 @@
 // Flexible experimentation system for feature testing
 
 import { MetricsCollector } from '@/lib/monitoring/grafana'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import React from 'react'
 
 // Experiment configuration
@@ -51,7 +51,6 @@ class ExperimentManager {
   
   private async loadExperiments(): Promise<void> {
     try {
-      const supabase = createClient()
       const { data, error } = await supabase
         .from('experiments')
         .select('*')
@@ -81,7 +80,6 @@ class ExperimentManager {
     if (!this.userId) return
     
     try {
-      const supabase = createClient()
       const { data, error } = await supabase
         .from('experiment_assignments')
         .select('*')
@@ -161,7 +159,6 @@ class ExperimentManager {
   
   private async saveAssignment(assignment: ExperimentAssignment): Promise<void> {
     try {
-      const supabase = createClient()
       await supabase.from('experiment_assignments').insert({
         experiment_id: assignment.experimentId,
         variant_id: assignment.variantId,
@@ -182,7 +179,6 @@ class ExperimentManager {
     if (!assignment) return
     
     try {
-      const supabase = createClient()
       await supabase.from('experiment_events').insert({
         experiment_id: experimentId,
         variant_id: assignment.variantId,
@@ -293,8 +289,6 @@ export async function getServerSideVariant(
   userId: string
 ): Promise<string | null> {
   try {
-    const supabase = createClient()
-    
     // Check existing assignment
     const { data: assignment } = await supabase
       .from('experiment_assignments')
