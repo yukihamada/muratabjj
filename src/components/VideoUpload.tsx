@@ -21,7 +21,36 @@ interface VideoMetadata {
   is_premium: boolean
 }
 
-const translations = {
+const translations: Record<string, {
+  uploadVideo: string
+  dragDrop: string
+  or: string
+  browse: string
+  allowedFormats: string
+  uploading: string
+  processing: string
+  cancel: string
+  metadata: string
+  titleJa: string
+  titleEn: string
+  titlePt: string
+  descriptionJa: string
+  descriptionEn: string
+  descriptionPt: string
+  technique: string
+  selectTechnique: string
+  beltRequirement: string
+  white: string
+  blue: string
+  purple: string
+  brown: string
+  black: string
+  isPremium: string
+  upload: string
+  error: string
+  success: string
+  videoUploaded: string
+}> = {
   ja: {
     uploadVideo: '動画をアップロード',
     dragDrop: 'ここにドラッグ＆ドロップ',
@@ -231,6 +260,96 @@ const translations = {
     error: 'Ошибка',
     success: 'Успех',
     videoUploaded: 'Видео успешно загружено',
+  },
+  zh: {
+    uploadVideo: '上传视频',
+    dragDrop: '拖放到这里',
+    or: '或',
+    browse: '浏览文件',
+    allowedFormats: '允许：MP4、MOV、AVI（最大500MB）',
+    uploading: '上传中...',
+    processing: '处理中...',
+    cancel: '取消',
+    metadata: '视频信息',
+    titleJa: '标题（日语）',
+    titleEn: '标题（英语）',
+    titlePt: '标题（葡萄牙语）',
+    descriptionJa: '描述（日语）',
+    descriptionEn: '描述（英语）',
+    descriptionPt: '描述（葡萄牙语）',
+    technique: '技术',
+    selectTechnique: '选择技术',
+    beltRequirement: '所需腰带',
+    white: '白带',
+    blue: '蓝带',
+    purple: '紫带',
+    brown: '棕带',
+    black: '黑带',
+    isPremium: '高级内容',
+    upload: '上传',
+    error: '错误',
+    success: '成功',
+    videoUploaded: '视频上传成功',
+  },
+  de: {
+    uploadVideo: 'Video hochladen',
+    dragDrop: 'Hier ablegen',
+    or: 'oder',
+    browse: 'Dateien durchsuchen',
+    allowedFormats: 'Erlaubt: MP4, MOV, AVI (max 500MB)',
+    uploading: 'Hochladen...',
+    processing: 'Verarbeitung...',
+    cancel: 'Abbrechen',
+    metadata: 'Video-Informationen',
+    titleJa: 'Titel (Japanisch)',
+    titleEn: 'Titel (Englisch)',
+    titlePt: 'Titel (Portugiesisch)',
+    descriptionJa: 'Beschreibung (Japanisch)',
+    descriptionEn: 'Beschreibung (Englisch)',
+    descriptionPt: 'Beschreibung (Portugiesisch)',
+    technique: 'Technik',
+    selectTechnique: 'Technik auswählen',
+    beltRequirement: 'Erforderlicher Gürtel',
+    white: 'Weißer Gürtel',
+    blue: 'Blauer Gürtel',
+    purple: 'Lila Gürtel',
+    brown: 'Brauner Gürtel',
+    black: 'Schwarzer Gürtel',
+    isPremium: 'Premium-Inhalt',
+    upload: 'Hochladen',
+    error: 'Fehler',
+    success: 'Erfolg',
+    videoUploaded: 'Video erfolgreich hochgeladen',
+  },
+  it: {
+    uploadVideo: 'Carica Video',
+    dragDrop: 'Trascina qui',
+    or: 'o',
+    browse: 'Sfoglia file',
+    allowedFormats: 'Consentiti: MP4, MOV, AVI (max 500MB)',
+    uploading: 'Caricamento...',
+    processing: 'Elaborazione...',
+    cancel: 'Annulla',
+    metadata: 'Informazioni Video',
+    titleJa: 'Titolo (Giapponese)',
+    titleEn: 'Titolo (Inglese)',
+    titlePt: 'Titolo (Portoghese)',
+    descriptionJa: 'Descrizione (Giapponese)',
+    descriptionEn: 'Descrizione (Inglese)',
+    descriptionPt: 'Descrizione (Portoghese)',
+    technique: 'Tecnica',
+    selectTechnique: 'Seleziona tecnica',
+    beltRequirement: 'Cintura Richiesta',
+    white: 'Cintura Bianca',
+    blue: 'Cintura Blu',
+    purple: 'Cintura Viola',
+    brown: 'Cintura Marrone',
+    black: 'Cintura Nera',
+    isPremium: 'Contenuto Premium',
+    upload: 'Carica',
+    error: 'Errore',
+    success: 'Successo',
+    videoUploaded: 'Video caricato con successo',
   },
 }
 

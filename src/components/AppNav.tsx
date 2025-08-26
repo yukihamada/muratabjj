@@ -9,7 +9,16 @@ import { Home, Video, Target, Swords, PenTool, User, LogOut, Plus } from 'lucide
 import { useState, useEffect } from 'react'
 import { getUserProfile } from '@/lib/supabase/helpers'
 
-const translations = {
+const translations: Record<string, {
+  home: string
+  videos: string
+  progress: string
+  sparring: string
+  flows: string
+  profile: string
+  logout: string
+  uploadVideo: string
+}> = {
   ja: {
     home: 'ホーム',
     videos: '動画',
@@ -79,6 +88,36 @@ const translations = {
     profile: 'Профиль',
     logout: 'Выйти',
     uploadVideo: 'Загрузить видео',
+  },
+  zh: {
+    home: '主页',
+    videos: '视频',
+    progress: '进度',
+    sparring: '对练',
+    flows: '流程',
+    profile: '个人资料',
+    logout: '退出',
+    uploadVideo: '上传视频',
+  },
+  de: {
+    home: 'Startseite',
+    videos: 'Videos',
+    progress: 'Fortschritt',
+    sparring: 'Sparring',
+    flows: 'Flows',
+    profile: 'Profil',
+    logout: 'Abmelden',
+    uploadVideo: 'Video hochladen',
+  },
+  it: {
+    home: 'Home',
+    videos: 'Video',
+    progress: 'Progressi',
+    sparring: 'Sparring',
+    flows: 'Flussi',
+    profile: 'Profilo',
+    logout: 'Esci',
+    uploadVideo: 'Carica Video',
   },
 }
 
