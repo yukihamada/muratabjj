@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { MetricsCollector, logToGrafana } from '@/lib/monitoring/grafana'
-import { rateLimitMiddleware } from '@/lib/rate-limit'
+import { rateLimitMiddleware, getClientIdentifier, rateLimitResponse } from '@/lib/rate-limit'
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
@@ -11,8 +11,9 @@ export async function middleware(request: NextRequest) {
   try {
     // Apply rate limiting for API routes
     if (pathname.startsWith('/api/')) {
-      const rateLimitResponse = await rateLimitMiddleware(request)
-      if (rateLimitResponse) {
+      const identifier = getClientIdentifier(request)
+      const rateLimitResult = await rateLimitMiddleware(request, identifier)
+      if (!rateLimitResult.success) {
         const duration = Date.now() - start
         metrics.recordResponseTime(pathname, request.method, 429, duration)
         await logToGrafana('warn', 'Rate limit exceeded', {
@@ -20,7 +21,7 @@ export async function middleware(request: NextRequest) {
           path: pathname,
           method: request.method,
         })
-        return rateLimitResponse
+        return rateLimitResponse(rateLimitResult)
       }
     }
     
