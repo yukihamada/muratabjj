@@ -1,6 +1,11 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Initialize Resend only if API key is available
+let resend: Resend | null = null
+
+if (process.env.RESEND_API_KEY) {
+  resend = new Resend(process.env.RESEND_API_KEY)
+}
 
 export default resend
 
@@ -16,6 +21,12 @@ export async function sendEmail({
   react?: React.ReactElement
   text?: string
 }) {
+  // Check if resend is initialized
+  if (!resend) {
+    console.warn('Resend API key not configured. Email sending is disabled.')
+    return { success: false, error: 'Email service not configured' }
+  }
+
   try {
     const { data, error } = await resend.emails.send({
       from: 'Murata BJJ <noreply@muratabjj.com>',
