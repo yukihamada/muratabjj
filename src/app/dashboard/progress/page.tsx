@@ -26,17 +26,20 @@ interface ProgressData {
   }
 }
 
-const progressLevels = {
+const progressLevels: Record<string, string[]> = {
   ja: ['理解', '手順', '再現', '連携', '実戦'],
   en: ['Understanding', 'Steps', 'Reproduction', 'Flow', 'Sparring'],
   pt: ['Compreensão', 'Passos', 'Reprodução', 'Fluxo', 'Sparring'],
   es: ['Comprensión', 'Pasos', 'Ejecución', 'Flow', 'En Vivo'],
   fr: ['Compréhension', 'Étapes', 'Exécution', 'Flow', 'En Direct'],
   ko: ['이해', '단계', '실행', 'Flow', '라이브'],
-  ru: ['Понимание', 'Шаги', 'Выполнение', 'Flow', 'Вживую']
+  ru: ['Понимание', 'Шаги', 'Выполнение', 'Flow', 'Вживую'],
+  zh: ['理解', '步骤', '重现', '流程', '实战'],
+  de: ['Verstehen', 'Schritte', 'Reproduktion', 'Flow', 'Sparring'],
+  it: ['Comprensione', 'Passaggi', 'Riproduzione', 'Flusso', 'Sparring']
 }
 
-const levelDescriptions = {
+const levelDescriptions: Record<string, string[]> = {
   ja: [
     '動画を視聴し、技の概念を理解した',
     '技の手順を記憶し、説明できる',
@@ -85,6 +88,27 @@ const levelDescriptions = {
     'Могу воспроизвести технику в одиночку',
     'Могу выполнить в рамках flow',
     'Могу использовать в живом спарринге'
+  ],
+  zh: [
+    '观看了视频并理解了概念',
+    '记住了步骤并能够解释',
+    '能够独自重现技术',
+    '能够在流程中执行',
+    '能够在实战对练中使用'
+  ],
+  de: [
+    'Video angesehen und Konzept verstanden',
+    'Schritte auswendig gelernt und kann erklären',
+    'Kann Technik alleine reproduzieren',
+    'Kann innerhalb eines Flows ausführen',
+    'Kann im Live-Sparring verwenden'
+  ],
+  it: [
+    'Ha guardato il video e compreso il concetto',
+    'Ha memorizzato i passaggi e può spiegare',
+    'Può riprodurre la tecnica da solo',
+    'Può eseguire all\'interno di un flusso',
+    'Può usare nello sparring dal vivo'
   ]
 }
 
