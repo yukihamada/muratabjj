@@ -85,9 +85,10 @@ export async function subscribeToPushNotifications(): Promise<PushSubscription |
       return null
     }
     
+    const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey)
     subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+      applicationServerKey: applicationServerKey as unknown as BufferSource,
     })
     
     // Send subscription to server
