@@ -44,7 +44,7 @@ export default function VideoApprovalPage() {
     try {
       // Check if user is admin
       const { data: profile } = await supabase
-        .from('user_profiles')
+        .from('users_profile')
         .select('is_admin')
         .eq('user_id', user.id)
         .single()
@@ -86,7 +86,7 @@ export default function VideoApprovalPage() {
 
       const videosWithEmail = data?.map((video: any) => ({
         ...video,
-        user_email: video.user_profiles?.email
+        user_email: video.users_profile?.email
       })) || []
 
       setVideos(videosWithEmail)

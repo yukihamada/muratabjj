@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     ] = await Promise.all([
       // 総ユーザー数
       supabaseAdmin
-        .from('user_profiles')
+        .from('users_profile')
         .select('id', { count: 'exact' }),
       
       // 総動画数
@@ -81,14 +81,14 @@ export async function GET(request: NextRequest) {
       
       // アクティブ会員数（Proプラン以上）
       supabaseAdmin
-        .from('user_profiles')
+        .from('users_profile')
         .select('id', { count: 'exact' })
         .in('subscription_plan', ['pro', 'dojo'])
         .eq('subscription_status', 'active'),
       
       // 今月の新規登録数
       supabaseAdmin
-        .from('user_profiles')
+        .from('users_profile')
         .select('id', { count: 'exact' })
         .gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString())
     ])

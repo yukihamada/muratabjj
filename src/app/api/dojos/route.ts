@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     // Check if user is a coach
     const { data: profile, error: profileError } = await supabase
-      .from('user_profiles')
+      .from('users_profile')
       .select('is_coach')
       .eq('user_id', token.value)
       .single()

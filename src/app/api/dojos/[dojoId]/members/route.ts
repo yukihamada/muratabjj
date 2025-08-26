@@ -123,7 +123,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     // Find user by email
     const { data: invitedUser } = await supabase
-      .from('user_profiles')
+      .from('users_profile')
       .select('id')
       .eq('email', email.toLowerCase().trim())
       .single()

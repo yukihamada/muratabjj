@@ -63,7 +63,7 @@ export default function FlowsPage() {
         .from('flows')
         .select(`
           *,
-          user_profiles!flows_user_id_fkey (
+          users_profile!flows_user_id_fkey (
             full_name
           )
         `)
@@ -488,7 +488,7 @@ export default function FlowsPage() {
 function FlowCard({ flow, t, isOwner, onEdit, onCopy, onDelete }: any) {
   const nodeCount = flow.nodes?.length || 0
   const edgeCount = flow.edges?.length || 0
-  const creatorName = flow.user_profiles?.full_name || 'Unknown'
+  const creatorName = flow.users_profile?.full_name || 'Unknown'
   const complexity = nodeCount > 10 ? 'high' : nodeCount > 5 ? 'medium' : 'low'
   const complexityColor = complexity === 'high' ? 'text-red-400' : complexity === 'medium' ? 'text-yellow-400' : 'text-green-400'
 
@@ -579,7 +579,7 @@ function FlowCard({ flow, t, isOwner, onEdit, onCopy, onDelete }: any) {
 function FlowListItem({ flow, t, isOwner, onEdit, onCopy, onDelete }: any) {
   const nodeCount = flow.nodes?.length || 0
   const edgeCount = flow.edges?.length || 0
-  const creatorName = flow.user_profiles?.full_name || 'Unknown'
+  const creatorName = flow.users_profile?.full_name || 'Unknown'
   const updatedAt = new Date(flow.updated_at || flow.created_at).toLocaleDateString()
 
   return (

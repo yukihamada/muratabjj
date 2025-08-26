@@ -9,7 +9,7 @@ export async function checkSubscriptionAccess(
   
   try {
     const { data: profile, error } = await supabase
-      .from('user_profiles')
+      .from('users_profile')
       .select('subscription_plan, subscription_status, subscription_period_end')
       .eq('user_id', userId)
       .single()

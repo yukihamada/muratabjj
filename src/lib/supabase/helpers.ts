@@ -6,7 +6,7 @@ type Tables = Database['public']['Tables']
 // User Profile helpers
 export async function getUserProfile(userId: string) {
   const { data, error } = await supabase
-    .from('user_profiles')
+    .from('users_profile')
     .select('*')
     .eq('user_id', userId)
     .single()
@@ -16,10 +16,10 @@ export async function getUserProfile(userId: string) {
 
 export async function updateUserProfile(
   userId: string,
-  updates: Partial<Tables['user_profiles']['Update']>
+  updates: Partial<Tables['users_profile']['Update']>
 ) {
   const { data, error } = await supabase
-    .from('user_profiles')
+    .from('users_profile')
     .update(updates)
     .eq('user_id', userId)
     .select()
