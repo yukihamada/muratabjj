@@ -143,7 +143,7 @@ export default function ProfilePage() {
       fetchProfile()
       fetchStats()
     }
-  }, [user])
+  }, [user, fetchProfile, fetchStats])
 
   const fetchProfile = useCallback(async () => {
     if (!user) return
@@ -209,7 +209,7 @@ export default function ProfilePage() {
           stripes: data.stripes || 0,
         })
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('[Profile] Error fetching profile:', error)
       // エラーが発生してもローディングを終了し、デフォルトフォームを表示
       setFormData({
@@ -217,10 +217,19 @@ export default function ProfilePage() {
         belt: 'white',
         stripes: 0,
       })
+      
+      // エラーメッセージ表示
+      if (error.code === 'PGRST301') {
+        toast.error('ネットワークエラー: インターネット接続を確認してください')
+      } else if (error.code === '42501' || error.message?.includes('row-level security')) {
+        toast.error('権限エラー: プロフィールへのアクセスが制限されています')
+      } else {
+        toast.error(`プロフィールの読み込みに失敗しました: ${error.message || ''}`)
+      }
     } finally {
       setLoading(false)
     }
-  }, [user, t.profileLoadError])
+  }, [user])
 
   const fetchStats = useCallback(async () => {
     if (!user) return
