@@ -133,7 +133,7 @@ test.describe('Authentication Tests', () => {
       console.log(`Password: ${newAccount.password}`);
       
     } catch (error) {
-      console.log(`❌ Registration failed: ${error.message}`);
+      console.log(`❌ Registration failed: ${(error as Error).message}`);
       
       // Take screenshot for debugging
       await page.screenshot({ path: 'e2e/screenshots/registration-error.png', fullPage: true });

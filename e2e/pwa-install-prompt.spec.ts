@@ -141,9 +141,12 @@ test.describe('PWA Install Prompt', () => {
     test.skip(browserName !== 'webkit', 'iOS test only runs on WebKit')
     
     // Set iOS user agent
-    await page.goto('/', {
-      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15'
+    await page.context().addInitScript(() => {
+      Object.defineProperty(navigator, 'userAgent', {
+        get: () => 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15'
+      })
     })
+    await page.goto('/')
     
     // Check for iOS specific instructions
     const iosPrompt = page.locator('text=Safari で共有ボタン')

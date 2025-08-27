@@ -1,5 +1,4 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import PWAInstallPrompt from '../PWAInstallPrompt'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 

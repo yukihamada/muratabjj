@@ -138,13 +138,6 @@ export default function ProfilePage() {
     stripes: 0,
   })
 
-  useEffect(() => {
-    if (user) {
-      fetchProfile()
-      fetchStats()
-    }
-  }, [user, fetchProfile, fetchStats])
-
   const fetchProfile = useCallback(async () => {
     if (!user) return
     
@@ -263,6 +256,13 @@ export default function ProfilePage() {
       console.error('Error fetching stats:', error)
     }
   }, [user])
+
+  useEffect(() => {
+    if (user) {
+      fetchProfile()
+      fetchStats()
+    }
+  }, [user, fetchProfile, fetchStats])
 
   const validateForm = useCallback((): boolean => {
     // フルネームのバリデーション
