@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
@@ -8,6 +8,7 @@ import { User, Award, Mail, Calendar, Save, Camera } from 'lucide-react'
 import toast from 'react-hot-toast'
 import DashboardNav from '@/components/DashboardNav'
 import SubscriptionManager from '@/components/SubscriptionManager'
+import ProfileSkeleton from '@/components/ProfileSkeleton'
 
 const belts = ['white', 'blue', 'purple', 'brown', 'black', 'coral', 'red']
 
@@ -144,14 +145,16 @@ export default function ProfilePage() {
     }
   }, [user])
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
+    if (!user) return
+    
     try {
       // Fetching profile for user
       
       const { data, error } = await supabase
         .from('users_profile')
         .select('*')
-        .eq('user_id', user!.id)
+        .eq('user_id', user.id)
         .single()
 
       if (error) {
@@ -217,9 +220,11 @@ export default function ProfilePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user, t.profileLoadError])
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
+    if (!user) return
+    
     try {
       const [progressData, sparringData] = await Promise.all([
         supabase
@@ -248,10 +253,37 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Error fetching stats:', error)
     }
-  }
+  }, [user])
+
+  const validateForm = useCallback((): boolean => {
+    // フルネームのバリデーション
+    if (!formData.full_name.trim()) {
+      toast.error('名前を入力してください')
+      return false
+    }
+    
+    if (formData.full_name.length > 100) {
+      toast.error('名前は100文字以内で入力してください')
+      return false
+    }
+    
+    // ストライプのバリデーション
+    if (formData.stripes < 0 || formData.stripes > 4) {
+      toast.error('ストライプは0〜4の間で設定してください')
+      return false
+    }
+    
+    return true
+  }, [formData])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // バリデーション
+    if (!validateForm()) {
+      return
+    }
+    
     setSaving(true)
 
     try {
@@ -269,9 +301,21 @@ export default function ProfilePage() {
 
       toast.success(t.profileUpdated)
       fetchProfile()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating profile:', error)
-      toast.error(t.updateFailed)
+      
+      // より詳細なエラーメッセージを提供
+      if (error.code === 'PGRST507') {
+        toast.error('権限エラー: プロフィールを更新する権限がありません')
+      } else if (error.code === '23505') {
+        toast.error('重複エラー: この情報は既に使用されています')
+      } else if (error.code === '42501') {
+        toast.error('権限不足: Row Level Security ポリシーを確認してください')
+      } else if (error.message?.includes('violates row-level security policy')) {
+        toast.error('セキュリティポリシー違反: 管理者に連絡してください')
+      } else {
+        toast.error(`${t.updateFailed}: ${error.message || '不明なエラー'}`)
+      }
     } finally {
       setSaving(false)
     }
@@ -279,68 +323,10 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-bjj-bg">
+      <>
         <DashboardNav />
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
-          <h1 className="text-3xl font-bold mb-8">{t.profile}</h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Profile Info Skeleton */}
-            <div className="md:col-span-2">
-              <div className="card-gradient border border-white/10 rounded-bjj p-6 animate-pulse">
-                <div className="h-6 w-32 bg-white/10 rounded mb-6"></div>
-                
-                <div className="space-y-6">
-                  <div>
-                    <div className="h-4 w-20 bg-white/10 rounded mb-2"></div>
-                    <div className="h-10 w-full bg-white/10 rounded"></div>
-                  </div>
-                  
-                  <div>
-                    <div className="h-4 w-16 bg-white/10 rounded mb-2"></div>
-                    <div className="h-10 w-full bg-white/10 rounded"></div>
-                  </div>
-                  
-                  <div>
-                    <div className="h-4 w-24 bg-white/10 rounded mb-2"></div>
-                    <div className="h-10 w-full bg-white/10 rounded"></div>
-                  </div>
-                  
-                  <div className="h-12 w-full bg-bjj-accent/20 rounded-lg"></div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Stats Skeleton */}
-            <div className="space-y-4">
-              <div className="card-gradient border border-white/10 rounded-bjj p-6 animate-pulse">
-                <div className="h-6 w-24 bg-white/10 rounded mb-4"></div>
-                <div className="space-y-2">
-                  <div className="h-4 w-full bg-white/10 rounded"></div>
-                  <div className="h-4 w-3/4 bg-white/10 rounded"></div>
-                  <div className="h-4 w-5/6 bg-white/10 rounded"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Loading text */}
-          <div className="text-center mt-8">
-            <p className="text-bjj-muted animate-pulse">
-              {language === 'ja' ? 'プロフィールを読み込んでいます...' :
-               language === 'en' ? 'Loading profile...' :
-               'Carregando perfil...'}
-            </p>
-            <div className="flex justify-center mt-4">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-bjj-accent rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-bjj-accent rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-bjj-accent rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        <ProfileSkeleton />
+      </>
     )
   }
 
@@ -356,15 +342,23 @@ export default function ProfilePage() {
             <div className="card-gradient border border-white/10 rounded-bjj p-6">
               <h2 className="text-xl font-semibold mb-6">{t.editProfile}</h2>
               
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form 
+                onSubmit={handleSubmit} 
+                className="space-y-6"
+                role="form"
+                aria-label="プロフィール編集フォーム"
+              >
                 <div>
-                  <label className="block text-sm font-medium mb-2">{t.fullName}</label>
+                  <label htmlFor="full-name" className="block text-sm font-medium mb-2">{t.fullName}</label>
                   <input
                     type="text"
+                    id="full-name"
                     value={formData.full_name}
                     onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 focus:border-bjj-accent focus:outline-none"
+                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 focus:border-bjj-accent focus:outline-none focus:ring-2 focus:ring-bjj-accent/20"
                     placeholder={t.fullName}
+                    aria-required="true"
+                    maxLength={100}
                   />
                 </div>
 
