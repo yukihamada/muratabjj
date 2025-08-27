@@ -165,12 +165,13 @@ export default function ProfilePage() {
             .insert({
               user_id: user!.id,
               full_name: '',
-              belt: 'white',
+              belt_rank: 'white',
               stripes: 0,
-              is_admin: false,
+              weight_class: null,
+              preferred_position: null,
+              years_training: 0,
+              dojo_id: null,
               is_coach: false,
-              subscription_tier: 'free',
-              subscription_status: 'inactive',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             })
@@ -258,7 +259,7 @@ export default function ProfilePage() {
         .from('users_profile')
         .update({
           full_name: formData.full_name,
-          belt: formData.belt,
+          belt_rank: formData.belt,
           stripes: formData.stripes,
           updated_at: new Date().toISOString(),
         })

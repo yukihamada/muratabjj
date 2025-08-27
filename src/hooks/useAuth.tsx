@@ -65,12 +65,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               {
                 user_id: userId,
                 full_name: userEmail?.split('@')[0] || '',
-                belt: 'white',
+                belt_rank: 'white',
                 stripes: 0,
-                is_admin: false,
-                is_coach: false,
-                subscription_tier: 'free',
-                subscription_status: 'inactive'
+                weight_class: null,
+                preferred_position: null,
+                years_training: 0,
+                dojo_id: null,
+                is_coach: false
               }
             ])
             .select()
