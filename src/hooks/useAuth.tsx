@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               {
                 user_id: userId,
                 full_name: userEmail?.split('@')[0] || '',
-                belt_rank: 'white',
+                belt: 'white',
                 stripes: 0,
                 weight_class: null,
                 preferred_position: null,

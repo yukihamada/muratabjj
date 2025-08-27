@@ -165,7 +165,7 @@ export default function ProfilePage() {
             .insert({
               user_id: user!.id,
               full_name: '',
-              belt_rank: 'white',
+              belt: 'white',
               stripes: 0,
               weight_class: null,
               preferred_position: null,
@@ -188,7 +188,7 @@ export default function ProfilePage() {
             setProfile(newProfile)
             setFormData({
               full_name: newProfile.full_name || '',
-              belt: newProfile.belt_rank || 'white',
+              belt: newProfile.belt || 'white',
               stripes: newProfile.stripes || 0,
             })
           }
@@ -202,7 +202,7 @@ export default function ProfilePage() {
         setProfile(data)
         setFormData({
           full_name: data.full_name || '',
-          belt: data.belt_rank || 'white',
+          belt: data.belt || 'white',
           stripes: data.stripes || 0,
         })
       }
@@ -259,7 +259,7 @@ export default function ProfilePage() {
         .from('users_profile')
         .update({
           full_name: formData.full_name,
-          belt_rank: formData.belt,
+          belt: formData.belt,
           stripes: formData.stripes,
           updated_at: new Date().toISOString(),
         })

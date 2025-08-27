@@ -17,7 +17,7 @@ export interface Database {
           id: string
           user_id: string
           full_name: string | null
-          belt_rank: 'white' | 'blue' | 'purple' | 'brown' | 'black' | null
+          belt: 'white' | 'blue' | 'purple' | 'brown' | 'black' | 'coral' | 'red' | null
           stripes: number
           weight_class: string | null
           preferred_position: string | null
@@ -31,7 +31,7 @@ export interface Database {
           id?: string
           user_id: string
           full_name?: string | null
-          belt_rank?: 'white' | 'blue' | 'purple' | 'brown' | 'black' | null
+          belt?: 'white' | 'blue' | 'purple' | 'brown' | 'black' | 'coral' | 'red' | null
           stripes?: number
           weight_class?: string | null
           preferred_position?: string | null
@@ -45,7 +45,7 @@ export interface Database {
           id?: string
           user_id?: string
           full_name?: string | null
-          belt_rank?: 'white' | 'blue' | 'purple' | 'brown' | 'black' | null
+          belt?: 'white' | 'blue' | 'purple' | 'brown' | 'black' | 'coral' | 'red' | null
           stripes?: number
           weight_class?: string | null
           preferred_position?: string | null

@@ -453,7 +453,8 @@ export default function VideoUpload() {
           url: videoResult.url,
           thumbnail_url: thumbnailResult.url,
           duration,
-          instructor_id: user.id,
+          user_id: user.id,
+          uploaded_by: user.id,
         })
         .select()
         .single()
