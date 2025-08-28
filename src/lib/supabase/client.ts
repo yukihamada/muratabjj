@@ -98,7 +98,7 @@ export const supabase = supabaseUrl && supabaseAnonKey && isValidUrl(supabaseUrl
       },
       auth: {
         flowType: 'pkce',
-        detectSessionInUrl: true,
+        detectSessionInUrl: false, // Route handlerで処理するため無効化
         persistSession: true,
         autoRefreshToken: true,
         debug: process.env.NODE_ENV === 'development',
