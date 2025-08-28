@@ -61,29 +61,40 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
       // Auth attempt
       
       if (mode === 'login') {
+        // eslint-disable-next-line no-console
+        console.log('[AuthDialog] Attempting login with email:', email)
+        
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
         
-        // Login response received
+        // eslint-disable-next-line no-console
+        console.log('[AuthDialog] Login response:', { data, error })
         
         if (error) {
+          console.error('[AuthDialog] Login error:', error)
           throw error
         }
         
         // セッションが確立したか確認
         const { data: { session } } = await supabase.auth.getSession()
-        // Session checked after login
+        // eslint-disable-next-line no-console
+        console.log('[AuthDialog] Session check:', { session })
         
         if (!session) {
+          // Cookieの状態を確認
+          // eslint-disable-next-line no-console
+          console.log('[AuthDialog] Cookies:', document.cookie)
           throw new Error('セッションの確立に失敗しました。Cookie設定を確認してください。')
         }
         
         toast.success(t.auth.loginSuccess || 'ログインしました')
         handleClose()
-        // ログイン成功後、ダッシュボードへリダイレクト
-        router.push('/dashboard')
+        // ログイン成功後、少し待ってからリダイレクト
+        setTimeout(() => {
+          router.push('/dashboard')
+        }, 100)
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,

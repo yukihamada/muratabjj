@@ -1,6 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 import type { Database } from '@/types/database'
-import { getCookieConfig } from './cookie-config'
 
 // デフォルトの値を設定（実際のSupabaseプロジェクトが必要）
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
@@ -68,45 +67,44 @@ const isValidUrl = (url: string) => {
   }
 }
 
-// カスタムストレージアダプター（SSR対応）
-const customStorageAdapter = {
-  getItem: (key: string) => {
-    if (typeof window === 'undefined') {
-      return null
-    }
-    return window.localStorage.getItem(key)
-  },
-  setItem: (key: string, value: string) => {
-    if (typeof window === 'undefined') {
-      return
-    }
-    window.localStorage.setItem(key, value)
-  },
-  removeItem: (key: string) => {
-    if (typeof window === 'undefined') {
-      return
-    }
-    window.localStorage.removeItem(key)
-  },
-}
-
-// Cookie設定を取得
-const cookieConfig = getCookieConfig()
-
 // 環境変数が設定されている場合のみ実際のクライアントを作成
 export const supabase = supabaseUrl && supabaseAnonKey && isValidUrl(supabaseUrl)
-  ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  ? createBrowserClient<Database>(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        get(name: string) {
+          if (typeof window === 'undefined') return undefined
+          const cookies = document.cookie.split(';')
+          const cookie = cookies
+            .map(c => c.trim())
+            .find(c => c.startsWith(`${name}=`))
+          return cookie ? decodeURIComponent(cookie.split('=')[1]) : undefined
+        },
+        set(name: string, value: string, options: any) {
+          if (typeof window === 'undefined') return
+          const cookieOptions = []
+          if (options?.domain) cookieOptions.push(`domain=${options.domain}`)
+          if (options?.path) cookieOptions.push(`path=${options.path}`)
+          if (options?.maxAge) cookieOptions.push(`max-age=${options.maxAge}`)
+          if (options?.httpOnly) cookieOptions.push('httpOnly')
+          if (options?.secure) cookieOptions.push('secure')
+          if (options?.sameSite) cookieOptions.push(`sameSite=${options.sameSite}`)
+          
+          document.cookie = `${name}=${encodeURIComponent(value)}; ${cookieOptions.join('; ')}`
+        },
+        remove(name: string, options: any) {
+          if (typeof window === 'undefined') return
+          document.cookie = `${name}=; path=${options?.path || '/'}; expires=Thu, 01 Jan 1970 00:00:00 GMT`
+        },
+      },
       auth: {
+        flowType: 'pkce',
+        detectSessionInUrl: true,
         persistSession: true,
         autoRefreshToken: true,
-        storage: customStorageAdapter,
-        detectSessionInUrl: true,
-        flowType: 'pkce',
-        debug: process.env.NODE_ENV === 'development', // 開発環境でデバッグ有効化
-        storageKey: cookieConfig.name,
+        debug: process.env.NODE_ENV === 'development',
       },
     })
   : createDummyClient()
 
-// Export createClient for other modules to use
-export { createClient }
+// Export createBrowserClient for other modules to use
+export { createBrowserClient as createClient }
