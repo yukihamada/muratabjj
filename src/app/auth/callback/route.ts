@@ -16,25 +16,47 @@ export async function GET(request: NextRequest) {
   }
 
   if (code) {
-    const supabase = createServerClient<Database>(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return request.cookies.get(name)?.value
-          },
-          set(name: string, value: string, options: any) {
-            // Server-side cookie setting will be handled in the response
-          },
-          remove(name: string, options: any) {
-            // Server-side cookie removal will be handled in the response
-          },
-        },
-      }
-    )
-
     try {
+      // Create response object first to capture cookies
+      const response = NextResponse.redirect(new URL('/dashboard', requestUrl.origin))
+      
+      // Create Supabase client with proper cookie handling
+      const supabase = createServerClient<Database>(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            get(name: string) {
+              return request.cookies.get(name)?.value
+            },
+            set(name: string, value: string, options: any) {
+              // Properly set cookies in the response
+              response.cookies.set({
+                name,
+                value,
+                ...options,
+                sameSite: 'lax',
+                secure: process.env.NODE_ENV === 'production',
+                httpOnly: true,
+                path: '/',
+              })
+            },
+            remove(name: string, options: any) {
+              // Properly remove cookies from the response
+              response.cookies.delete({
+                name,
+                ...options,
+                sameSite: 'lax',
+                secure: process.env.NODE_ENV === 'production',
+                httpOnly: true,
+                path: '/',
+              })
+            },
+          },
+        }
+      )
+
+      // Exchange code for session - this will automatically set cookies
       const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
       
       if (exchangeError) {
@@ -44,22 +66,19 @@ export async function GET(request: NextRequest) {
         )
       }
 
-      // Successful authentication, redirect to dashboard
-      const response = NextResponse.redirect(new URL('/dashboard', requestUrl.origin))
+      // Verify session was created
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
       
-      // Set cookies from Supabase auth
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        // Set auth cookies
-        const cookieOptions = {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax' as const,
-          path: '/',
-        }
-        
-        response.cookies.set('sb-access-token', session.access_token, cookieOptions)
-        response.cookies.set('sb-refresh-token', session.refresh_token, cookieOptions)
+      if (sessionError || !session) {
+        console.error('[Auth Callback Route] Session error:', sessionError || 'No session created')
+        return NextResponse.redirect(
+          new URL(`/?auth_error=${encodeURIComponent('セッションの作成に失敗しました')}`, requestUrl.origin)
+        )
+      }
+      
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.log('[Auth Callback Route] Session successfully created for user:', session.user.email)
       }
       
       return response

@@ -70,23 +70,36 @@ export default function AuthDialog({ isOpen, onClose, initialMode = 'login' }: A
         })
         
         // eslint-disable-next-line no-console
-        console.log('[AuthDialog] Login response:', { data, error })
+        console.log('[AuthDialog] Login response:', { 
+          hasUser: !!data?.user,
+          hasSession: !!data?.session,
+          error 
+        })
         
         if (error) {
           console.error('[AuthDialog] Login error:', error)
           throw error
         }
         
+        // ログインレスポンスのセッションを確認
+        if (!data?.session) {
+          console.error('[AuthDialog] No session in login response')
+          throw new Error('ログインレスポンスにセッションが含まれていません')
+        }
+        
+        // 少し待ってからセッションを再確認
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
         // セッションが確立したか確認
         const { data: { session } } = await supabase.auth.getSession()
         // eslint-disable-next-line no-console
-        console.log('[AuthDialog] Session check:', { session })
+        console.log('[AuthDialog] Session check after delay:', { 
+          hasSession: !!session,
+          cookies: document.cookie.split(';').map(c => c.trim().split('=')[0])
+        })
         
         if (!session) {
-          // Cookieの状態を確認
-          // eslint-disable-next-line no-console
-          console.log('[AuthDialog] Cookies:', document.cookie)
-          throw new Error('セッションの確立に失敗しました。Cookie設定を確認してください。')
+          throw new Error('セッションの確立に失敗しました。ブラウザの設定を確認してください。')
         }
         
         toast.success(t.auth.loginSuccess || 'ログインしました')

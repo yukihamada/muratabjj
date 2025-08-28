@@ -85,8 +85,8 @@ export const supabase = supabaseUrl && supabaseAnonKey && isValidUrl(supabaseUrl
           if (options?.domain) cookieOptions.push(`domain=${options.domain}`)
           if (options?.path) cookieOptions.push(`path=${options.path}`)
           if (options?.maxAge) cookieOptions.push(`max-age=${options.maxAge}`)
-          if (options?.httpOnly) cookieOptions.push('httpOnly')
-          if (options?.secure) cookieOptions.push('secure')
+          // httpOnly cannot be set from browser JavaScript
+          if (options?.secure || window.location.protocol === 'https:') cookieOptions.push('secure')
           if (options?.sameSite) cookieOptions.push(`sameSite=${options.sameSite}`)
           
           document.cookie = `${name}=${encodeURIComponent(value)}; ${cookieOptions.join('; ')}`
