@@ -119,18 +119,18 @@ const translations = {
 }
 
 export default function ProfilePage() {
-  const { user } = useAuth()
+  const { user, profile: authProfile, refreshProfile } = useAuth()
   const { language } = useLanguage()
   const t = translations[language as keyof typeof translations]
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [profile, setProfile] = useState<any>(null)
   const [stats, setStats] = useState({
     videosWatched: 0,
     techniquesLearned: 0,
     sparringSessions: 0,
     averageProgress: 0,
   })
+  const [statsLoaded, setStatsLoaded] = useState(false)
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -138,91 +138,20 @@ export default function ProfilePage() {
     stripes: 0,
   })
 
-  const fetchProfile = useCallback(async () => {
-    if (!user) return
-    
-    try {
-      // Fetching profile for user
-      
-      const { data, error } = await supabase
-        .from('users_profile')
-        .select('*')
-        .eq('user_id', user.id)
-        .single()
-
-      if (error) {
-        // Error fetching profile
-        
-        // プロファイルが存在しない場合は作成
-        if (error.code === 'PGRST116') {
-          // Profile not found, creating new profile
-          const { data: newProfile, error: createError } = await supabase
-            .from('users_profile')
-            .insert({
-              user_id: user!.id,
-              full_name: '',
-              belt: 'white',
-              stripes: 0,
-              weight_class: null,
-              preferred_position: null,
-              years_training: 0,
-              dojo_id: null,
-              is_coach: false,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            })
-            .select()
-            .single()
-          
-          if (createError) {
-            console.error('[Profile] Error creating profile:', createError)
-            throw createError
-          }
-          
-          if (newProfile) {
-            // New profile created
-            setProfile(newProfile)
-            setFormData({
-              full_name: newProfile.full_name || '',
-              belt: newProfile.belt || 'white',
-              stripes: newProfile.stripes || 0,
-            })
-          }
-          return
-        }
-        throw error
-      }
-
-      if (data) {
-        // Profile loaded
-        setProfile(data)
-        setFormData({
-          full_name: data.full_name || '',
-          belt: data.belt || 'white',
-          stripes: data.stripes || 0,
-        })
-      }
-    } catch (error: any) {
-      console.error('[Profile] Error fetching profile:', error)
-      // エラーが発生してもローディングを終了し、デフォルトフォームを表示
+  // authProfileから初期値を設定
+  useEffect(() => {
+    if (authProfile) {
       setFormData({
-        full_name: '',
-        belt: 'white',
-        stripes: 0,
+        full_name: authProfile.full_name || '',
+        belt: authProfile.belt || 'white',
+        stripes: authProfile.stripes || 0,
       })
-      
-      // エラーメッセージ表示
-      if (error.code === 'PGRST301') {
-        toast.error('ネットワークエラー: インターネット接続を確認してください')
-      } else if (error.code === '42501' || error.message?.includes('row-level security')) {
-        toast.error('権限エラー: プロフィールへのアクセスが制限されています')
-      } else {
-        toast.error(`プロフィールの読み込みに失敗しました: ${error.message || ''}`)
-      }
-    } finally {
+    }
+    // プロファイルがnullでも、ユーザーが存在すれば読み込み完了とする
+    if (user !== undefined) {
       setLoading(false)
     }
-  }, [user])
+  }, [authProfile, user])
 
   const fetchStats = useCallback(async () => {
     if (!user) return
@@ -257,12 +186,20 @@ export default function ProfilePage() {
     }
   }, [user])
 
+  // 統計情報のみ取得（プロファイルはuseAuthから取得）
   useEffect(() => {
-    if (user) {
-      fetchProfile()
-      fetchStats()
+    if (user && !statsLoaded) {
+      setStatsLoaded(true)
+      fetchStats().catch(err => {
+        console.error('Failed to fetch stats:', err)
+      })
     }
-  }, [user, fetchProfile, fetchStats])
+    
+    // プロファイルがまだ読み込まれていない場合
+    if (!authProfile && user) {
+      refreshProfile()
+    }
+  }, [user, statsLoaded, fetchStats, authProfile, refreshProfile])
 
   const validateForm = useCallback((): boolean => {
     // フルネームのバリデーション
@@ -309,7 +246,8 @@ export default function ProfilePage() {
       if (error) throw error
 
       toast.success(t.profileUpdated)
-      fetchProfile()
+      // AuthContextのプロファイルを更新
+      await refreshProfile()
     } catch (error: any) {
       console.error('Error updating profile:', error)
       
@@ -476,8 +414,8 @@ export default function ProfilePage() {
                 <div>
                   <p className="text-sm text-bjj-muted">{t.memberSince}</p>
                   <p className="font-medium">
-                    {profile?.created_at 
-                      ? new Date(profile.created_at).toLocaleDateString(
+                    {authProfile?.created_at 
+                      ? new Date(authProfile.created_at).toLocaleDateString(
                           language === 'ja' ? 'ja-JP' : language === 'pt' ? 'pt-BR' : 'en-US'
                         )
                       : '-'
@@ -486,7 +424,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <p className="text-sm text-bjj-muted">{t.role}</p>
-                  <p className="font-medium">{profile?.is_coach ? t.coach : (profile?.is_admin ? t.admin : t.user)}</p>
+                  <p className="font-medium">{authProfile?.is_coach ? t.coach : (authProfile?.is_admin ? t.admin : t.user)}</p>
                 </div>
               </div>
             </div>
