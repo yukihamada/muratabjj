@@ -36,10 +36,11 @@ export async function middleware(request: NextRequest) {
       return response
     }
     
-    // Skip API routes, static files, and other system paths
+    // Skip API routes, static files, auth callback, and other system paths
     if (
       pathname.startsWith('/_next') ||
       pathname.startsWith('/api') ||
+      pathname.startsWith('/auth') || // Auth callback path
       pathname.includes('/favicon.ico') ||
       pathname.includes('.') // has a file extension
     ) {

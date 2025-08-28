@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
 import Features from '@/components/Features'
@@ -10,12 +11,16 @@ import FAQ from '@/components/FAQ'
 import Signup from '@/components/Signup'
 import Footer from '@/components/Footer'
 import AuthRedirect from '@/components/AuthRedirect'
+import AuthErrorHandler from '@/components/AuthErrorHandler'
 import StructuredData from '@/components/StructuredData'
 
 export default function Home() {
   return (
     <>
       <AuthRedirect />
+      <Suspense fallback={null}>
+        <AuthErrorHandler />
+      </Suspense>
       <StructuredData />
       <main className="min-h-screen bg-bjj-bg">
         <Header />
