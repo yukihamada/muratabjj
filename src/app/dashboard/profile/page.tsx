@@ -233,7 +233,45 @@ export default function ProfilePage() {
     setSaving(true)
 
     try {
-      const { error } = await supabase
+      // 最初にプロフィールが存在するか確認
+      const { data: existingProfile, error: checkError } = await supabase
+        .from('users_profile')
+        .select('id')
+        .eq('user_id', user!.id)
+        .single()
+      
+      if (checkError && checkError.code === 'PGRST116') {
+        // プロフィールが存在しない場合は作成
+        // eslint-disable-next-line no-console
+        console.log('[Profile] Creating new profile for user:', user!.id)
+        const { error: insertError } = await supabase
+          .from('users_profile')
+          .insert({
+            user_id: user!.id,
+            full_name: formData.full_name,
+            belt: formData.belt,
+            stripes: formData.stripes,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+        
+        if (insertError) {
+          console.error('[Profile] Insert error:', insertError)
+          throw insertError
+        }
+        
+        toast.success(t.profileUpdated)
+        await refreshProfile()
+        setSaving(false)
+        return
+      } else if (checkError) {
+        throw checkError
+      }
+      
+      // プロフィールが存在する場合は更新
+      // eslint-disable-next-line no-console
+      console.log('[Profile] Updating profile for user:', user!.id)
+      const { data: updateData, error } = await supabase
         .from('users_profile')
         .update({
           full_name: formData.full_name,
@@ -242,8 +280,51 @@ export default function ProfilePage() {
           updated_at: new Date().toISOString(),
         })
         .eq('user_id', user!.id)
+        .select()
 
-      if (error) throw error
+      if (error) {
+        console.error('[Profile] Supabase update error:', error)
+        console.error('[Profile] Error details:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        })
+        throw error
+      }
+      
+      // eslint-disable-next-line no-console
+      console.log('[Profile] Update successful:', updateData)
+
+      // 更新が成功した場合、データが存在するか確認
+      const { data: updatedProfile, error: selectError } = await supabase
+        .from('users_profile')
+        .select('*')
+        .eq('user_id', user!.id)
+        .single()
+      
+      if (selectError) {
+        console.error('Failed to fetch updated profile:', selectError)
+        // プロフィールが存在しない場合は作成を試みる
+        if (selectError.code === 'PGRST116') {
+          const { error: insertError } = await supabase
+            .from('users_profile')
+            .insert({
+              user_id: user!.id,
+              full_name: formData.full_name,
+              belt: formData.belt,
+              stripes: formData.stripes,
+              updated_at: new Date().toISOString(),
+            })
+          
+          if (insertError) {
+            console.error('Failed to insert profile:', insertError)
+            throw insertError
+          }
+        } else {
+          throw selectError
+        }
+      }
 
       toast.success(t.profileUpdated)
       // AuthContextのプロファイルを更新
@@ -252,17 +333,29 @@ export default function ProfilePage() {
       console.error('Error updating profile:', error)
       
       // より詳細なエラーメッセージを提供
+      let errorMessage = t.updateFailed
+      
       if (error.code === 'PGRST507') {
-        toast.error('権限エラー: プロフィールを更新する権限がありません')
+        errorMessage = '権限エラー: プロフィールを更新する権限がありません'
       } else if (error.code === '23505') {
-        toast.error('重複エラー: この情報は既に使用されています')
+        errorMessage = '重複エラー: この情報は既に使用されています'
       } else if (error.code === '42501') {
-        toast.error('権限不足: Row Level Security ポリシーを確認してください')
+        errorMessage = '権限不足: Row Level Security ポリシーを確認してください'
+      } else if (error.code === 'PGRST116') {
+        errorMessage = 'プロフィールが存在しません。新規作成を試みています...'
       } else if (error.message?.includes('violates row-level security policy')) {
-        toast.error('セキュリティポリシー違反: 管理者に連絡してください')
+        errorMessage = 'セキュリティポリシー違反: 管理者に連絡してください'
+      } else if (error.message) {
+        errorMessage = `${t.updateFailed}: ${error.message}`
+      } else if (error.hint) {
+        errorMessage = `${t.updateFailed}: ${error.hint}`
+      } else if (error.details) {
+        errorMessage = `${t.updateFailed}: ${error.details}`
       } else {
-        toast.error(`${t.updateFailed}: ${error.message || '不明なエラー'}`)
+        errorMessage = `${t.updateFailed}: エラーコード ${error.code || 'UNKNOWN'}`
       }
+      
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }

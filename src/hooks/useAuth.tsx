@@ -67,17 +67,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 full_name: userEmail?.split('@')[0] || '',
                 belt: 'white',
                 stripes: 0,
-                weight_class: null,
                 preferred_position: null,
-                years_training: 0,
-                dojo_id: null,
-                is_coach: false
+                height: null,
+                weight: null,
+                is_coach: false,
+                is_admin: false
               }
             ])
             .select()
             .single()
           
           if (createError) {
+            console.error('Failed to create profile:', createError)
             // プロファイル作成に失敗してもログインは成功させる
             return
           }
@@ -177,6 +178,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (timeoutId) clearTimeout(timeoutId)
       subscription.unsubscribe()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const signIn = async (email: string, password: string) => {
