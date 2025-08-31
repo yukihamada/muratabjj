@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Video, Target, Swords, PenTool, TrendingUp, Calendar } from 'lucide-react'
@@ -79,6 +79,7 @@ export default function DashboardPage() {
   const { language } = useLanguage()
   const t = translations[language as keyof typeof translations]
   const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
   
   const [profile, setProfile] = useState<any>(null)
   const [stats, setStats] = useState({
@@ -88,28 +89,42 @@ export default function DashboardPage() {
   })
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    loadDashboardData()
-  }, [])
-
-  async function loadDashboardData() {
+  const loadDashboardData = useCallback(async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
       if (!user) {
-        router.push('/')
         return
       }
 
       // Load user profile
       const { data: profileData, error: profileError } = await supabase
-        .from('users_profile')
+        .from('user_profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .single()
       
       if (profileError) {
         console.error('プロフィールの取得エラー:', profileError)
+        // プロファイルが存在しない場合、新規作成を試みる
+        if (profileError.code === 'PGRST116') {
+          const { data: newProfile, error: createError } = await supabase
+            .from('user_profiles')
+            .insert([{
+              user_id: user.id,
+              full_name: user.email?.split('@')[0] || '',
+              belt: 'white',
+              stripes: 0,
+              is_admin: false,
+              is_coach: false
+            }])
+            .select()
+            .single()
+          
+          if (createError) {
+            console.error('プロフィール作成エラー:', createError)
+          } else if (newProfile) {
+            setProfile(newProfile)
+          }
+        }
       } else if (profileData) {
         setProfile(profileData)
       }
@@ -137,7 +152,17 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        router.push('/')
+      } else {
+        loadDashboardData()
+      }
+    }
+  }, [user, authLoading, router, loadDashboardData])
 
   const quickActions = [
     {
@@ -166,7 +191,7 @@ export default function DashboardPage() {
     },
   ]
 
-  if (isLoading) {
+  if (authLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bjj-bg">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bjj-accent"></div>
