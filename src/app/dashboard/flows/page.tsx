@@ -45,25 +45,14 @@ export default function FlowsPage() {
   const [isPublic, setIsPublic] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/')
-      return
-    }
-
-    if (user) {
-      loadFlows()
-    }
-  }, [user, loading, router])
-
-  async function loadFlows() {
+  const loadFlows = useCallback(async () => {
     try {
       // 公開フローを取得
       const { data: publicData, error: publicError } = await supabase
         .from('flows')
         .select(`
           *,
-          users_profile!flows_user_id_fkey (
+          user_profiles!flows_user_id_fkey (
             full_name
           )
         `)
@@ -95,7 +84,18 @@ export default function FlowsPage() {
     } finally {
       setLoadingFlows(false)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/')
+      return
+    }
+
+    if (user) {
+      loadFlows()
+    }
+  }, [user, loading, router, loadFlows])
 
   async function copyFlow(flow: any) {
     try {
@@ -144,7 +144,7 @@ export default function FlowsPage() {
 
   const onConnect = useCallback((params: Connection) => {
     setEdges((eds) => addEdge(params, eds))
-  }, [])
+  }, [setEdges])
 
   const handleNewFlow = () => {
     const newFlow = {
@@ -253,12 +253,38 @@ export default function FlowsPage() {
     return true
   })
 
-  if (loading || loadingFlows) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bjj-bg">
         <div className="animate-pulse flex flex-col items-center gap-4">
           <div className="w-16 h-16 bg-gradient-to-br from-bjj-accent to-bjj-accent/50 rounded-full animate-spin" />
-          <p className="text-bjj-muted">Loading flows...</p>
+          <p className="text-bjj-muted">認証を確認中...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-bjj-bg">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">ログインが必要です</h2>
+          <p className="text-bjj-muted mb-6">フローエディタを使用するにはログインしてください。</p>
+          <Link href="/" className="btn-primary">
+            ホームに戻る
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (loadingFlows) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-bjj-bg">
+        <DashboardNav />
+        <div className="animate-pulse flex flex-col items-center gap-4 mt-20">
+          <div className="w-16 h-16 bg-gradient-to-br from-bjj-accent to-bjj-accent/50 rounded-full animate-spin" />
+          <p className="text-bjj-muted">フローを読み込み中...</p>
         </div>
       </div>
     )
@@ -488,7 +514,7 @@ export default function FlowsPage() {
 function FlowCard({ flow, t, isOwner, onEdit, onCopy, onDelete }: any) {
   const nodeCount = flow.nodes?.length || 0
   const edgeCount = flow.edges?.length || 0
-  const creatorName = flow.users_profile?.full_name || 'Unknown'
+  const creatorName = flow.user_profiles?.full_name || 'Unknown'
   const complexity = nodeCount > 10 ? 'high' : nodeCount > 5 ? 'medium' : 'low'
   const complexityColor = complexity === 'high' ? 'text-red-400' : complexity === 'medium' ? 'text-yellow-400' : 'text-green-400'
 
@@ -579,7 +605,7 @@ function FlowCard({ flow, t, isOwner, onEdit, onCopy, onDelete }: any) {
 function FlowListItem({ flow, t, isOwner, onEdit, onCopy, onDelete }: any) {
   const nodeCount = flow.nodes?.length || 0
   const edgeCount = flow.edges?.length || 0
-  const creatorName = flow.users_profile?.full_name || 'Unknown'
+  const creatorName = flow.user_profiles?.full_name || 'Unknown'
   const updatedAt = new Date(flow.updated_at || flow.created_at).toLocaleDateString()
 
   return (
