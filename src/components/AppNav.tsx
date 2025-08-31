@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useLanguage } from '@/contexts/LanguageContext'
 import LanguageSwitcher from './LanguageSwitcher'
 import { Home, Video, Target, Swords, PenTool, User, LogOut, Plus } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { getUserProfile } from '@/lib/supabase/helpers'
 
 const translations: Record<string, {
@@ -128,23 +128,23 @@ export default function AppNav() {
   const t = translations[locale]
   const [isCoach, setIsCoach] = useState(false)
 
-  useEffect(() => {
-    if (user) {
-      checkCoachStatus()
-    }
-  }, [user])
-
-  async function checkCoachStatus() {
+  const checkCoachStatus = useCallback(async () => {
     if (!user) return
     const { data } = await getUserProfile(user.id)
     if (data?.is_coach) {
       setIsCoach(true)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (user) {
+      checkCoachStatus()
+    }
+  }, [user, checkCoachStatus])
 
   const navItems = [
     { href: '/videos', label: t.videos, icon: Video },
-    { href: '/flow-editor', label: t.flows, icon: PenTool },
+    { href: '/dashboard/flows', label: t.flows, icon: PenTool },
     { href: '/progress', label: t.progress, icon: Target },
     { href: '/sparring', label: t.sparring, icon: Swords },
   ]
