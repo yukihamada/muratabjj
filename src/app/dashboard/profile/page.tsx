@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import DashboardNav from '@/components/DashboardNav'
 import SubscriptionManager from '@/components/SubscriptionManager'
 import ProfileSkeleton from '@/components/ProfileSkeleton'
+import { testProfileUpdate } from '@/utils/test-profile-update'
 
 const belts = ['white', 'blue', 'purple', 'brown', 'black', 'coral', 'red']
 
@@ -288,8 +289,19 @@ export default function ProfilePage() {
           code: error.code,
           message: error.message,
           details: error.details,
-          hint: error.hint
+          hint: error.hint,
+          status: error.status,
+          statusText: error.statusText
         })
+        
+        // デバッグ用: 現在のユーザー情報を表示
+        // eslint-disable-next-line no-console
+        console.log('[Profile] Current user:', {
+          id: user?.id,
+          email: user?.email,
+          formData
+        })
+        
         throw error
       }
       
@@ -452,6 +464,18 @@ export default function ProfilePage() {
                   >
                     {saving ? t.saving : t.save}
                   </button>
+                  {process.env.NODE_ENV === 'development' && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        testProfileUpdate()
+                        toast('Check console for debug info', { icon: 'ℹ️' })
+                      }}
+                      className="btn-ghost text-xs"
+                    >
+                      Debug
+                    </button>
+                  )}
                 </div>
               </form>
             </div>

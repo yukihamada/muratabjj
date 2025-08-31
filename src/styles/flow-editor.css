@@ -1,0 +1,89 @@
+/* Custom styles for React Flow */
+.react-flow__renderer {
+  background: #0f0f12;
+}
+
+.react-flow__node {
+  cursor: grab;
+}
+
+.react-flow__node:active {
+  cursor: grabbing;
+}
+
+.react-flow__edge-path {
+  stroke: #ea384c;
+  stroke-width: 2;
+}
+
+.react-flow__edge-path:hover {
+  stroke-width: 3;
+}
+
+.react-flow__handle {
+  background: #ea384c;
+  border: 2px solid #fff;
+  width: 12px;
+  height: 12px;
+}
+
+.react-flow__handle-connecting {
+  background: #10b981;
+}
+
+.react-flow__handle-valid {
+  background: #10b981;
+}
+
+.react-flow__minimap {
+  background-color: #13131a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.react-flow__controls {
+  background: #13131a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.react-flow__controls-button {
+  background: #13131a;
+  border: none;
+  color: #e9e9ee;
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Custom node animations */
+.react-flow__node-technique {
+  animation: nodeAppear 0.3s ease-out;
+}
+
+@keyframes nodeAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Edge animations */
+.react-flow__edge.animated {
+  animation: dashdraw 0.5s ease-in-out;
+}
+
+@keyframes dashdraw {
+  from {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+  }
+}

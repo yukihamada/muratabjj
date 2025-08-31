@@ -29,7 +29,7 @@ function getSupabaseAdmin() {
 
 // 管理者チェック
 function isAdmin(email: string | undefined): boolean {
-  const adminEmails = ['shu.shu.4029@gmail.com', 'yuki@hamada.tokyo']
+  const adminEmails = ['admin@test.muratabjj.com', 'shu.shu.4029@gmail.com', 'yuki@hamada.tokyo', 'yukihamada010@gmail.com']
   return adminEmails.includes(email || '')
 }
 
