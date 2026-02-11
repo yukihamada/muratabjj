@@ -4,6 +4,13 @@
       "main": true
     }
   },
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://jiuflow.art/$1",
+      "permanent": true
+    }
+  ],
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "devCommand": "npm run dev",
